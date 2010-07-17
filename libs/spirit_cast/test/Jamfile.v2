@@ -11,3 +11,4 @@ project spirit_cast_test :
     ;
 
 unit-test pass_through : pass_through.cpp ;
+unit-test qi : qi.cpp ;
