@@ -174,9 +174,6 @@ namespace boost {
                     bool result = boost::spirit::qi::parse(
                         iterator, end, target);
 
-                    if (!result)
-                        std::cout << "False" << std::endl;
-
                     if (!result || !((iterator < end && *iterator == 0) || iterator == end))
                         throw boost::bad_spirit_cast();
 
