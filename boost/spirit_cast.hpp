@@ -142,12 +142,10 @@ namespace boost {
         struct spirit_cast;
 
         // pass-through when the source type is equal to the target type
-        template <typename Target, typename Source>
-        struct spirit_cast<Target, Source, typename boost::enable_if<
-            boost::is_same<Target, Source>
-                >::type> {
+        template <typename Target>
+        struct spirit_cast<Target, Target> {
             static inline Target const &
-            call(Source const & source) {
+            call(Target const & source) {
                 return source;
             }
         };
