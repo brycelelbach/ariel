@@ -138,10 +138,9 @@ namespace boost {
 
     namespace detail {
 
-        template <typename Target, typename Source, typename Enable = void>
+        template <typename Target, typename Source>
         struct spirit_cast;
 
-        // pass-through when the source type is equal to the target type
         template <typename Target>
         struct spirit_cast<Target, Target> {
             static inline Target const &
@@ -150,52 +149,39 @@ namespace boost {
             }
         };
 
-        // pass-through when the source type is convertible to target type
         template <typename Target, typename Source>
-        struct spirit_cast<Target, Source, typename boost::enable_if<
-            boost::mpl::and_<
-                boost::is_convertible<Target, Source>,
-                boost::mpl::not_<
-                    boost::is_same<Target, Source>
-                >
-            >
-                >::type> {
+        struct spirit_cast {
             static inline Target const
             call(Source const & source) {
-                return static_cast<Target>(source);
-            }
-        };
+                return do_call(source, boost::is_convertible<Target, Source>());
+            };
+ 
+            private:
+                static inline Target const
+                do_call(Source const & source, boost::true_type const &) {
+                    return static_cast<Target>(source);
+                };
 
-        // boost::spirit::qi based conversion from a string to target type
-        template <typename Target, typename Source>
-        struct spirit_cast<Target, Source, typename boost::enable_if<
-            boost::mpl::and_<
-                boost::spirit::traits::is_string<Source>,
-                boost::mpl::not_<
-                    boost::is_same<Target, Source>
-                >
-            >
-                >::type> {
-            static inline Target const
-            call(Source const & source) {
-                Target target;
+                static inline Target const
+                do_call(Source const & source, boost::false_type const &) {
+                    Target target;
 
-                spirit_cast_string<Source> expression(source);
+                    spirit_cast_string<Source> expression(source);
 
-                typedef typename spirit_cast_string<Source>::const_iterator iterator_t;
-                iterator_t iterator = expression.begin(), end = expression.end();
+                    typedef typename spirit_cast_string<Source>::const_iterator iterator_t;
+                    iterator_t iterator = expression.begin(), end = expression.end();
 
-                bool result = boost::spirit::qi::parse(
-                    iterator, end, target);
+                    bool result = boost::spirit::qi::parse(
+                        iterator, end, target);
 
-                if (!result)
-                    std::cout << "False" << std::endl;
+                    if (!result)
+                        std::cout << "False" << std::endl;
 
-                if (!result || !((iterator < end && *iterator == 0) || iterator == end))
-                    throw boost::bad_spirit_cast();
+                    if (!result || !((iterator < end && *iterator == 0) || iterator == end))
+                        throw boost::bad_spirit_cast();
 
-                return target;
-            }
+                    return target;
+                };
         };
 
     }  // namespace detail
