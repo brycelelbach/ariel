@@ -10,6 +10,10 @@
 #include <boost/spirit_cast.hpp>
 
 BOOST_AUTO_TEST_CASE(pass_through) {
+    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(1), 1);
+}
+
+BOOST_AUTO_TEST_CASE(pass_through_convertible) {
     BOOST_CHECK_EQUAL(boost::spirit_cast<int>(1.0), 1);
 }
 

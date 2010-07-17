@@ -141,10 +141,26 @@ namespace boost {
         template <typename Target, typename Source, typename Enable = void>
         struct spirit_cast;
 
+        // pass-through when the source type is equal to the target type
+        template <typename Target, typename Source>
+        struct spirit_cast<Target, Source, typename boost::enable_if<
+            boost::is_same<Target, Source>
+                >::type> {
+            static inline Target const &
+            call(Source const & source) {
+                return source;
+            }
+        };
+
         // pass-through when the source type is convertible to target type
         template <typename Target, typename Source>
         struct spirit_cast<Target, Source, typename boost::enable_if<
-            boost::is_convertible<Target, Source>
+            boost::mpl::and_<
+                boost::is_convertible<Target, Source>,
+                boost::mpl::not_<
+                    boost::is_same<Target, Source>
+                >
+            >
                 >::type> {
             static inline Target const
             call(Source const & source) {
