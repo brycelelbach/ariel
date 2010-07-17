@@ -164,12 +164,15 @@ namespace boost {
 
                 static inline Target const
                 do_call(Source const & source, boost::false_type const &) {
+                    typedef spirit_cast_string<Source> string_t;
+                    typedef typename string_t::const_iterator iterator_t;
+
                     Target target;
 
-                    spirit_cast_string<Source> expression(source);
+                    string_t expression(source);
 
-                    typedef typename spirit_cast_string<Source>::const_iterator iterator_t;
-                    iterator_t iterator = expression.begin(), end = expression.end();
+                    iterator_t iterator = expression.begin();
+                    iterator_t end = expression.end();
 
                     bool result = boost::spirit::qi::parse(
                         iterator, end, target);
