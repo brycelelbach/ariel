@@ -153,29 +153,26 @@ namespace boost {
             call(Source const & source) {
                 return do_call(
                     source,
-                    boost::spirit::traits::is_string<Target>(),
-                    boost::spirit::traits::is_string<Source>(),
-                    boost::is_convertible<Target, Source>());
-            };
+                    boost::is_convertible<Target, Source>(),
+                    boost::spirit::traits::is_string<Source>());
+            }
  
             private:
                 static inline Target const
                 do_call(
                     Source const & source,
-                    bool,
-                    bool,
-                    boost::mpl::true_)
-                {
+                    boost::mpl::true_,
+                    bool
+                ) {
                     return static_cast<Target>(source);
-                };
+                }
 
                 static inline Target const
                 do_call(
                     Source const & source,
-                    bool,
-                    boost::mpl::true_,
-                    boost::mpl::false_)
-                {
+                    boost::mpl::false_,
+                    boost::mpl::true_
+                ) {
                     typedef spirit_cast_string<Source> string_t;
                     typedef typename string_t::const_iterator iterator_t;
 
@@ -193,7 +190,7 @@ namespace boost {
                         throw boost::bad_spirit_cast();
 
                     return target;
-                };
+                }
         };
 
     }  // namespace detail
