@@ -198,10 +198,15 @@ namespace boost {
 
     }  // namespace detail
 
+    namespace traits {
+        template <typename Target, typename Source, typename Enable = void>
+        struct spirit_cast : detail::spirit_cast<Target, Source> {};
+    }  // traits
+
     template <typename Target, typename Source>
     inline Target const
     spirit_cast(Source const & source) {
-        return boost::detail::spirit_cast<Target, Source>::call(source);
+        return boost::traits::spirit_cast<Target, Source>::call(source);
     }
 
 }  // namespace boost
