@@ -7,13 +7,11 @@
 #ifndef BOOST_SPIRIT_CAST_HPP
 #define BOOST_SPIRIT_CAST_HPP
 
-#include <boost/mpl/and.hpp>
-#include <boost/mpl/not.hpp>
+#include <boost/mpl/bool.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/support_string_traits.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <boost/type_traits/is_convertible.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <string>
 #include <typeinfo>
@@ -153,17 +151,31 @@ namespace boost {
         struct spirit_cast {
             static inline Target const
             call(Source const & source) {
-                return do_call(source, boost::is_convertible<Target, Source>());
+                return do_call(
+                    source,
+                    boost::spirit::traits::is_string<Target>(),
+                    boost::spirit::traits::is_string<Source>(),
+                    boost::is_convertible<Target, Source>());
             };
  
             private:
                 static inline Target const
-                do_call(Source const & source, boost::true_type const &) {
+                do_call(
+                    Source const & source,
+                    bool,
+                    bool,
+                    boost::mpl::true_)
+                {
                     return static_cast<Target>(source);
                 };
 
                 static inline Target const
-                do_call(Source const & source, boost::false_type const &) {
+                do_call(
+                    Source const & source,
+                    bool,
+                    boost::mpl::true_,
+                    boost::mpl::false_)
+                {
                     typedef spirit_cast_string<Source> string_t;
                     typedef typename string_t::const_iterator iterator_t;
 
