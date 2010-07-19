@@ -10,6 +10,7 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/support_string_traits.hpp>
+#include <boost/static_assert.hpp>
 #include <boost/type_traits/integral_constant.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -190,6 +191,15 @@ namespace boost {
                         throw boost::bad_spirit_cast();
 
                     return target;
+                }
+
+                static inline Target const
+                do_call(
+                    Source const & source,
+                    boost::mpl::false_,
+                    boost::mpl::false_
+                ) {
+                    BOOST_STATIC_ASSERT(sizeof(Source) == 0);
                 }
         };
 
