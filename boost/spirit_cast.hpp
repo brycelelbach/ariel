@@ -179,10 +179,10 @@ namespace boost {
 
                     Target target;
 
-                    string_t expression(source);
+                    string_t input(source);
 
-                    iterator_t iterator = expression.begin();
-                    iterator_t end = expression.end();
+                    iterator_t iterator = input.begin();
+                    iterator_t end = input.end();
 
                     bool result = boost::spirit::qi::parse(
                         iterator, end, target);
