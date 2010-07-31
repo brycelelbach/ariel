@@ -8,7 +8,9 @@
 #define BOOST_SPIRIT_CAST_HPP
 
 #include <boost/mpl/bool.hpp>
+#include <boost/spirit/include/karma.hpp>
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/support_container.hpp>
 #include <boost/spirit/include/support_string_traits.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/integral_constant.hpp>
@@ -155,7 +157,8 @@ namespace boost {
                 return do_call(
                     source,
                     boost::is_convertible<Target, Source>(),
-                    boost::spirit::traits::is_string<Source>());
+                    boost::spirit::traits::is_string<Source>(),
+                    boost::spirit::traits::is_container<Target>());
             }
  
             private:
@@ -163,6 +166,7 @@ namespace boost {
                 do_call(
                     Source const & source,
                     boost::mpl::true_,
+                    bool,
                     bool
                 ) {
                     return static_cast<Target>(source);
@@ -172,7 +176,8 @@ namespace boost {
                 do_call(
                     Source const & source,
                     boost::mpl::false_,
-                    boost::mpl::true_
+                    boost::mpl::true_,
+                    boost::mpl::false_
                 ) {
                     typedef spirit_cast_string<Source> string_t;
                     typedef typename string_t::const_iterator iterator_t;
@@ -196,6 +201,27 @@ namespace boost {
                 static inline Target const
                 do_call(
                     Source const & source,
+                    boost::mpl::false_,
+                    boost::mpl::false_,
+                    boost::mpl::true_
+                ) {
+                    // TODO
+                }
+
+                static inline Target const
+                do_call(
+                    Source const & source,
+                    boost::mpl::false_,
+                    boost::mpl::true_,
+                    boost::mpl::true_
+                ) {
+                    // TODO
+                }
+
+                static inline Target const
+                do_call(
+                    Source const & source,
+                    boost::mpl::false_,
                     boost::mpl::false_,
                     boost::mpl::false_
                 ) {
