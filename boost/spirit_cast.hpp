@@ -205,7 +205,16 @@ namespace boost {
                     boost::mpl::false_,
                     boost::mpl::true_
                 ) {
-                    // TODO
+                    Target target;
+
+                    std::back_insert_iterator<Target> iterator(target);
+                    bool result = boost::spirit::karma::generate(
+                        iterator, source);
+
+                    if (!result)
+                        throw bad_spirit_cast();
+
+                    return target;
                 }
 
                 static inline Target const
