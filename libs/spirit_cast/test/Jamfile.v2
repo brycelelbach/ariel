@@ -10,5 +10,6 @@ project spirit_cast_test :
         <source>/boost//unit_test_framework
     ;
 
+unit-test karma : karma.cpp ;
 unit-test pass_through : pass_through.cpp ;
 unit-test qi : qi.cpp ;
