@@ -10,4 +10,4 @@ use-project /boost : $(BOOST_ROOT) ;
 
 using testing ;
 
-build-project libs/spirit_cast/test ;
+build-project libs/construe_cast/test ;

@@ -6,8 +6,8 @@
 
 #define BOOST_TEST_MODULE qi
 
+#include <boost/construe_cast.hpp>
 #include <boost/test/unit_test.hpp>
-#include <boost/spirit_cast.hpp>
 
 #include <string>
 

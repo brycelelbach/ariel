@@ -6,8 +6,8 @@
 
 #define BOOST_TEST_MODULE pass_through
 
+#include <boost/construe_cast.hpp>
 #include <boost/test/unit_test.hpp>
-#include <boost/spirit_cast.hpp>
 
 BOOST_AUTO_TEST_CASE(pass_through) {
     BOOST_CHECK_EQUAL(boost::spirit_cast<int>(1), 1);
