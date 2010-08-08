@@ -10,13 +10,13 @@
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(pass_through) {
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(1), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(1), 1);
 }
 
 BOOST_AUTO_TEST_CASE(pass_through_convertible) {
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(1.0), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(1.0), 1);
 }
 
 BOOST_AUTO_TEST_CASE(pass_through_downcast) {
-    BOOST_CHECK_EQUAL(boost::spirit_cast<double>(1), 1.0);
+    BOOST_CHECK_EQUAL(boost::construe_cast<double>(1), 1.0);
 }

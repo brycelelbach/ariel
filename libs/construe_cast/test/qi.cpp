@@ -13,60 +13,60 @@
 
 BOOST_AUTO_TEST_CASE(qi_char_const_array) {
     char const string[1] = {'1'};
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_char_array) {
     char string[1] = {'1'};
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_char_const_pointer) {
     char const *string = "1";
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_char_pointer) {
     char *string = const_cast<char *>("1");
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_string_const) {
     std::string const string("1");
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_string) {
     std::string string("1");
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_wide_char_const_array) {
     wchar_t const string[1] = {L'1'};
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_wide_char_array) {
     wchar_t string[1] = {L'1'};
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_wide_char_const_pointer) {
     wchar_t const *string = L"1";
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_wide_char_pointer) {
     wchar_t *string = const_cast<wchar_t *>(L"1");
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_wide_string_const) {
     std::wstring const string(L"1");
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
 
 BOOST_AUTO_TEST_CASE(qi_wide_string) {
     std::wstring string(L"1");
-    BOOST_CHECK_EQUAL(boost::spirit_cast<int>(string), 1);
+    BOOST_CHECK_EQUAL(boost::construe_cast<int>(string), 1);
 }
