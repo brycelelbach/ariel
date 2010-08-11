@@ -29,36 +29,22 @@ namespace boost {
         namespace detail {
 
             template <typename String>
-            struct spirit_cast_string;
+            struct string_iterators;
 
-            template <typename CharT, std::size_t N>
-            struct spirit_cast_string<CharT [N]> {
-                typedef CharT * iterator;
-                typedef CharT const * const_iterator;
-
-                spirit_cast_string(CharT const (&value)[N])
-                    : value_(value) { }
-
-                inline const_iterator const
-                begin() {
-                    return &value_[0];
-                }
-
-                inline const_iterator const
-                end() {
-                    return &value_[0] + N;
-                }
-
-                private:
-                    CharT const (&value_)[N];
+            template <typename String>
+            struct string_iterators<String const>
+                : string_iterators<String> {
+                template <typename T>
+                string_iterators(T value)
+                    : string_iterators<String>(value) { }
             };
 
             template <>
-            struct spirit_cast_string<char const *> {
+            struct string_iterators<char const *> {
                 typedef char * iterator;
                 typedef char const * const_iterator;
 
-                spirit_cast_string(char const * value)
+                string_iterators(char const * value)
                     : value_(value) { }
 
                 inline const_iterator const
@@ -76,18 +62,11 @@ namespace boost {
             };
 
             template <>
-            struct spirit_cast_string<char *>
-                : spirit_cast_string<char const *> {
-                spirit_cast_string(char * value)
-                    : spirit_cast_string<char const *>(value) { }
-            };
-
-            template <>
-            struct spirit_cast_string<wchar_t const *> {
+            struct string_iterators<wchar_t const *> {
                 typedef wchar_t * iterator;
                 typedef wchar_t const * const_iterator;
 
-                spirit_cast_string(wchar_t const * value)
+                string_iterators(wchar_t const * value)
                     : value_(value) { }
 
                 inline const_iterator const
@@ -105,14 +84,66 @@ namespace boost {
             };
 
             template <>
-            struct spirit_cast_string<wchar_t *>
-                : spirit_cast_string<wchar_t const *> {
-                spirit_cast_string(wchar_t * value)
-                    : spirit_cast_string<wchar_t const *>(value) { }
+            struct string_iterators<char *>
+                : string_iterators<char const *> {
+                template <typename T>
+                string_iterators(T value)
+                    : string_iterators<char const *>(value) { }
+            };
+
+            template <>
+            struct string_iterators<wchar_t *>
+                : string_iterators<wchar_t const *> {
+                template <typename T>
+                string_iterators(T value)
+                    : string_iterators<wchar_t const *>(value) { }
+            };
+
+            template <typename CharT, std::size_t N>
+            struct string_iterators<CharT [N]> {
+                typedef CharT * iterator;
+                typedef CharT const * const_iterator;
+
+                string_iterators(CharT const (&value)[N])
+                    : value_(value) { }
+
+                inline const_iterator const
+                begin() {
+                    return &value_[0];
+                }
+
+                inline const_iterator const
+                end() {
+                    return &value_[0] + N;
+                }
+
+                private:
+                    CharT const (&value_)[N];
+            };
+
+            template <typename CharT, std::size_t N>
+            struct string_iterators<CharT const [N]>
+                : string_iterators<CharT [N]> {
+                string_iterators(CharT const (&value)[N])
+                    : string_iterators<CharT [N]>(value) { }
+            };
+
+            template <typename CharT, std::size_t N>
+            struct string_iterators<CharT (&)[N]>
+                : string_iterators<CharT [N]> {
+                string_iterators(CharT const (&value)[N])
+                    : string_iterators<CharT [N]>(value) { }
+            };
+
+            template <typename CharT, std::size_t N>
+            struct string_iterators<CharT const (&)[N]>
+                : string_iterators<CharT [N]> {
+                string_iterators(CharT const (&value)[N])
+                    : string_iterators<CharT [N]>(value) { }
             };
 
             template <typename CharT, typename Traits, typename Allocator>
-            struct spirit_cast_string<std::basic_string<CharT, Traits, Allocator> > {
+            struct string_iterators<std::basic_string<CharT, Traits, Allocator> > {
                 private:
                     typedef std::basic_string<CharT, Traits, Allocator> string_t;
 
@@ -120,7 +151,7 @@ namespace boost {
                     typedef typename string_t::iterator iterator;
                     typedef typename string_t::const_iterator const_iterator;
 
-                    spirit_cast_string(string_t const & value)
+                    string_iterators(string_t const & value)
                         : value_(value) { }
 
                     inline const_iterator const
@@ -181,15 +212,15 @@ namespace boost {
                         boost::mpl::true_,
                         boost::mpl::false_
                     ) {
-                        typedef spirit_cast_string<Source> string_t;
-                        typedef typename string_t::const_iterator iterator_t;
+                        typedef string_iterators<Source> iterators_t;
+                        typedef typename iterators_t::const_iterator iterator_t;
 
                         Target target;
 
-                        string_t input(source);
+                        string_iterators<Source> iterators(source);
 
-                        iterator_t iterator = input.begin();
-                        iterator_t end = input.end();
+                        iterator_t iterator = iterators.begin();
+                        iterator_t end = iterators.end();
 
                         bool result = boost::spirit::qi::parse(
                             iterator, end, target);
