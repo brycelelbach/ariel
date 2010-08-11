@@ -198,9 +198,9 @@ namespace boost {
                     static inline Target const
                     do_call(
                         Source const & source,
-                        boost::mpl::true_,
-                        bool,
-                        bool
+                        boost::mpl::true_ const,
+                        bool const,
+                        bool const
                     ) {
                         return static_cast<Target>(source);
                     }
@@ -208,9 +208,9 @@ namespace boost {
                     static inline Target const
                     do_call(
                         Source const & source,
-                        boost::mpl::false_,
-                        boost::mpl::true_,
-                        boost::mpl::false_
+                        boost::mpl::false_ const,
+                        boost::mpl::true_ const,
+                        boost::mpl::false_ const
                     ) {
                         typedef string_iterators<Source> iterators_t;
                         typedef typename iterators_t::const_iterator iterator_t;
@@ -234,9 +234,9 @@ namespace boost {
                     static inline Target const
                     do_call(
                         Source const & source,
-                        boost::mpl::false_,
-                        boost::mpl::false_,
-                        boost::mpl::true_
+                        boost::mpl::false_ const,
+                        boost::mpl::false_ const,
+                        boost::mpl::true_ const
                     ) {
                         Target target;
 
@@ -253,9 +253,9 @@ namespace boost {
                     static inline Target const
                     do_call(
                         Source const & source,
-                        boost::mpl::false_,
-                        boost::mpl::true_,
-                        boost::mpl::true_
+                        boost::mpl::false_ const,
+                        boost::mpl::true_ const,
+                        boost::mpl::true_ const
                     ) {
                         // TODO
                     }
@@ -263,9 +263,9 @@ namespace boost {
                     static inline Target const
                     do_call(
                         Source const & source,
-                        boost::mpl::false_,
-                        boost::mpl::false_,
-                        boost::mpl::false_
+                        boost::mpl::false_ const,
+                        boost::mpl::false_ const,
+                        boost::mpl::false_ const
                     ) {
                         BOOST_STATIC_ASSERT(sizeof(Source) == 0);
                     }
