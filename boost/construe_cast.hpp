@@ -16,6 +16,7 @@
 #include <boost/type_traits/integral_constant.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
+#include <cstddef>
 #include <string>
 #include <typeinfo>
 
@@ -170,6 +171,69 @@ namespace boost {
 
         }  // namespace detail
 
+        namespace traits {
+
+            template <typename Sequence>
+            class has_reserve {
+                template <typename U, void (U::*)(typename U::size_type) = &U::reserve>
+                struct impl { };
+
+                template <typename U>
+                static boost::type_traits::yes_type test(U*, impl<U>* = 0);
+
+                template <typename U>
+                static boost::type_traits::no_type test(...);
+
+            public:
+                static bool const value = sizeof(test<Sequence>(0)) == sizeof(boost::type_traits::yes_type);
+                typedef boost::mpl::bool_<value> type;
+            };
+
+        }  // namespace traits
+
+        namespace detail {
+
+            template <typename Sequence>
+            inline void
+            call_reserve(
+                Sequence & sequence,
+                typename Sequence::size_type const size
+            ) {
+                call_reserve_impl(
+                    sequence, size, typename boost::construe::traits::has_reserve<Sequence>::type());
+            }
+
+            template <typename Sequence>
+            inline void
+            call_reserve(
+                Sequence const &,
+                std::size_t const
+            ) {
+                // Missing size_type
+            }
+
+            template <typename Sequence>
+            inline void
+            call_reserve_impl(
+                Sequence & sequence,
+                typename Sequence::size_type const size,
+                boost::mpl::true_ const
+            ) {
+                sequence.reserve(size);
+            }
+
+            template <typename Sequence>
+            inline void
+            call_reserve_impl(
+                Sequence const &,
+                typename Sequence::size_type const,
+                boost::mpl::false_ const
+            ) {
+                // Missing .reserve()
+            }
+
+        }  // namespace detail
+
         namespace detail {
 
             template <typename Target, typename Source>
@@ -240,6 +304,8 @@ namespace boost {
                     ) {
                         Target target;
 
+                        call_reserve(target, 32);
+
                         std::back_insert_iterator<Target> iterator(target);
                         bool result = boost::spirit::karma::generate(
                             iterator, source);
@@ -278,7 +344,7 @@ namespace boost {
     namespace traits {
         template <typename Target, typename Source, typename Enable = void>
         struct construe_cast
-            : boost::construe::detail::construe_cast<Target, Source> {};
+            : boost::construe::detail::construe_cast<Target, Source> { };
     }  // traits
 
     template <typename Target, typename Source>
