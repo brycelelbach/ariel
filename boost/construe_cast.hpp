@@ -8,10 +8,12 @@
 #define BOOST_CONSTRUE_CAST_HPP
 
 #include <boost/mpl/bool.hpp>
-#include <boost/spirit/include/karma.hpp>
-#include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/support_container.hpp>
-#include <boost/spirit/include/support_string_traits.hpp>
+#include <boost/spirit/home/karma/auto.hpp>
+#include <boost/spirit/home/karma/numeric.hpp>
+#include <boost/spirit/home/qi/auto.hpp>
+#include <boost/spirit/home/qi/numeric.hpp>
+#include <boost/spirit/home/support/container.hpp>
+#include <boost/spirit/home/support/string_traits.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/integral_constant.hpp>
 #include <boost/type_traits/is_convertible.hpp>
@@ -308,7 +310,11 @@ namespace boost {
 
                         std::back_insert_iterator<Target> iterator(target);
                         bool result = boost::spirit::karma::generate(
-                            iterator, source);
+                            iterator,
+#if SPIRIT_VERSION <= 0x2030
+                            boost::spirit::karma::auto_,
+#endif
+                            source);
 
                         if (!result)
                             throw boost::bad_construe_cast();
