@@ -31,7 +31,7 @@
 namespace boost {
 
     class bad_construe_cast
-        : std::bad_cast { };
+        : public std::bad_cast { };
 
     namespace construe {
 
