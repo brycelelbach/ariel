@@ -33,22 +33,22 @@ namespace boost {
         namespace detail {
 
             template <typename String>
-            struct string_iterators;
+            struct string_wrapper;
 
             template <typename String>
-            struct string_iterators<String const>
-                : string_iterators<String> {
+            struct string_wrapper<String const>
+                : string_wrapper<String> {
                 template <typename T>
-                string_iterators(T value)
-                    : string_iterators<String>(value) { }
+                string_wrapper(T value)
+                    : string_wrapper<String>(value) { }
             };
 
             template <>
-            struct string_iterators<char const *> {
+            struct string_wrapper<char const *> {
                 typedef char * iterator;
                 typedef char const * const_iterator;
 
-                string_iterators(char const * value)
+                string_wrapper(char const * value)
                     : value_(value) { }
 
                 inline const_iterator const
@@ -58,19 +58,29 @@ namespace boost {
 
                 inline const_iterator const
                 end() {
-                    return value_ + strlen(value_);
+                    return value_ + length();
+                }
+
+                inline std::size_t const
+                length() {
+                    if (length_ == false)
+                        length_ = strlen(value_);
+
+                    return length_.get();
                 }
 
                 private:
                     char const * value_;
+
+                    boost::optional<std::size_t> mutable length_;
             };
 
             template <>
-            struct string_iterators<wchar_t const *> {
+            struct string_wrapper<wchar_t const *> {
                 typedef wchar_t * iterator;
                 typedef wchar_t const * const_iterator;
 
-                string_iterators(wchar_t const * value)
+                string_wrapper(wchar_t const * value)
                     : value_(value) { }
 
                 inline const_iterator const
@@ -80,35 +90,45 @@ namespace boost {
 
                 inline const_iterator const
                 end() {
-                    return value_ + wcslen(value_);
+                    return value_ + length();
+                }
+
+                inline std::size_t const
+                length() {
+                    if (length_ == false)
+                        length_ = wcslen(value_);
+
+                    return length_.get();
                 }
 
                 private:
                     wchar_t const * value_;
+
+                    boost::optional<std::size_t> mutable length_;
             };
 
             template <>
-            struct string_iterators<char *>
-                : string_iterators<char const *> {
+            struct string_wrapper<char *>
+                : string_wrapper<char const *> {
                 template <typename T>
-                string_iterators(T value)
-                    : string_iterators<char const *>(value) { }
+                string_wrapper(T value)
+                    : string_wrapper<char const *>(value) { }
             };
 
             template <>
-            struct string_iterators<wchar_t *>
-                : string_iterators<wchar_t const *> {
+            struct string_wrapper<wchar_t *>
+                : string_wrapper<wchar_t const *> {
                 template <typename T>
-                string_iterators(T value)
-                    : string_iterators<wchar_t const *>(value) { }
+                string_wrapper(T value)
+                    : string_wrapper<wchar_t const *>(value) { }
             };
 
             template <typename CharT, std::size_t N>
-            struct string_iterators<CharT [N]> {
+            struct string_wrapper<CharT [N]> {
                 typedef CharT * iterator;
                 typedef CharT const * const_iterator;
 
-                string_iterators(CharT const (&value)[N])
+                string_wrapper(CharT const (&value)[N])
                     : value_(value) { }
 
                 inline const_iterator const
@@ -121,33 +141,38 @@ namespace boost {
                     return &value_[0] + N;
                 }
 
+                inline std::size_t const
+                length() {
+                    return N;
+                }
+
                 private:
                     CharT const (&value_)[N];
             };
 
             template <typename CharT, std::size_t N>
-            struct string_iterators<CharT const [N]>
-                : string_iterators<CharT [N]> {
-                string_iterators(CharT const (&value)[N])
-                    : string_iterators<CharT [N]>(value) { }
+            struct string_wrapper<CharT const [N]>
+                : string_wrapper<CharT [N]> {
+                string_wrapper(CharT const (&value)[N])
+                    : string_wrapper<CharT [N]>(value) { }
             };
 
             template <typename CharT, std::size_t N>
-            struct string_iterators<CharT (&)[N]>
-                : string_iterators<CharT [N]> {
-                string_iterators(CharT const (&value)[N])
-                    : string_iterators<CharT [N]>(value) { }
+            struct string_wrapper<CharT (&)[N]>
+                : string_wrapper<CharT [N]> {
+                string_wrapper(CharT const (&value)[N])
+                    : string_wrapper<CharT [N]>(value) { }
             };
 
             template <typename CharT, std::size_t N>
-            struct string_iterators<CharT const (&)[N]>
-                : string_iterators<CharT [N]> {
-                string_iterators(CharT const (&value)[N])
-                    : string_iterators<CharT [N]>(value) { }
+            struct string_wrapper<CharT const (&)[N]>
+                : string_wrapper<CharT [N]> {
+                string_wrapper(CharT const (&value)[N])
+                    : string_wrapper<CharT [N]>(value) { }
             };
 
             template <typename CharT, typename Traits, typename Allocator>
-            struct string_iterators<std::basic_string<CharT, Traits, Allocator> > {
+            struct string_wrapper<std::basic_string<CharT, Traits, Allocator> > {
                 private:
                     typedef std::basic_string<CharT, Traits, Allocator> string_t;
 
@@ -155,7 +180,7 @@ namespace boost {
                     typedef typename string_t::iterator iterator;
                     typedef typename string_t::const_iterator const_iterator;
 
-                    string_iterators(string_t const & value)
+                    string_wrapper(string_t const & value)
                         : value_(value) { }
 
                     inline const_iterator const
@@ -166,6 +191,11 @@ namespace boost {
                     inline const_iterator const
                     end() {
                         return value_.end();
+                    }
+
+                    inline std::size_t const
+                    length() {
+                        return value_.length();
                     }
 
                 private:
@@ -376,15 +406,15 @@ namespace boost {
                         boost::mpl::true_ const,
                         boost::mpl::false_ const
                     ) {
-                        typedef string_iterators<Source> iterators_t;
-                        typedef typename iterators_t::const_iterator iterator_t;
+                        typedef boost::construe::detail::string_wrapper<Source> string_t;
+                        typedef typename string_t::const_iterator iterator_t;
 
                         Target target;
 
-                        string_iterators<Source> iterators(source);
+                        string_t string(source);
 
-                        iterator_t iterator = iterators.begin();
-                        iterator_t end = iterators.end();
+                        iterator_t iterator = string.begin();
+                        iterator_t end = string.end();
 
                         bool result = boost::spirit::qi::parse(
                             iterator, end, target);
