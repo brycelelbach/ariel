@@ -284,7 +284,8 @@ namespace boost {
                 static boost::type_traits::no_type test(...);
 
             public:
-                static bool const value = sizeof(test<Sequence>(0)) == sizeof(boost::type_traits::yes_type);
+                BOOST_STATIC_CONSTANT(bool, value =
+                    sizeof(test<Sequence>(0)) == sizeof(boost::type_traits::yes_type));
                 typedef boost::mpl::bool_<value> type;
             };
 
