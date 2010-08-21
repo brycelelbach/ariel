@@ -22,6 +22,9 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #include <cstddef>
+#include <cstring>
+#include <cwchar>
+#include <limits>
 #include <string>
 #include <typeinfo>
 
