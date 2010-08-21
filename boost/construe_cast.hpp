@@ -13,6 +13,8 @@
 #include <boost/spirit/home/karma/auto.hpp>
 #include <boost/spirit/home/karma/numeric.hpp>
 #include <boost/spirit/home/qi/auto.hpp>
+#include <boost/spirit/home/qi/char.hpp>
+#include <boost/spirit/home/qi/directive.hpp>
 #include <boost/spirit/home/qi/numeric.hpp>
 #include <boost/spirit/home/support/container.hpp>
 #include <boost/spirit/home/support/string_traits.hpp>
@@ -457,7 +459,25 @@ namespace boost {
                         boost::mpl::true_ const,
                         boost::mpl::true_ const
                     ) {
-                        // TODO
+                        typedef boost::construe::detail::string_wrapper<Source> string_t;
+                        typedef typename string_t::const_iterator iterator_t;
+
+                        Target target;
+
+                        string_t string(source);
+
+                        call_reserve(target, string.length());
+
+                        iterator_t iterator = string.begin();
+                        iterator_t end = string.end();
+
+                        bool result = boost::spirit::qi::parse(
+                            iterator, end, target);
+
+                        if (!result || iterator != end)
+                            throw boost::bad_construe_cast();
+
+                        return target;
                     }
 
                     static inline Target const
