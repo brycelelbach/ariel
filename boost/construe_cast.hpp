@@ -418,7 +418,10 @@ namespace boost {
 
                         string_t string(source);
 
-                        iterator_t iterator = string.begin();
+                        if (string.length() < 1)
+                            throw boost::bad_construe_cast();
+
+                        iterator_t begin = string.begin(), iterator = begin;
                         iterator_t end = string.end();
 
                         bool result = boost::spirit::qi::parse(
