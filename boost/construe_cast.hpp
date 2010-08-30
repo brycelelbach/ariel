@@ -148,7 +148,7 @@ namespace boost {
 
                 inline std::size_t const
                 length() {
-                    return N;
+                    return (0 < N && value_[N - 1] == 0) ? N - 1 : N;
                 }
 
                 private:
