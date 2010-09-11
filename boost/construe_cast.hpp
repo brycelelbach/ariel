@@ -40,14 +40,6 @@ namespace boost {
             template <typename String>
             struct string_wrapper;
 
-            template <typename String>
-            struct string_wrapper<String const>
-                : string_wrapper<String> {
-                template <typename T>
-                string_wrapper(T value)
-                    : string_wrapper<String>(value) { }
-            };
-
             template <>
             struct string_wrapper<char const *> {
                 typedef char * iterator;
