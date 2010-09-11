@@ -502,9 +502,11 @@ namespace boost {
     }  // namespace construe
 
     namespace traits {
+
         template <typename Target, typename Source, typename Enable = void>
         struct construe_cast
             : boost::construe::detail::construe_cast<Target, Source> { };
+
     }  // traits
 
     template <typename Target, typename Source>
