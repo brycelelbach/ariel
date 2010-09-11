@@ -143,7 +143,7 @@ namespace boost {
 
                 inline const_iterator const
                 end() {
-                    return &value_[0] + N;
+                    return &value_[0] + length();
                 }
 
                 inline std::size_t const
