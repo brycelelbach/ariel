@@ -8,6 +8,7 @@
 #define BOOST_CONSTRUE_CAST_HPP
 
 #include <boost/config.hpp>
+#include <boost/limits.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/optional.hpp>
 #include <boost/spirit/home/karma/auto.hpp>
@@ -24,7 +25,6 @@
 #include <cstddef>
 #include <cstring>
 #include <cwchar>
-#include <limits>
 #include <string>
 #include <typeinfo>
 
