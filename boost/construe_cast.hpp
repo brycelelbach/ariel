@@ -447,7 +447,7 @@ namespace boost {
                         typedef boost::construe::detail::string_wrapper<Source> string_t;
                         typedef typename string_t::const_iterator iterator_t;
 
-                        Target target;
+                        Target target = Target();
 
                         string_t string(source);
 
@@ -473,7 +473,7 @@ namespace boost {
                         boost::mpl::false_ const,
                         boost::mpl::true_ const
                     ) {
-                        Target target;
+                        Target target = Target();
 
                         call_reserve(target, boost::construe::traits::reserve_size<Source>::value);
 
@@ -501,7 +501,7 @@ namespace boost {
                         typedef boost::construe::detail::string_wrapper<Source> string_t;
                         typedef typename string_t::const_iterator iterator_t;
 
-                        Target target;
+                        Target target = Target();
 
                         string_t string(source);
 
