@@ -31,19 +31,21 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 """
 
-from os import path, getcwd
+version = "1.5.10"
 
-join = path.join
+import sys, os
 
 if sys.hexversion < 0x203000f: raise ImportError("Waf requires Python >= 2.3")
 
-wafdir = os.path.dirname(os.getcwd())
-w = join(wafdir, 'wafadmin')
-t = join(w, 'Tools')
-f = join(w, '3rdparty')
-sys.path = [w, t, f] + sys.path
+cwd        = os.getcwd()
+wafadmin   = os.path.join(cwd, 'wafadmin')
+tools      = os.path.join(wafadmin, 'Tools')
+thirdparty = os.path.join(wafadmin, '3rdparty')
+
+sys.path = [wafadmin, tools, thirdparty] + sys.path
 
 import Scripting
-Scripting.prepare(t, cwd, "1.5.10", wafdir)
+Scripting.prepare(tools, cwd, version, wafadmin)
+
 sys.exit(0)
 
