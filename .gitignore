@@ -1,0 +1,5 @@
+wafadmin/*.pyc
+wafadmin/3rdparty/*.pyc
+wafadmin/Tools/*.pyc
+.lock-wscript
+build
