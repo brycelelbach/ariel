@@ -1,4 +1,4 @@
-// Profiler.cpp - the Ariel C++ template profiler (still VERY young)
+// Implements ariel.Profiler as a Clang shared object plugin
 //
 // (C) Copyright 2010 Bryce Lelbach
 //
@@ -8,12 +8,11 @@
 // Relative to repository root: /doc/BOOST_LICENSE_1_0.rst
 // Online: http://www.boost.org/LICENSE_1_0.txt
 
-#include <iterator>
-
 #include "clang/Frontend/FrontendPluginRegistry.h"
 #include "clang/AST/ASTConsumer.h"
+#include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/AST/AST.h"
-#include "clang/AST/Type.h"
+#include "clang/Parse/ParseAST.h"
 #include "clang/Frontend/CompilerInstance.h"
 
 #include "llvm/Support/raw_ostream.h"
@@ -22,30 +21,31 @@ using namespace clang;
 
 namespace ariel {
 
-class ProfilerConsumer: public ASTConsumer {
- private:
-  unsigned long TUCount;
-
- public:
-  ProfilerConsumer (void): TUCount(0) { }
-
-  virtual void HandleTranslationUnit(ASTContext &ctx) {
-    ASTContext::type_iterator begin = ctx.types_begin();
-    ASTContext::type_iterator end   = ctx.types_end();
-
-    llvm::errs() << "Translation Unit " << TUCount++ 
-                 << " has " << std::distance(begin, end)
-                 << " Type objects:\n";
-
-    for (; begin != end; ++begin) {
-//      llvm::errs() << "  " << (*begin)->getTypeClassName() << "\n";
-      (*begin)->dump();
-    }
-  }
+class ProfilerConsumer:
+  public ASTConsumer,
+  public RecursiveASTVisitor<ProfilerConsumer>
+{
 };
 
 class ProfilerAction: public PluginASTAction {
-protected:
+ protected:
+  void ExecuteAction() {
+    CompilerInstance &CI = getCompilerInstance();
+
+    if (hasCodeCompletionSupport() &&
+        !CI.getFrontendOpts().CodeCompletionAt.FileName.empty())
+      CI.createCodeCompletionConsumer();
+
+    CodeCompleteConsumer *CompletionConsumer = 0;
+    if (CI.hasCodeCompletionConsumer())
+      CompletionConsumer = &CI.getCodeCompletionConsumer();
+
+    if (!CI.hasSema())
+      CI.createSema(usesCompleteTranslationUnit(), CompletionConsumer);
+
+    ParseAST(CI.getSema(), CI.getFrontendOpts().ShowStats);
+  }
+
   ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef) {
     return new ProfilerConsumer();
   }
