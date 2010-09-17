@@ -15,24 +15,22 @@ BSD relative to repository root: /doc/NEW_BSD_LICENSE.txt
 BSD online: http://www.opensource.org/licenses/bsd-license.php
 """
 
-from sys import path as syspath
-from sys import exit
-from sys import hexversion as PYVERSION
-from os.path import join, abspath
+import sys
+from os.path import join
+from os import getcwd
 
 if __name__ == '__main__':
   # check the python version
-  if PYVERSION < 0x203000f:
+  if sys.hexversion < 0x203000f:
     raise ImportError("Waf requires Python >= 2.3")
 
-  # we like absolute paths
-  cwd        = abspath(getcwd())
-  wafadmin   = abspath(join(cwd, 'wafadmin'))
-  tools      = abspath(join(wafadmin, 'Tools')
-  thirdparty = abspath(join(wafadmin, '3rdparty'))
+  cwd        = getcwd()
+  wafadmin   = join(cwd, 'wafadmin')
+  tools      = join(wafadmin, 'Tools')
+  thirdparty = join(wafadmin, '3rdparty')
 
   # add the local waf install to the search path
-  syspath = [wafadmin, tools, thirdparty] + syspath
+  sys.path = [wafadmin, tools, thirdparty] + sys.path
 
   # now we can boostrap waf
   from Scripting import prepare
@@ -41,5 +39,5 @@ if __name__ == '__main__':
   # hand things over to waf
   prepare(tools, cwd, WAFVERSION, wafadmin)
 
-  exit(0)
+  sys.exit(0)
 

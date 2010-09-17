@@ -39,10 +39,10 @@ def set_options(opt):
 def configure(conf):
   conf.check_tool('compiler_cxx')
 
-  conf.env.__ARIEL__ = version 
-  conf.env.__ariel__ = version
-  conf.env.ARIEL     = version
-  conf.env.ariel     = version
+  conf.env.__ARIEL__ = VERSION 
+  conf.env.__ariel__ = VERSION
+  conf.env.ARIEL     = VERSION
+  conf.env.ariel     = VERSION
 
   from Options import options
 
@@ -50,7 +50,6 @@ def configure(conf):
   conf.env.CLANGPATH = options.clangdir
 
 def build(bld):
-  bld.recurse('Profiler/interface')
   bld.recurse('Profiler/implementation')
 
 if __name__ == '__main__':

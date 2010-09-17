@@ -15,9 +15,19 @@ Boost online: http://www.boost.org/LICENSE_1_0.txt
 def build(bld):
   bld.new_task_gen(
     features     = ['cxx'], 
-    source       = 'plugin.cpp',
-    target       = 'plugin.o',
-    includes     = ['.', bld.env.LLVMPATH, bld.env.CLANGPATH],
+    target       = 'Plugin.o',
+
+    includes     = [
+      bld.srcnode.abspath(),
+      bld.env.LLVMPATH,
+      bld.env.CLANGPATH
+    ],
+    
+    source       = [
+      'BootstrapProfiler.cpp',
+      'HotSema.cpp',
+      'ApplyHotSema.cpp'
+    ],
 
     defines      = [
       '__STDC_LIMIT_MACROS',
@@ -37,7 +47,7 @@ def build(bld):
 
   bld.new_task_gen(
     features     = ['cxx', 'cshlib'], 
-    add_objects  = 'plugin.o',
+    add_objects  = 'Plugin.o',
     target       = 'arielProfiler',
     install_path = '${PREFIX}/lib/',
     vnum         = bld.env.ARIEL,
@@ -46,7 +56,7 @@ def build(bld):
     
     linkflags    = [
       '-Wl,-R', '-Wl,\'$ORIGIN\'',
-      '-Wl,--version-script,%s/Profiler/implementation/plugin.exports.map'
+      '-Wl,--version-script,%s/Profiler/implementation/BootstrapProfiler.exports.map'
       % bld.srcnode.abspath()
     ]
   );
