@@ -1,0 +1,36 @@
+# /ariel/Profiler Clang plugin build script
+#
+# (C) Copyright 2010 Bryce Lelbach
+#
+# Use, modification and distribution of this software is subject to the Boost
+# Software License, Version 1.0.
+#
+# Relative to repository root: /doc/BOOST_LICENSE_1_0.rst
+# Online: http://www.boost.org/LICENSE_1_0.txt
+
+def build(bld):
+  bld.new_task_gen(
+    features     = ['cxx'], 
+    source       = 'Profiler.cpp',
+    target       = 'Profiler.o',
+    includes     = ['.'],
+    defines      = ['__STDC_LIMIT_MACROS', '__STDC_CONSTANT_MACROS'],
+    cxxflags     = ['-I%s' % bld.env.LLVMPATH, '-I%s' % bld.env.CLANGPATH,
+                    '-g', '-fno-exceptions', '-fno-strict-aliasing', 
+                    '-fno-rtti', '-fPIC', '-pedantic', '-Wall', '-MD', '-MP',
+                    '-MF', '%s/Profiler.d' % bld.path.abspath(bld.env),
+                    '-MT', '%s/Profiler.o' % bld.path.abspath(bld.env)],
+  );
+
+  bld.new_task_gen(
+    features     = ['cxx', 'cshlib'], 
+    add_objects  = 'Profiler.o',
+    target       = 'arielProfiler',
+    install_path = '${PREFIX}/lib/ariel/',
+    vnum         = '0.0.1',
+    linkflags    = ['-Wl,-R', '-Wl,\'$ORIGIN\'',
+                    '-Wl,--version-script,%s/Profiler/Profiler.exports.map'
+                    % bld.srcnode.abspath()], 
+    libpath      = ['/usr/lib/', '/usr/local/lib/'],
+    lib          = ['pthread', 'dl', 'm']
+  );
