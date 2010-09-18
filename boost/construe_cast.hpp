@@ -20,6 +20,7 @@
 #include <boost/spirit/home/qi/numeric.hpp>
 #include <boost/spirit/home/support/container.hpp>
 #include <boost/spirit/home/support/string_traits.hpp>
+#include <boost/spirit/home/support/unused.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -371,18 +372,60 @@ namespace boost {
 
         namespace detail {
 
-            template <typename Target, typename Source>
+            template <typename Type, typename Tag>
+            struct tagged_type {
+                tagged_type(Type const & value)
+                    : value_(value) { }
+
+                inline Type const &
+                get_value() const {
+                    return value_;
+                }
+
+                private:
+                    Type const & value_;
+            };
+
+            template <typename Type, typename Tag>
+            struct tag_type {
+                typedef boost::construe::detail::tagged_type<Type, Tag> type;
+
+                static inline type const
+                call(Type const & value) {
+                    return type(value);
+                }
+            };
+
+            template <typename Type>
+            struct tag_type<Type, boost::spirit::unused_type> {
+                static inline Type const &
+                call(Type const & value) {
+                    return value;
+                }
+            };
+
+        }  // namespace detail
+
+        namespace tag {
+
+            using boost::spirit::tag::hex;
+
+        }  // namespace tag
+
+        namespace detail {
+
+            template <typename Target, typename Tag, typename Source>
             struct construe_cast;
 
             template <typename Target>
-            struct construe_cast<Target, Target> {
+            struct construe_cast<Target, boost::spirit::unused_type, Target> {
                 static inline Target const &
                 call(Target const & source) {
                     return source;
                 }
             };
 
-            template <typename Target, typename Source>
+            template <typename Target, typename Tag, typename Source>
             struct construe_cast {
                 static inline Target const
                 call(Source const & source) {
@@ -483,7 +526,7 @@ namespace boost {
 #if SPIRIT_VERSION <= 0x2030
                             boost::spirit::karma::auto_,
 #endif
-                            source);
+                            boost::construe::detail::tag_type<Source, Tag>::call(source));
 
                         if (!result)
                             throw boost::bad_construe_cast();
@@ -536,17 +579,57 @@ namespace boost {
 
     namespace traits {
 
-        template <typename Target, typename Source, typename Enable = void>
+        template <typename Target, typename Tag, typename Source, typename Enable = void>
         struct construe_cast
-            : boost::construe::detail::construe_cast<Target, Source> { };
+            : boost::construe::detail::construe_cast<Target, Tag, Source> { };
 
     }  // traits
 
     template <typename Target, typename Source>
     inline Target const
     construe_cast(Source const & source) {
-        return boost::traits::construe_cast<Target, Source>::call(source);
+        return boost::traits::construe_cast<Target, boost::spirit::unused_type, Source>::call(source);
     }
+
+    template <typename Target, typename Tag, typename Source>
+    inline Target const
+    construe_cast(Source const & source) {
+        return boost::traits::construe_cast<Target, Tag, Source>::call(source);
+    }
+
+    namespace spirit {
+
+        namespace traits {
+
+            template <typename Source>
+            struct create_generator<boost::construe::detail::tagged_type<Source, boost::construe::tag::hex> > {
+                typedef spirit::hex_type type;
+
+                static inline type const &
+                call() {
+                    return spirit::hex;
+                }
+            };
+
+            template <typename Source, typename Tag, typename Enable>
+            struct extract_from_attribute<boost::construe::detail::tagged_type<Source, Tag>, Source, Enable> {
+                typedef Source type;
+
+                template <typename Context>
+                static inline type
+                call(boost::construe::detail::tagged_type<Source, Tag> const & attr, Context & context) {
+                    return attr.get_value();
+                }
+            };
+
+            template <typename Source, typename Tag, typename Attrib, typename Enable>
+            struct extract_from_attribute<boost::construe::detail::tagged_type<Source, Tag>, Attrib, Enable> {
+                BOOST_STATIC_ASSERT(sizeof(Source) == 0);
+            };
+
+        }  // namespace traits
+
+    }  // namespace spirit
 
 }  // namespace boost
 
