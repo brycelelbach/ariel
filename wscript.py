@@ -49,8 +49,10 @@ def configure(conf):
   conf.env.LLVMPATH  = options.llvmdir
   conf.env.CLANGPATH = options.clangdir
 
+  conf.env.CXXFLAGS  += ['-g']
+
 def build(bld):
-  bld.recurse('Profiler/implementation')
+  bld.recurse('Profiler')
 
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'

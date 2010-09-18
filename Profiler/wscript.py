@@ -15,7 +15,7 @@ Boost online: http://www.boost.org/LICENSE_1_0.txt
 def build(bld):
   bld.new_task_gen(
     features     = ['cxx'], 
-    target       = 'Plugin.o',
+    target       = 'plugin.o',
 
     includes     = [
       bld.srcnode.abspath(),
@@ -24,9 +24,8 @@ def build(bld):
     ],
     
     source       = [
-      'BootstrapProfiler.cpp',
-      'HotSema.cpp',
-      'ApplyHotSema.cpp'
+      'impl/TIConsumer.cpp',
+      'impl/TIAction.cpp',
     ],
 
     defines      = [
@@ -35,11 +34,8 @@ def build(bld):
     ],
     
     cxxflags     = [
-      '-g',
-      '-fno-exceptions', '-fno-strict-aliasing', 
-      '-fno-rtti', '-fPIC',
-      '-pedantic',
-      '-Wall',
+      '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', '-fPIC',
+      '-pedantic', '-Wall',
       '-MD', '-MP', '-MF', '%s/plugin.d' % bld.path.abspath(bld.env),
       '-MT', '%s/plugin.o' % bld.path.abspath(bld.env)
     ]
@@ -47,7 +43,7 @@ def build(bld):
 
   bld.new_task_gen(
     features     = ['cxx', 'cshlib'], 
-    add_objects  = 'Plugin.o',
+    add_objects  = 'plugin.o',
     target       = 'arielProfiler',
     install_path = '${PREFIX}/lib/',
     vnum         = bld.env.ARIEL,
@@ -56,7 +52,7 @@ def build(bld):
     
     linkflags    = [
       '-Wl,-R', '-Wl,\'$ORIGIN\'',
-      '-Wl,--version-script,%s/Profiler/implementation/BootstrapProfiler.exports.map'
+      '-Wl,--version-script,%s/Profiler/plugin.exports.map'
       % bld.srcnode.abspath()
     ]
   );
