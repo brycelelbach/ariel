@@ -374,7 +374,7 @@ namespace boost {
 
             template <typename Type, typename Tag>
             struct tagged_type {
-                tagged_type(Type const & value)
+                tagged_type(Type & value)
                     : value_(value) { }
 
                 inline Type const &
@@ -382,8 +382,13 @@ namespace boost {
                     return value_;
                 }
 
+                void
+                set_value(Type const & value) {
+                    value_ = value;
+                }
+
                 private:
-                    Type const & value_;
+                    Type & value_;
             };
 
             template <typename Type, typename Tag>
@@ -391,15 +396,15 @@ namespace boost {
                 typedef boost::construe::detail::tagged_type<Type, Tag> type;
 
                 static inline type const
-                call(Type const & value) {
+                call(Type & value) {
                     return type(value);
                 }
             };
 
             template <typename Type>
             struct tag_type<Type, boost::spirit::unused_type> {
-                static inline Type const &
-                call(Type const & value) {
+                static inline Type &
+                call(Type & value) {
                     return value;
                 }
             };
@@ -501,7 +506,7 @@ namespace boost {
                         iterator_t end = string.end();
 
                         bool result = boost::spirit::qi::parse(
-                            iterator, end, target);
+                            iterator, end, boost::construe::detail::tag_type<Target, Tag>::call(target));
 
                         if (!result || !((iterator < end && *iterator == 0) || iterator == end))
                             throw boost::bad_construe_cast();
@@ -526,7 +531,7 @@ namespace boost {
 #if SPIRIT_VERSION <= 0x2030
                             boost::spirit::karma::auto_,
 #endif
-                            boost::construe::detail::tag_type<Source, Tag>::call(source));
+                            boost::construe::detail::tag_type<Source const, Tag>::call(source));
 
                         if (!result)
                             throw boost::bad_construe_cast();
@@ -554,7 +559,7 @@ namespace boost {
                         iterator_t end = string.end();
 
                         bool result = boost::spirit::qi::parse(
-                            iterator, end, target);
+                            iterator, end, boost::construe::detail::tag_type<Target, Tag>::call(target));
 
                         if (!result || iterator != end)
                             throw boost::bad_construe_cast();
@@ -600,6 +605,24 @@ namespace boost {
     namespace spirit {
 
         namespace traits {
+
+            template <typename Target>
+            struct create_parser<boost::construe::detail::tagged_type<Target, boost::construe::tag::hex> > {
+                typedef spirit::hex_type type;
+
+                static inline type const &
+                call() {
+                    return spirit::hex;
+                }
+            };
+
+            template <typename Target, typename Tag, typename Enable>
+            struct assign_to_attribute_from_value<boost::construe::detail::tagged_type<Target, Tag>, Target, Enable> {
+                static inline void
+                call(Target const & val, boost::construe::detail::tagged_type<Target, Tag> & attr) {
+                    attr.set_value(val);
+                }
+            };
 
             template <typename Source>
             struct create_generator<boost::construe::detail::tagged_type<Source, boost::construe::tag::hex> > {
