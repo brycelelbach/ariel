@@ -31,8 +31,16 @@ void TIConsumer::HandleTopLevelDecl (clang::DeclGroupRef ref) {
 }
 
 bool TIConsumer::TraverseTemplateName (clang::TemplateName temp) {
+  // FIXME: push to binary table here
   TreeifyTemplateName(temp); // add the instantiation to the XML tree IR
   
+  return true;
+}
+
+bool TIConsumer::TraverseTemplateArguments (
+  clang::TemplateArgument const* args, unsigned num
+) {
+  // FIXME: implement
   return true;
 }
 
@@ -93,4 +101,5 @@ void TIConsumer::TreeifyNestedNameSpecifier (clang::NestedNameSpecifier* nss) {
   // recurse to end of NestedNameSpecifier
   while ((nss = nss->getPrefix())) { TreeifyNestedNameSpecifier(nss); } 
 }
+
 

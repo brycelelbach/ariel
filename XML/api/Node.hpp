@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <map>
 
 namespace ariel {
 namespace XML {
@@ -10,22 +11,20 @@ namespace XML {
 class Document;
 
 class Node {
- friend class Document;
-
  public:
   Node (std::string const& name, Document& document);
-  Node (std::string const& name, Node& parent);
 
   Node& addChild (std::string const& name);
-  Node& addSibling (std::string const& name);
 
-  template<typename Value>
-  Node& addAttribute (std::string const& name);
+  bool addAttribute (std::string const& name, std::string const& value);
+
+  void writeNode (void);
 
  private:
-  Document&                 document;
-  std::list<Node>           children;
-  std::list<Node>::iterator parent;
+  const std::string                   name;
+  Document&                           document;
+  std::map<std::string, std::string>  attributes; 
+  std::list<Node>                     children;
 };
 
 } // XML

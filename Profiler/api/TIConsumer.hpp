@@ -26,7 +26,10 @@ class TIConsumer:
   virtual void HandleTopLevelDecl (clang::DeclGroupRef ref);
 
   bool TraverseTemplateName (clang::TemplateName temp);
-   
+  bool TraverseTemplateArguments (
+    clang::TemplateArgument const* args, unsigned num
+  );
+
   void TreeifyTemplateName (clang::TemplateName& temp);
   void TreeifyQualifiedTemplateName (clang::QualifiedTemplateName* temp);
   void TreeifyNestedNameSpecifier (clang::NestedNameSpecifier* nss);

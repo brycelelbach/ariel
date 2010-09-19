@@ -52,6 +52,7 @@ def configure(conf):
   conf.env.CXXFLAGS  += ['-g']
 
 def build(bld):
+  bld.recurse('XML')
   bld.recurse('Profiler')
 
 if __name__ == '__main__':

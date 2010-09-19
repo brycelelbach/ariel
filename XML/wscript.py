@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-/Profiler waf build script
+/XML waf build script
 
 (C) Copyright 2010 Bryce Lelbach
 
@@ -14,8 +14,10 @@ Boost online: http://www.boost.org/LICENSE_1_0.txt
 
 def build(bld):
   bld.new_task_gen(
-    features     = ['cxx'], 
-    target       = 'plugin.o',
+    features     = ['cxx', 'cprogram'], 
+    target       = 'XMLTest',
+    libpath      = ['/usr/lib/', '/usr/local/lib/'],
+    lib          = ['LLVM-2.9svn'],
 
     includes     = [
       bld.srcnode.abspath(),
@@ -24,8 +26,9 @@ def build(bld):
     ],
     
     source       = [
-      'impl/TIConsumer.cpp',
-      'impl/TIAction.cpp',
+      'test/main.cpp',
+      'impl/Document.cpp',
+      'impl/Node.cpp',
     ],
 
     defines      = [
@@ -36,24 +39,6 @@ def build(bld):
     cxxflags     = [
       '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', '-fPIC',
       '-pedantic', '-Wall',
-      '-MD', '-MP', '-MF', '%s/plugin.d' % bld.path.abspath(bld.env),
-      '-MT', '%s/plugin.o' % bld.path.abspath(bld.env)
-    ]
-  );
-
-  bld.new_task_gen(
-    features     = ['cxx', 'cshlib'], 
-    add_objects  = 'plugin.o',
-    target       = 'arielProfiler',
-    install_path = '${PREFIX}/lib/',
-    vnum         = bld.env.ARIEL,
-    libpath      = ['/usr/lib/', '/usr/local/lib/'],
-    lib          = ['pthread', 'dl', 'm'],
-    
-    linkflags    = [
-      '-Wl,-R', '-Wl,\'$ORIGIN\'',
-      '-Wl,--version-script,%s/Profiler/plugin.exports.map'
-      % bld.srcnode.abspath()
     ]
   );
 

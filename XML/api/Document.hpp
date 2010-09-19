@@ -3,6 +3,8 @@
 
 #include "llvm/Support/raw_ostream.h"
 
+#include "XML/api/Node.hpp"
+
 #include <string>
 
 namespace ariel {
@@ -11,26 +13,29 @@ namespace XML {
 class Node;
 
 class Document {
- public:
-  enum BufferPolicy {
-    BufferNothing,
-    BufferTags,
-    BufferDocument
-  };
+ friend class Node;
 
+ public:
   Document (
-    std::string const& root, llvm::raw_ostream& out,
-    BufferPolicy policy = BufferNothing
+    std::string const& name,
+    llvm::raw_ostream& out,
+    double version = 1.0,
+    std::string encoding = "UTF-8"
   );
+
+  virtual ~Document (void); 
 
   Node& getRoot (void);
 
-  void finalize (void); 
+  bool isFinalized (void) const { return finalized; }
+
+  void Finalize (void);
 
  private:
+  std::size_t        indent;
+  bool               finalized;
   Node               root;
   llvm::raw_ostream& out;
-  BufferPolicy       policy;
 };
 
 } // XML
