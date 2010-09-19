@@ -612,7 +612,11 @@ namespace boost {
             };
 
             template <typename Source, typename Tag, typename Enable>
+#if SPIRIT_VERSION < 2040
+            struct extract_from_attribute<boost::construe::detail::tagged_type<Source, Tag>, Enable> {
+#else
             struct extract_from_attribute<boost::construe::detail::tagged_type<Source, Tag>, Source, Enable> {
+#endif
                 typedef Source type;
 
                 template <typename Context>
@@ -622,10 +626,12 @@ namespace boost {
                 }
             };
 
+#if SPIRIT_VERSION >= 2040
             template <typename Source, typename Tag, typename Attrib, typename Enable>
             struct extract_from_attribute<boost::construe::detail::tagged_type<Source, Tag>, Attrib, Enable> {
                 BOOST_STATIC_ASSERT(sizeof(Source) == 0);
             };
+#endif
 
         }  // namespace traits
 
