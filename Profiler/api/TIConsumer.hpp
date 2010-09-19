@@ -16,6 +16,9 @@
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/AST/DeclTemplate.h"
 
+#include "XML/api/Document.hpp"
+#include "XML/api/Tree.hpp"
+
 namespace ariel {
 
 class TIConsumer:
@@ -23,18 +26,41 @@ class TIConsumer:
   public clang::RecursiveASTVisitor<TIConsumer>
 {
  public:
+  TIConsumer (std::string name);
+
+  ~TIConsumer (void);
+
+  virtual void Initialize (clang::ASTContext& ctx);
+
   virtual void HandleTopLevelDecl (clang::DeclGroupRef ref);
 
-  bool TraverseTemplateName (clang::TemplateName temp);
-  bool TraverseTemplateArguments (
-    clang::TemplateArgument const* args, unsigned num
+  // This is an override for RecursiveASTVisitor, to prevent explicit 
+  // specializations from being added to our dataset
+  bool TraverseClassTemplateSpecializationDecl (
+    clang::ClassTemplateSpecializationDecl* decl
+  ) { return true; }
+
+  bool VisitTemplateSpecializationType (
+    const clang::TemplateSpecializationType* temp
   );
 
-  void TreeifyTemplateName (clang::TemplateName& temp);
-  void TreeifyQualifiedTemplateName (clang::QualifiedTemplateName* temp);
-  void TreeifyNestedNameSpecifier (clang::NestedNameSpecifier* nss);
+  void TreeifyTemplateName (
+    clang::TemplateName temp, std::list<XML::Tree>::iterator& parent
+  );
+
+  void TreeifyQualifiedTemplateName (
+    clang::QualifiedTemplateName* temp, std::list<XML::Tree>::iterator& parent
+  );
+
+  void TreeifyNestedNameSpecifier (
+    clang::NestedNameSpecifier* nss, std::list<XML::Tree>::iterator& parent
+  );
 
   bool shouldVisitTemplateInstantiations (void) const { return true; }
+ 
+ private:
+  XML::Tree tree;
+  std::list<XML::Tree>::iterator last;
 };
 
 } // ariel

@@ -28,7 +28,7 @@ def build(bld):
     source       = [
       'test/main.cpp',
       'impl/Document.cpp',
-      'impl/Node.cpp',
+      'impl/Tree.cpp',
     ],
 
     defines      = [

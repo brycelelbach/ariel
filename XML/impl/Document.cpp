@@ -6,12 +6,11 @@ using namespace ariel;
 using namespace ariel::XML;
 
 Document::Document (
-  std::string const& name, llvm::raw_ostream& out, 
+  Node& root, llvm::raw_ostream& out, 
   double version, std::string encoding
 ):
-  indent(0),
   finalized(false),
-  root(name, *this),
+  root(root),
   out(out)
 {
   out << "<?xml version=\""
@@ -23,7 +22,7 @@ Document::Document (
 
 Document::~Document (void) {
   if (!finalized) {
-    root.writeNode();
+    root.writeNode(out);
     finalized = true;
   }
 }
@@ -34,7 +33,7 @@ Node& Document::getRoot (void) {
 
 void Document::Finalize (void) {
   if (!finalized) {
-    root.writeNode();
+    root.writeNode(out);
     finalized = true;
   }
 }

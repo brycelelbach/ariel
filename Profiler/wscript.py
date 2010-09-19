@@ -26,6 +26,8 @@ def build(bld):
     source       = [
       'impl/TIConsumer.cpp',
       'impl/TIAction.cpp',
+      '../XML/impl/Document.cpp',
+      '../XML/impl/Tree.cpp'
     ],
 
     defines      = [

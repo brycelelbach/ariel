@@ -23,7 +23,7 @@ class TIAction: public clang::PluginASTAction {
  protected:
   clang::ASTConsumer* CreateASTConsumer (
     clang::CompilerInstance& compiler,
-    llvm::StringRef
+    llvm::StringRef string
   ); 
 
   bool ParseArgs (

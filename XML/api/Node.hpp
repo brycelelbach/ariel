@@ -1,30 +1,16 @@
 #if !defined(ARIEL_XML_NODE_HPP)
 #define ARIEL_XML_NODE_HPP
 
-#include <string>
-#include <list>
-#include <map>
+#include "llvm/Support/raw_ostream.h"
 
 namespace ariel {
 namespace XML {
 
-class Document;
-
 class Node {
  public:
-  Node (std::string const& name, Document& document);
+  virtual ~Node (void) { }  
 
-  Node& addChild (std::string const& name);
-
-  bool addAttribute (std::string const& name, std::string const& value);
-
-  void writeNode (void);
-
- private:
-  const std::string                   name;
-  Document&                           document;
-  std::map<std::string, std::string>  attributes; 
-  std::list<Node>                     children;
+  virtual void writeNode (llvm::raw_ostream& out, std::size_t indent = 0) = 0;
 };
 
 } // XML

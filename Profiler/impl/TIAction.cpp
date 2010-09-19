@@ -17,9 +17,9 @@
 using namespace ariel;
 
 clang::ASTConsumer* TIAction::CreateASTConsumer (
-  clang::CompilerInstance&, llvm::StringRef
+  clang::CompilerInstance&, llvm::StringRef string
 ) {
-  return new TIConsumer();
+  return new TIConsumer(string.data());
 }
 
 bool TIAction::ParseArgs (

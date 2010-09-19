@@ -10,14 +10,10 @@
 namespace ariel {
 namespace XML {
 
-class Node;
-
 class Document {
- friend class Node;
-
  public:
   Document (
-    std::string const& name,
+    Node& root,
     llvm::raw_ostream& out,
     double version = 1.0,
     std::string encoding = "UTF-8"
@@ -32,9 +28,8 @@ class Document {
   void Finalize (void);
 
  private:
-  std::size_t        indent;
   bool               finalized;
-  Node               root;
+  Node&              root;
   llvm::raw_ostream& out;
 };
 
