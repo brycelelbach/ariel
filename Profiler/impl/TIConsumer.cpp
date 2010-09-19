@@ -55,7 +55,8 @@ bool TIConsumer::VisitTemplateSpecializationType (
   std::list<XML::Tree>::iterator root = last;
 
   TreeifyTemplateName(temp->getTemplateName(), root);
-  
+  TreeifyTemplateArguments(temp->getArgs(), temp->getNumArgs(), root);
+
   return true;
 }
 
@@ -117,13 +118,16 @@ void TIConsumer::TreeifyNestedNameSpecifier (
       } break;
     case clang::NestedNameSpecifier::TypeSpec:
     case clang::NestedNameSpecifier::TypeSpecWithTemplate: { 
-        const clang::TemplateSpecializationType* spec = 
+        const clang::TemplateSpecializationType* temp = 
           nss->getAsType()->getAs<clang::TemplateSpecializationType>();
         
-        if (spec) TreeifyTemplateName(spec->getTemplateName(), parent);
+        if (temp) {
+          TreeifyTemplateName(temp->getTemplateName(), parent);
+          TreeifyTemplateArguments(temp->getArgs(), temp->getNumArgs(), parent);
+        }
 
-        else { 
-          parent = (*parent).addChild("type-specifier");
+        else {
+          parent = (*parent).addChild("type");
           (*parent).addAttribute(
             "name", nss->getAsType()->getCanonicalTypeInternal().getAsString()
           );
@@ -137,3 +141,39 @@ void TIConsumer::TreeifyNestedNameSpecifier (
   while ((nss = nss->getPrefix())) { TreeifyNestedNameSpecifier(nss, parent); }
 }
 
+void TIConsumer::TreeifyTemplateArguments (
+  const clang::TemplateArgument* args, unsigned arity,
+  std::list<XML::Tree>::iterator& parent
+) {
+  parent = (*parent).addChild("parameters");
+
+  for (unsigned i = 0; i < arity; ++i) {
+    switch (args[i].getKind()) {
+      case clang::TemplateArgument::Null: {
+          parent = (*parent).addChild("null");
+        } break;
+      case clang::TemplateArgument::Type: {
+          parent = (*parent).addChild("type");
+          (*parent).addAttribute(
+            "name", args[i].getAsType()->getCanonicalTypeInternal().getAsString()
+          );
+        } break;
+      // FIXME: implement
+      case clang::TemplateArgument::Declaration: {
+          parent = (*parent).addChild("declaration");
+        } break;
+      case clang::TemplateArgument::Integral: {
+          parent = (*parent).addChild("integral");
+        } break;
+      case clang::TemplateArgument::Template: {
+          parent = (*parent).addChild("template");
+        } break;
+      case clang::TemplateArgument::Expression: {
+          parent = (*parent).addChild("expression");
+        } break;
+      case clang::TemplateArgument::Pack: {
+          parent = (*parent).addChild("parameter-pack");
+        } break;
+    }
+  }
+}

@@ -56,6 +56,11 @@ class TIConsumer:
     clang::NestedNameSpecifier* nss, std::list<XML::Tree>::iterator& parent
   );
 
+  void TreeifyTemplateArguments (
+    const clang::TemplateArgument* args, unsigned arity,
+    std::list<XML::Tree>::iterator& parent
+  );
+  
   bool shouldVisitTemplateInstantiations (void) const { return true; }
  
  private:
