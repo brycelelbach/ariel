@@ -14,17 +14,34 @@
 
 using namespace ariel;
 
-TIConsumer::TIConsumer (std::string name):
-  tree(name),
-  last(tree.end()) { }
-
-TIConsumer::~TIConsumer (void) {
-  XML::Document doc(tree, llvm::outs());
-  doc.Finalize(); // call this explicitly to shut up unused warnings
+TIConsumer::TIConsumer (std::string name): tree() {
+  #if 0
+  XML::Tree root(name);
+  tree.push_back(name);
+  #endif
 }
 
-void TIConsumer::Initialize (clang::ASTContext& ctx) {
-  last = tree.addChild("translation-unit");
+TIConsumer::~TIConsumer (void) {
+  TemplateTable::iterator tempIt = templates.begin(),
+                          tempEnd = templates.end();
+
+  do {
+    delete (*tempIt).second;
+  } while (++tempIt != tempEnd);
+}
+
+void TIConsumer::HandleTranslationUnit (clang::ASTContext&) {
+  #if 0
+  XML::Document doc(tree.front(), llvm::outs());
+  doc.Finalize(); // call this explicitly to shut up unused warnings
+  #endif
+  TemplateTable::iterator tempIt = templates.begin(),
+                          tempEnd = templates.end();
+
+  do {
+    (*tempIt).first.dump();
+    llvm::outs() << " -> " << (*tempIt).second->size() << "\n";
+  } while (++tempIt != tempEnd);
 }
 
 void TIConsumer::HandleTopLevelDecl (clang::DeclGroupRef ref) {
@@ -44,7 +61,7 @@ void TIConsumer::HandleTopLevelDecl (clang::DeclGroupRef ref) {
 }
 
 bool TIConsumer::VisitTemplateSpecializationType (
-  const clang::TemplateSpecializationType* temp
+  clang::TemplateSpecializationType* temp
 ) {
   #if defined(ARIEL_ASSERT_NULLS)
     assert(temp && "cannot expand a NULL TemplateSpecializationType*");
@@ -52,10 +69,46 @@ bool TIConsumer::VisitTemplateSpecializationType (
     if (!temp) return false;
   #endif
 
-  std::list<XML::Tree>::iterator root = last;
+  clang::TemplateName name = temp->getTemplateName();
+
+  // ignore dependent templates for now
+  if (name.isDependent() || name.isNull()) return true;
+
+  TemplateTable::iterator it = templates.find(name),
+                               end = templates.end();
+
+  // the template isn't in the table yet
+  if (it == end) {
+    clang::TemplateDecl* decl = name.getAsTemplateDecl();
+
+    // FIXME: a set of function templates can have a NULL
+    // declaration. ATM we don't handle function templates
+    // at all, but this would be done by calling name.getKind()
+    // (OverloadedTemplate == function template set)
+    if (!decl) return true;
+
+    // allocate a new InstantiationSet for this template
+    InstantiationSet* set = new InstantiationSet(
+      decl->getASTContext()
+    );
+    
+    // insert the instantiation into the set
+    set->InsertNode(temp);
+
+    // insert the set into the template table
+    templates.insert(TemplateTable::value_type(name, set));
+  }
+
+  // the template is in the table
+  else
+    (*it).second->GetOrInsertNode(temp);
+
+  #if 0
+  std::list<XML::Tree>::iterator root = tree.begin();
 
   TreeifyTemplateName(temp->getTemplateName(), root);
   TreeifyTemplateArguments(temp->getArgs(), temp->getNumArgs(), root);
+  #endif 
 
   return true;
 }
@@ -145,34 +198,37 @@ void TIConsumer::TreeifyTemplateArguments (
   const clang::TemplateArgument* args, unsigned arity,
   std::list<XML::Tree>::iterator& parent
 ) {
-  parent = (*parent).addChild("parameters");
+  std::list<XML::Tree>::iterator root = parent;
+  
+  root = (*root).addChild("parameters");
 
   for (unsigned i = 0; i < arity; ++i) {
     switch (args[i].getKind()) {
       case clang::TemplateArgument::Null: {
-          parent = (*parent).addChild("null");
+          root = (*root).addChild("null");
         } break;
       case clang::TemplateArgument::Type: {
-          parent = (*parent).addChild("type");
-          (*parent).addAttribute(
+          root = (*root).addChild("type");
+          (*root).addAttribute(
             "name", args[i].getAsType()->getCanonicalTypeInternal().getAsString()
           );
         } break;
       // FIXME: implement
       case clang::TemplateArgument::Declaration: {
-          parent = (*parent).addChild("declaration");
+          root = (*root).addChild("declaration");
         } break;
       case clang::TemplateArgument::Integral: {
-          parent = (*parent).addChild("integral");
+          root = (*root).addChild("integral");
+          (*root).addAttribute("value", args[i].getAsIntegral()->toString(10));
         } break;
       case clang::TemplateArgument::Template: {
-          parent = (*parent).addChild("template");
+          root = (*root).addChild("template");
         } break;
       case clang::TemplateArgument::Expression: {
-          parent = (*parent).addChild("expression");
+          root = (*root).addChild("expression");
         } break;
       case clang::TemplateArgument::Pack: {
-          parent = (*parent).addChild("parameter-pack");
+          root = (*root).addChild("parameter-pack");
         } break;
     }
   }

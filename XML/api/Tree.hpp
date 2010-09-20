@@ -16,9 +16,11 @@ class Tree: public Node {
  public:
   Tree (std::string const& name);
 
-  std::list<Tree>::iterator addChild (std::string const& name);
+  std::list<Tree>::iterator addChild (std::string const& name = "node");
 
   bool addAttribute (std::string const& name, std::string const& value);
+
+  void changeName (std::string const& newName) { name = newName; }
 
   void writeNode (llvm::raw_ostream& out, std::size_t indent = 0);
 
@@ -29,7 +31,7 @@ class Tree: public Node {
   std::list<Tree>::const_iterator end (void) const { return children.end(); }
 
  private:
-  const std::string                   name;
+  std::string                         name;
   std::map<std::string, std::string>  attributes; 
   std::list<Tree>                     children;
 };

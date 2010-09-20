@@ -16,8 +16,38 @@
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/AST/DeclTemplate.h"
 
+#include "llvm/ADT/DenseMap.h"
+#include "llvm/ADT/FoldingSet.h"
+
 #include "XML/api/Document.hpp"
 #include "XML/api/Tree.hpp"
+
+namespace llvm {
+
+template<>
+struct DenseMapInfo<clang::TemplateName> {
+  static inline clang::TemplateName getEmptyKey() {
+    return clang::TemplateName::getFromVoidPointer((void*) -1);
+  }
+
+  static inline clang::TemplateName getTombstoneKey() {
+    return clang::TemplateName::getFromVoidPointer((void*) -2);
+  }
+
+  static unsigned getHashValue (clang::TemplateName OP) {
+    return (uintptr_t) OP.getAsVoidPointer();
+  }
+
+  static inline bool
+  isEqual(clang::TemplateName LHS, clang::TemplateName RHS) {
+    return LHS.getAsVoidPointer() == RHS.getAsVoidPointer();
+  }
+};
+
+template <>
+struct isPodLike<clang::TemplateName> { static const bool value = true; };
+
+}  // llvm
 
 namespace ariel {
 
@@ -26,12 +56,20 @@ class TIConsumer:
   public clang::RecursiveASTVisitor<TIConsumer>
 {
  public:
-  TIConsumer (std::string name);
+  typedef llvm::ContextualFoldingSet<
+    clang::TemplateSpecializationType,
+    clang::ASTContext&
+  > InstantiationSet;
 
+  typedef llvm::DenseMap<
+    clang::TemplateName,
+    InstantiationSet*
+  > TemplateTable;
+  
+  TIConsumer (std::string name);
   ~TIConsumer (void);
 
-  virtual void Initialize (clang::ASTContext& ctx);
-
+  virtual void HandleTranslationUnit (clang::ASTContext&);
   virtual void HandleTopLevelDecl (clang::DeclGroupRef ref);
 
   // This is an override for RecursiveASTVisitor, to prevent explicit 
@@ -41,9 +79,10 @@ class TIConsumer:
   ) { return true; }
 
   bool VisitTemplateSpecializationType (
-    const clang::TemplateSpecializationType* temp
+    clang::TemplateSpecializationType* temp
   );
 
+  // XML tree builder member functions
   void TreeifyTemplateName (
     clang::TemplateName temp, std::list<XML::Tree>::iterator& parent
   );
@@ -61,11 +100,12 @@ class TIConsumer:
     std::list<XML::Tree>::iterator& parent
   );
   
+  // Tells RecursiveASTVisitor to visit template instantiations
   bool shouldVisitTemplateInstantiations (void) const { return true; }
  
  private:
-  XML::Tree tree;
-  std::list<XML::Tree>::iterator last;
+  TemplateTable        templates; 
+  std::list<XML::Tree> tree;
 };
 
 } // ariel
