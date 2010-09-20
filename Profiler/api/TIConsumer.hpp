@@ -22,32 +22,15 @@
 #include "XML/api/Document.hpp"
 #include "XML/api/Tree.hpp"
 
-namespace llvm {
+#include <boost/unordered_map.hpp>
 
-template<>
-struct DenseMapInfo<clang::TemplateName> {
-  static inline clang::TemplateName getEmptyKey() {
-    return clang::TemplateName::getFromVoidPointer((void*) -1);
-  }
+namespace clang {
 
-  static inline clang::TemplateName getTombstoneKey() {
-    return clang::TemplateName::getFromVoidPointer((void*) -2);
-  }
+std::size_t hash_value (TemplateName const& name);
 
-  static unsigned getHashValue (clang::TemplateName OP) {
-    return (uintptr_t) OP.getAsVoidPointer();
-  }
+bool operator== (TemplateName const& lhs, TemplateName const& rhs);
 
-  static inline bool
-  isEqual(clang::TemplateName LHS, clang::TemplateName RHS) {
-    return LHS.getAsVoidPointer() == RHS.getAsVoidPointer();
-  }
-};
-
-template <>
-struct isPodLike<clang::TemplateName> { static const bool value = true; };
-
-}  // llvm
+} // clang
 
 namespace ariel {
 
@@ -61,15 +44,15 @@ class TIConsumer:
     clang::ASTContext&
   > InstantiationSet;
 
-  typedef llvm::DenseMap<
+  typedef boost::unordered_map<
     clang::TemplateName,
     InstantiationSet*
   > TemplateTable;
   
-  TIConsumer (std::string name);
+  TIConsumer (std::string name): name(name) { }
   ~TIConsumer (void);
 
-  virtual void HandleTranslationUnit (clang::ASTContext&);
+  virtual void HandleTranslationUnit (clang::ASTContext& ctx);
   virtual void HandleTopLevelDecl (clang::DeclGroupRef ref);
 
   // This is an override for RecursiveASTVisitor, to prevent explicit 
@@ -81,31 +64,13 @@ class TIConsumer:
   bool VisitTemplateSpecializationType (
     clang::TemplateSpecializationType* temp
   );
-
-  // XML tree builder member functions
-  void TreeifyTemplateName (
-    clang::TemplateName temp, std::list<XML::Tree>::iterator& parent
-  );
-
-  void TreeifyQualifiedTemplateName (
-    clang::QualifiedTemplateName* temp, std::list<XML::Tree>::iterator& parent
-  );
-
-  void TreeifyNestedNameSpecifier (
-    clang::NestedNameSpecifier* nss, std::list<XML::Tree>::iterator& parent
-  );
-
-  void TreeifyTemplateArguments (
-    const clang::TemplateArgument* args, unsigned arity,
-    std::list<XML::Tree>::iterator& parent
-  );
   
   // Tells RecursiveASTVisitor to visit template instantiations
   bool shouldVisitTemplateInstantiations (void) const { return true; }
  
  private:
-  TemplateTable        templates; 
-  std::list<XML::Tree> tree;
+  const std::string name;
+  TemplateTable     templates; 
 };
 
 } // ariel

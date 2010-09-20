@@ -14,34 +14,63 @@
 
 using namespace ariel;
 
-TIConsumer::TIConsumer (std::string name): tree() {
-  #if 0
-  XML::Tree root(name);
-  tree.push_back(name);
-  #endif
+std::size_t clang::hash_value (clang::TemplateName const& name) {
+  boost::hash<void*> hasher;
+  
+  clang::TemplateDecl* decl = name.getAsTemplateDecl();
+  assert(decl && "TemplateNames with NULL TemplateDecls cannot be hashed");
+  
+  ASTContext& ctx = decl->getASTContext();
+
+  TemplateName canon = ctx.getCanonicalTemplateName(name); 
+
+  return hasher(canon.getAsVoidPointer());
+}
+
+bool clang::operator== (
+  clang::TemplateName const& lhs, clang::TemplateName const& rhs
+) {
+  clang::TemplateDecl* lhsDecl = lhs.getAsTemplateDecl();
+  clang::TemplateDecl* rhsDecl = rhs.getAsTemplateDecl();
+ 
+  assert(
+    lhsDecl && rhsDecl &&
+    "TemplateNames with NULL TemplateDecls cannot be hashed"
+  );
+
+  ASTContext& lhsCtx = lhsDecl->getASTContext();
+  ASTContext& rhsCtx = rhsDecl->getASTContext();
+
+  return lhsCtx.hasSameTemplateName(
+    lhsCtx.getCanonicalTemplateName(lhs),
+    lhsCtx.getCanonicalTemplateName(rhs)
+  ) && (&lhsCtx == &rhsCtx);
 }
 
 TIConsumer::~TIConsumer (void) {
   TemplateTable::iterator tempIt = templates.begin(),
                           tempEnd = templates.end();
 
-  do {
+  for (; tempIt != tempEnd; ++tempIt) {
     delete (*tempIt).second;
-  } while (++tempIt != tempEnd);
+  }
 }
 
-void TIConsumer::HandleTranslationUnit (clang::ASTContext&) {
-  #if 0
-  XML::Document doc(tree.front(), llvm::outs());
-  doc.Finalize(); // call this explicitly to shut up unused warnings
-  #endif
+void TIConsumer::HandleTranslationUnit (clang::ASTContext& ctx) {
   TemplateTable::iterator tempIt = templates.begin(),
                           tempEnd = templates.end();
 
-  do {
-    (*tempIt).first.dump();
-    llvm::outs() << " -> " << (*tempIt).second->size() << "\n";
-  } while (++tempIt != tempEnd);
+  clang::LangOptions LO;
+  LO.CPlusPlus = true;
+  LO.Bool = true;
+
+  clang::PrintingPolicy policy(LO);
+
+  for (; tempIt != tempEnd; ++tempIt) {
+    llvm::outs()
+      << (*tempIt).first.getAsTemplateDecl()->getQualifiedNameAsString()
+      << " -> " << (*tempIt).second->size() << "\n";
+  }
 }
 
 void TIConsumer::HandleTopLevelDecl (clang::DeclGroupRef ref) {
@@ -103,133 +132,6 @@ bool TIConsumer::VisitTemplateSpecializationType (
   else
     (*it).second->GetOrInsertNode(temp);
 
-  #if 0
-  std::list<XML::Tree>::iterator root = tree.begin();
-
-  TreeifyTemplateName(temp->getTemplateName(), root);
-  TreeifyTemplateArguments(temp->getArgs(), temp->getNumArgs(), root);
-  #endif 
-
   return true;
 }
 
-void TIConsumer::TreeifyTemplateName (
-  clang::TemplateName temp, std::list<XML::Tree>::iterator& parent
-) {
-  switch (temp.getKind()) {
-    case clang::TemplateName::Template: {
-        parent = (*parent).addChild("template");
-        (*parent).addAttribute("name", temp.getAsTemplateDecl()->getNameAsString());
-      } break; 
-    case clang::TemplateName::OverloadedTemplate: {
-        parent = (*parent).addChild("template");
-        (*parent).addAttribute("name", temp.getAsTemplateDecl()->getNameAsString());
-        (*parent).addAttribute("overloaded", "true");
-      } break; 
-    case clang::TemplateName::QualifiedTemplate: 
-      TreeifyQualifiedTemplateName(temp.getAsQualifiedTemplateName(), parent);
-      break;
-    case clang::TemplateName::DependentTemplate:
-      // ATM the profiler completely ignores dependent contexts
-      break;
-  }
-}
-
-void TIConsumer::TreeifyQualifiedTemplateName (
-  clang::QualifiedTemplateName* temp, std::list<XML::Tree>::iterator& parent
-) {
-  #if defined(ARIEL_ASSERT_NULLS)
-    assert(temp && "cannot expand a NULL QualifiedTemplateName*");
-  #else
-    if (!temp) return;
-  #endif
-
-  TreeifyNestedNameSpecifier(temp->getQualifier(), parent);
-  
-  parent = (*parent).addChild("template");
-  (*parent).addAttribute("name", temp->getDecl()->getNameAsString());
-  (*parent).addAttribute("qualified", "true");
-}
-
-void TIConsumer::TreeifyNestedNameSpecifier (
-  clang::NestedNameSpecifier* nss, std::list<XML::Tree>::iterator& parent
-) {
-  #if defined(ARIEL_ASSERT_NULLS)
-    assert(nss && "cannot expand a NULL NestedNameSpecifier*");
-  #else
-    if (!nss) return;
-  #endif
-
-  switch (nss->getKind()) {
-    case clang::NestedNameSpecifier::Identifier: { 
-        parent = (*parent).addChild("identifier");
-        (*parent).addAttribute("name", nss->getAsIdentifier()->getName());
-      } break;
-    case clang::NestedNameSpecifier::Namespace: {
-        parent = (*parent).addChild("namespace");
-        (*parent).addAttribute("name", nss->getAsNamespace()->getName());
-      } break;
-    case clang::NestedNameSpecifier::TypeSpec:
-    case clang::NestedNameSpecifier::TypeSpecWithTemplate: { 
-        const clang::TemplateSpecializationType* temp = 
-          nss->getAsType()->getAs<clang::TemplateSpecializationType>();
-        
-        if (temp) {
-          TreeifyTemplateName(temp->getTemplateName(), parent);
-          TreeifyTemplateArguments(temp->getArgs(), temp->getNumArgs(), parent);
-        }
-
-        else {
-          parent = (*parent).addChild("type");
-          (*parent).addAttribute(
-            "name", nss->getAsType()->getCanonicalTypeInternal().getAsString()
-          );
-        }
-      } break;
-    case clang::NestedNameSpecifier::Global:
-      break;
-  }
-  
-  // recurse to end of NestedNameSpecifier
-  while ((nss = nss->getPrefix())) { TreeifyNestedNameSpecifier(nss, parent); }
-}
-
-void TIConsumer::TreeifyTemplateArguments (
-  const clang::TemplateArgument* args, unsigned arity,
-  std::list<XML::Tree>::iterator& parent
-) {
-  std::list<XML::Tree>::iterator root = parent;
-  
-  root = (*root).addChild("parameters");
-
-  for (unsigned i = 0; i < arity; ++i) {
-    switch (args[i].getKind()) {
-      case clang::TemplateArgument::Null: {
-          root = (*root).addChild("null");
-        } break;
-      case clang::TemplateArgument::Type: {
-          root = (*root).addChild("type");
-          (*root).addAttribute(
-            "name", args[i].getAsType()->getCanonicalTypeInternal().getAsString()
-          );
-        } break;
-      // FIXME: implement
-      case clang::TemplateArgument::Declaration: {
-          root = (*root).addChild("declaration");
-        } break;
-      case clang::TemplateArgument::Integral: {
-          root = (*root).addChild("integral");
-          (*root).addAttribute("value", args[i].getAsIntegral()->toString(10));
-        } break;
-      case clang::TemplateArgument::Template: {
-          root = (*root).addChild("template");
-        } break;
-      case clang::TemplateArgument::Expression: {
-          root = (*root).addChild("expression");
-        } break;
-      case clang::TemplateArgument::Pack: {
-          root = (*root).addChild("parameter-pack");
-        } break;
-    }
-  }
-}
