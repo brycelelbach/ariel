@@ -22,15 +22,60 @@
 #include "XML/api/Document.hpp"
 #include "XML/api/Tree.hpp"
 
-#include <boost/unordered_map.hpp>
+namespace llvm {
 
-namespace clang {
+template<>
+struct DenseMapInfo<clang::TemplateName> {
+  static inline clang::TemplateName getEmptyKey (void) {
+    return clang::TemplateName::getFromVoidPointer((void*) -1);
+  }
 
-std::size_t hash_value (TemplateName const& name);
+  static inline clang::TemplateName getTombstoneKey (void) {
+    return clang::TemplateName::getFromVoidPointer((void*) -2);
+  }
 
-bool operator== (TemplateName const& lhs, TemplateName const& rhs);
+  static unsigned getHashValue (clang::TemplateName name) {
+    clang::TemplateDecl* decl = name.getAsTemplateDecl();
+ 
+    if (!decl) return (uintptr_t) name.getAsVoidPointer();
 
-} // clang
+    clang::ASTContext& ctx = decl->getASTContext();
+
+    clang::TemplateName canon = ctx.getCanonicalTemplateName(name); 
+
+    uintptr_t ptr = (uintptr_t) canon.getAsVoidPointer();
+
+    if (sizeof(unsigned) < sizeof(uintptr_t))
+      // hash thought up by michi7x7 from #boost
+      return (ptr >> sizeof(unsigned)) ^ (ptr & ((1 << sizeof(unsigned)) - 1));
+    else
+      return ptr;
+  }
+
+  static inline bool isEqual (clang::TemplateName lhs, clang::TemplateName rhs) {
+    if (lhs.isNull() || rhs.isNull())
+      return lhs.isNull() == rhs.isNull();
+    
+    clang::TemplateDecl* lhsDecl = lhs.getAsTemplateDecl();
+    clang::TemplateDecl* rhsDecl = rhs.getAsTemplateDecl();
+ 
+    if (!lhsDecl || !rhsDecl)
+      return lhsDecl == rhsDecl;
+
+    clang::ASTContext& lhsCtx = lhsDecl->getASTContext();
+    clang::ASTContext& rhsCtx = rhsDecl->getASTContext();
+
+    return lhsCtx.hasSameTemplateName(
+      lhsCtx.getCanonicalTemplateName(lhs),
+      lhsCtx.getCanonicalTemplateName(rhs)
+    ) && (&lhsCtx == &rhsCtx);
+  }
+};
+
+template<>
+struct isPodLike<clang::TemplateName> { static const bool value = true; };
+
+} // llvm
 
 namespace ariel {
 
@@ -44,7 +89,7 @@ class TIConsumer:
     clang::ASTContext&
   > InstantiationSet;
 
-  typedef boost::unordered_map<
+  typedef llvm::DenseMap<
     clang::TemplateName,
     InstantiationSet*
   > TemplateTable;

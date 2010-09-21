@@ -14,39 +14,6 @@
 
 using namespace ariel;
 
-std::size_t clang::hash_value (clang::TemplateName const& name) {
-  boost::hash<void*> hasher;
-  
-  clang::TemplateDecl* decl = name.getAsTemplateDecl();
-  assert(decl && "TemplateNames with NULL TemplateDecls cannot be hashed");
-  
-  ASTContext& ctx = decl->getASTContext();
-
-  TemplateName canon = ctx.getCanonicalTemplateName(name); 
-
-  return hasher(canon.getAsVoidPointer());
-}
-
-bool clang::operator== (
-  clang::TemplateName const& lhs, clang::TemplateName const& rhs
-) {
-  clang::TemplateDecl* lhsDecl = lhs.getAsTemplateDecl();
-  clang::TemplateDecl* rhsDecl = rhs.getAsTemplateDecl();
- 
-  assert(
-    lhsDecl && rhsDecl &&
-    "TemplateNames with NULL TemplateDecls cannot be hashed"
-  );
-
-  ASTContext& lhsCtx = lhsDecl->getASTContext();
-  ASTContext& rhsCtx = rhsDecl->getASTContext();
-
-  return lhsCtx.hasSameTemplateName(
-    lhsCtx.getCanonicalTemplateName(lhs),
-    lhsCtx.getCanonicalTemplateName(rhs)
-  ) && (&lhsCtx == &rhsCtx);
-}
-
 TIConsumer::~TIConsumer (void) {
   TemplateTable::iterator tempIt = templates.begin(),
                           tempEnd = templates.end();
