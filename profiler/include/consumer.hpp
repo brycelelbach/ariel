@@ -1,5 +1,3 @@
-// A template profiler implemented as an ASTConsumer for Clang 
-//
 // (C) Copyright 2010 Bryce Lelbach
 //
 // Use, modification and distribution of this software is subject to the Boost
@@ -14,54 +12,55 @@
 #include "clang/AST/ASTConsumer.h"
 #include "clang/AST/AST.h"
 
-#include "llvm/Support/raw_ostream.h"
-
-#include "PP/poly.hpp"
-#include "PP/foreach.hpp"
+#include "profiler/include/traits.hpp"
 
 namespace ariel {
-namespace Profiler {
+namespace profiler {
 
-template<typename View>
-class Consumer: public clang::ASTConsumer {
+template<class Production>
+class plugin;
+
+template<class Filter>
+class consumer;
+
+template<
+  template<template<class> class, class> class Writer,
+  template<class> class Filter, class Target
+>
+class consumer<Filter<Writer<Filter, Target> > >: public clang::ASTConsumer {
  public:
-  Consumer (std::string name): name(name) { }
-  
-  virtual void HandleTranslationUnit (clang::ASTContext& ctx) { 
-    #if 0
-    typedef clang::ASTContext::type_iterator iterator;
-    
-    llvm::FoldingSet<clang::ClassTemplateSpecializationDecl>
-      instantiations;
-    
-    ARIEL_FOREACH_LLVM(iterator, it, end, ctx, types_) {
-      ARIEL_IF_DYN_CAST(
-        clang::RecordType, rec, *it
-      ) continue;
+  typedef production_traits<consumer> traits;
 
-      ARIEL_IF_DYN_CAST(
-        clang::ClassTemplateSpecializationDecl, decl, rec->getDecl()
-      ) continue;
-  
-      instantiations.GetOrInsertNode(decl);
-    }
-    #endif
+  typedef typename traits::value_type value_type;
+  typedef typename traits::container  container;
 
-    static_cast<View*>(this)->Process(ctx);
+  typedef typename traits::writer_type   writer_type;
+  typedef typename traits::filter_type   filter_type;
+  typedef typename traits::consumer_type consumer_type;
+
+  // these aren't inherited, but plugin static_casts the Production
+  // that it makes to a Production::consumer_type so we can avoid
+  // requiring that client classes friend plugin if they inherit from
+  // consumer
+  friend class plugin<writer_type>;
+  friend class plugin<filter_type>;
+  friend class plugin<consumer_type>;
+  
+  void HandleTranslationUnit (clang::ASTContext& ctx) { 
+    if (!static_cast<filter_type*>(this)->call(ctx)
+    &&  !static_cast<filter_type*>(this)->error(ctx))
+      return;
+
+    if (!static_cast<writer_type*>(this)->call(ctx))
+      static_cast<writer_type*>(this)->error(ctx);
   }
 
-  std::string const& getName (void) const { return name; }
-
- private:
-  std::string const name;
+ protected:
+  std::string name;
+  container   ir;
 };
 
-class NullView: public Consumer<NullView> {
- public:
-  void Process (clang::ASTContext&) { }
-};
-
-} // Profiler
+} // profiler
 } // ariel
 
 #endif // ARIEL_PROFILER_CONSUMER_HPP

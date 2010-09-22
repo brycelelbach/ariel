@@ -1,5 +1,3 @@
-// clang plugin class for arielProfiler
-//
 // (C) Copyright 2010 Bryce Lelbach
 //
 // Use, modification and distribution of this software is subject to the Boost
@@ -17,19 +15,21 @@
 
 #include "llvm/Support/raw_ostream.h"
 
-#include "Profiler/api/Consumer.hpp"
+#include "profiler/include/consumer.hpp"
 
 namespace ariel {
-namespace Profiler {
+namespace profiler {
 
-template<typename View>
-class Plugin: public clang::PluginASTAction {
+template<class Production>
+class plugin: public clang::PluginASTAction {
  protected:
   clang::ASTConsumer* CreateASTConsumer (
     clang::CompilerInstance& compiler,
-    llvm::StringRef string
+    llvm::StringRef name
   ) {
-    return new Consumer<View>(string.data());
+    Production* prod  = new Production();
+    static_cast<typename Production::consumer_type*>(prod)->name = name.data();
+    return prod;
   }
 
   bool ParseArgs (
@@ -45,7 +45,7 @@ class Plugin: public clang::PluginASTAction {
   }
 };
 
-} // Profiler
+} // profiler
 } // ariel 
 
 #endif // ARIEL_PROFILER_PLUGIN_HPP

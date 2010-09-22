@@ -33,7 +33,7 @@ def set_options(opt):
     '--clangdir',
     action  = 'store',
     default = '/usr/local/include/',
-    help    = 'Clang include directory [default: /usr/local/include/]'
+    help    = 'clang include directory [default: /usr/local/include/]'
   )
 
 def configure(conf):
@@ -52,8 +52,7 @@ def configure(conf):
   conf.env.CXXFLAGS  += ['-g']
 
 def build(bld):
-  bld.recurse('XML')
-  bld.recurse('Profiler')
+  bld.recurse('profiler')
 
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'

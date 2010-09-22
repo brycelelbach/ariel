@@ -1,5 +1,3 @@
-// Register clang arielProfiler plugins
-//
 // (C) Copyright 2010 Bryce Lelbach
 //
 // Use, modification and distribution of this software is subject to the Boost
@@ -10,11 +8,12 @@
 
 #include "clang/Frontend/FrontendPluginRegistry.h"
 
-#include "Profiler/api/Plugin.hpp"
+#include "profiler/include/plugin.hpp"
+#include "profiler/include/writers/null_writer.hpp"
+#include "profiler/include/filters/null_filter.hpp"
 
-using namespace ariel;
-using namespace ariel::Profiler;
+using namespace ariel::profiler;
 
-static clang::FrontendPluginRegistry::Add<Plugin<NullView> >
-X("ariel.Profiler.null", "Profile C++ templates (emit nothing)");
+static clang::FrontendPluginRegistry::Add<plugin<null_writer<null_filter, void*> > >
+X("ariel.profiler.null", "Profile C++ templates (emit nothing)");
 

@@ -15,7 +15,7 @@ Boost online: http://www.boost.org/LICENSE_1_0.txt
 def build(bld):
   bld.new_task_gen(
     features     = ['cxx'], 
-    target       = 'Profiler.o',
+    target       = 'profiler.o',
 
     includes     = [
       bld.srcnode.abspath(),
@@ -24,9 +24,7 @@ def build(bld):
     ],
     
     source       = [
-      'impl/register_plugins.cpp',
-      '../XML/impl/Document.cpp',
-      '../XML/impl/Tree.cpp'
+      'src/register_plugins.cpp',
     ],
 
     defines      = [
@@ -37,15 +35,15 @@ def build(bld):
     cxxflags     = [
       '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', '-fPIC',
       '-fdiagnostics-show-option', '-pedantic', '-Wall',
-      '-MD', '-MP', '-MF', '%s/Profiler.d' % bld.path.abspath(bld.env),
-      '-MT', '%s/Profiler.o' % bld.path.abspath(bld.env)
+      '-MD', '-MP', '-MF', '%s/profiler.d' % bld.path.abspath(bld.env),
+      '-MT', '%s/profiler.o' % bld.path.abspath(bld.env)
     ]
   );
 
   bld.new_task_gen(
     features     = ['cxx', 'cshlib'], 
-    add_objects  = 'Profiler.o',
-    target       = 'arielProfiler',
+    add_objects  = 'profiler.o',
+    target       = 'ariel_profiler',
     install_path = '${PREFIX}/lib/',
     vnum         = bld.env.ARIEL,
     libpath      = ['/usr/lib/', '/usr/local/lib/'],
@@ -53,7 +51,7 @@ def build(bld):
     
     linkflags    = [
       '-Wl,-R', '-Wl,\'$ORIGIN\'',
-      '-Wl,--version-script,%s/Profiler/Profiler.exports.map'
+      '-Wl,--version-script,%s/profiler/profiler.exports.map'
       % bld.srcnode.abspath()
     ]
   );
