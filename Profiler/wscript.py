@@ -15,7 +15,7 @@ Boost online: http://www.boost.org/LICENSE_1_0.txt
 def build(bld):
   bld.new_task_gen(
     features     = ['cxx'], 
-    target       = 'plugin.o',
+    target       = 'Profiler.o',
 
     includes     = [
       bld.srcnode.abspath(),
@@ -24,8 +24,8 @@ def build(bld):
     ],
     
     source       = [
-      'impl/TIConsumer.cpp',
-      'impl/TIAction.cpp',
+      'impl/Consumer.cpp',
+      'impl/Plugin.cpp',
       '../XML/impl/Document.cpp',
       '../XML/impl/Tree.cpp'
     ],
@@ -38,14 +38,14 @@ def build(bld):
     cxxflags     = [
       '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', '-fPIC',
       '-fdiagnostics-show-option', '-pedantic', '-Wall',
-      '-MD', '-MP', '-MF', '%s/plugin.d' % bld.path.abspath(bld.env),
-      '-MT', '%s/plugin.o' % bld.path.abspath(bld.env)
+      '-MD', '-MP', '-MF', '%s/Profiler.d' % bld.path.abspath(bld.env),
+      '-MT', '%s/Profiler.o' % bld.path.abspath(bld.env)
     ]
   );
 
   bld.new_task_gen(
     features     = ['cxx', 'cshlib'], 
-    add_objects  = 'plugin.o',
+    add_objects  = 'Profiler.o',
     target       = 'arielProfiler',
     install_path = '${PREFIX}/lib/',
     vnum         = bld.env.ARIEL,
@@ -54,7 +54,7 @@ def build(bld):
     
     linkflags    = [
       '-Wl,-R', '-Wl,\'$ORIGIN\'',
-      '-Wl,--version-script,%s/Profiler/plugin.exports.map'
+      '-Wl,--version-script,%s/Profiler/Profiler.exports.map'
       % bld.srcnode.abspath()
     ]
   );

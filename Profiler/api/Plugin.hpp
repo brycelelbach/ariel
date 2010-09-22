@@ -8,8 +8,8 @@
 // Relative to repository root: /doc/BOOST_LICENSE_1_0.rst
 // Online: http://www.boost.org/LICENSE_1_0.txt
 
-#if !defined(ARIEL_PROFILER_TIACTION_HPP)
-#define ARIEL_PROFILER_TIACTION_HPP
+#if !defined(ARIEL_PROFILER_PLUGIN_HPP)
+#define ARIEL_PROFILER_PLUGIN_HPP
 
 #include "clang/AST/ASTConsumer.h"
 #include "clang/AST/AST.h"
@@ -18,8 +18,9 @@
 #include "llvm/Support/raw_ostream.h"
 
 namespace ariel {
+namespace Profiler {
 
-class TIAction: public clang::PluginASTAction {
+class Plugin: public clang::PluginASTAction {
  protected:
   clang::ASTConsumer* CreateASTConsumer (
     clang::CompilerInstance& compiler,
@@ -34,6 +35,7 @@ class TIAction: public clang::PluginASTAction {
   void PrintHelp (llvm::raw_ostream& ros);
 };
 
+} // Profiler
 } // ariel 
 
-#endif // ARIEL_PROFILER_TIACTION_HPP
+#endif // ARIEL_PROFILER_PLUGIN_HPP

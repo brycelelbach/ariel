@@ -8,21 +8,22 @@
 // Relative to repository root: /doc/BOOST_LICENSE_1_0.rst
 // Online: http://www.boost.org/LICENSE_1_0.txt
 
-#include "Profiler/api/TIAction.hpp"
+#include "Profiler/api/Plugin.hpp"
 
 #include "clang/Frontend/FrontendPluginRegistry.h"
 
-#include "Profiler/api/TIConsumer.hpp"
+#include "Profiler/api/Consumer.hpp"
 
 using namespace ariel;
+using namespace ariel::Profiler;
 
-clang::ASTConsumer* TIAction::CreateASTConsumer (
+clang::ASTConsumer* Plugin::CreateASTConsumer (
   clang::CompilerInstance&, llvm::StringRef string
 ) {
-  return new TIConsumer(string.data());
+  return new Consumer(string.data());
 }
 
-bool TIAction::ParseArgs (
+bool Plugin::ParseArgs (
   clang::CompilerInstance const& compiler,
   std::vector<std::string> const& args
 ) {
@@ -30,10 +31,10 @@ bool TIAction::ParseArgs (
   return true; 
 }
 
-void TIAction::PrintHelp (llvm::raw_ostream& ros) {
+void Plugin::PrintHelp (llvm::raw_ostream& ros) {
   // FIXME: implement
 }
 
-static clang::FrontendPluginRegistry::Add<ariel::TIAction>
+static clang::FrontendPluginRegistry::Add<ariel::Profiler::Plugin>
 X("arielProfiler", "Build AST and emit XML template instantiation profile");
 
