@@ -24,8 +24,7 @@ def build(bld):
     ],
     
     source       = [
-      'impl/Consumer.cpp',
-      'impl/Plugin.cpp',
+      'impl/register_plugins.cpp',
       '../XML/impl/Document.cpp',
       '../XML/impl/Tree.cpp'
     ],

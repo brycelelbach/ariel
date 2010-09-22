@@ -14,22 +14,51 @@
 #include "clang/AST/ASTConsumer.h"
 #include "clang/AST/AST.h"
 
+#include "llvm/Support/raw_ostream.h"
+
+#include "PP/poly.hpp"
+#include "PP/foreach.hpp"
+
 namespace ariel {
 namespace Profiler {
 
+template<typename View>
 class Consumer: public clang::ASTConsumer {
  public:
-  typedef llvm::FoldingSet<
-    clang::ClassTemplateSpecializationDecl
-  > InstantiationSet;
-  
   Consumer (std::string name): name(name) { }
-
-  virtual void HandleTranslationUnit (clang::ASTContext& ctx);
   
+  virtual void HandleTranslationUnit (clang::ASTContext& ctx) { 
+    #if 0
+    typedef clang::ASTContext::type_iterator iterator;
+    
+    llvm::FoldingSet<clang::ClassTemplateSpecializationDecl>
+      instantiations;
+    
+    ARIEL_FOREACH_LLVM(iterator, it, end, ctx, types_) {
+      ARIEL_IF_DYN_CAST(
+        clang::RecordType, rec, *it
+      ) continue;
+
+      ARIEL_IF_DYN_CAST(
+        clang::ClassTemplateSpecializationDecl, decl, rec->getDecl()
+      ) continue;
+  
+      instantiations.GetOrInsertNode(decl);
+    }
+    #endif
+
+    static_cast<View*>(this)->Process(ctx);
+  }
+
+  std::string const& getName (void) const { return name; }
+
  private:
-  const std::string name;
-  InstantiationSet  instantiations;
+  std::string const name;
+};
+
+class NullView: public Consumer<NullView> {
+ public:
+  void Process (clang::ASTContext&) { }
 };
 
 } // Profiler
