@@ -1,9 +1,7 @@
 Todo
 ====
  
- * Write a Profiler::Writer class that will generate a output from a 
-   Profiler::Consumer. Writer should be an abstract class, classes derived
-   from Writer should implement a specific output format.
- * Implement proper handling for template functions in Profiler::Consumer.
- * Write a functionality test suite for the profiler. Bugger people into
-   providing simple test cases.
+ * Change naming style from clang/LLVM to Boost for my own sanity.
+ * Consumer -> Filter -> Writer interface.
+ * GraphML/Dot Writers, ClassInstantiation Filter. 
+ * Test suite for the profiler.
