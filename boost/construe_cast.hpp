@@ -10,7 +10,6 @@
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/numeric/conversion/bounds.hpp>
 #include <boost/optional.hpp>
 #include <boost/spirit/home/karma/auto.hpp>
 #include <boost/spirit/home/karma/numeric.hpp>
@@ -22,20 +21,13 @@
 #include <boost/spirit/home/support/string_traits.hpp>
 #include <boost/spirit/home/support/unused.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/type_traits/is_same.hpp>
 
-#include <cmath>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <cwchar>
 #include <string>
 #include <typeinfo>
-
-#ifndef BOOST_CONSTRUE_CAST_BOOLEAN_EPSILON
-#define BOOST_CONSTRUE_CAST_BOOLEAN_EPSILON 8
-#endif
 
 namespace boost {
 
@@ -436,7 +428,6 @@ namespace boost {
                 call(Source const & source) {
                     return do_call(
                         source,
-                        boost::is_convertible<Target, Source>(),
                         boost::spirit::traits::is_string<Source>(),
                         boost::spirit::traits::is_container<Target>());
                 }
@@ -445,50 +436,6 @@ namespace boost {
                     static inline Target const
                     do_call(
                         Source const & source,
-                        boost::mpl::true_ const,
-                        bool const,
-                        bool const
-                    ) {
-                        return do_call_implicit(
-                            source,
-                            boost::is_same<Target, bool>(),
-                            boost::mpl::bool_<std::numeric_limits<Target>::is_specialized>());
-                    }
-
-                    static inline Target const
-                    do_call_implicit(
-                        Source const & source,
-                        boost::mpl::true_ const,
-                        bool const
-                    ) {
-                        return std::abs(source) > std::numeric_limits<Source>::epsilon() * BOOST_CONSTRUE_CAST_BOOLEAN_EPSILON;
-                    }
-
-                    static inline Target const
-                    do_call_implicit(
-                        Source const & source,
-                        boost::mpl::false_ const,
-                        boost::mpl::true_ const
-                    ) {
-                        if (source < boost::numeric::bounds<Target>::lowest() || boost::numeric::bounds<Target>::highest() < source)
-                            throw boost::bad_construe_cast();
-
-                        return static_cast<Target>(source);
-                    }
-
-                    static inline Target const
-                    do_call_implicit(
-                        Source const & source,
-                        boost::mpl::false_ const,
-                        boost::mpl::false_ const
-                    ) {
-                        return static_cast<Target>(source);
-                    }
-
-                    static inline Target const
-                    do_call(
-                        Source const & source,
-                        boost::mpl::false_ const,
                         boost::mpl::true_ const,
                         boost::mpl::false_ const
                     ) {
@@ -518,7 +465,6 @@ namespace boost {
                     do_call(
                         Source const & source,
                         boost::mpl::false_ const,
-                        boost::mpl::false_ const,
                         boost::mpl::true_ const
                     ) {
                         Target target = Target();
@@ -542,7 +488,6 @@ namespace boost {
                     static inline Target const
                     do_call(
                         Source const & source,
-                        boost::mpl::false_ const,
                         boost::mpl::true_ const,
                         boost::mpl::true_ const
                     ) {
@@ -570,7 +515,6 @@ namespace boost {
                     static inline Target const
                     do_call(
                         Source const & source,
-                        boost::mpl::false_ const,
                         boost::mpl::false_ const,
                         boost::mpl::false_ const
                     ) {
