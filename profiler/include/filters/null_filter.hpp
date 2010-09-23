@@ -21,15 +21,12 @@ struct consumer;
 template<class Writer>
 struct null_filter;
 
-template<template<template<class> class, class> class Writer, class Target>
-class null_filter<Writer<null_filter, Target> >:
-  public consumer<null_filter<Writer<null_filter, Target> > >
+template<template<template<class> class> class Writer>
+class null_filter<Writer<null_filter> >:
+  public consumer<null_filter<Writer<null_filter> > >
 {
  public:
   typedef production_traits<null_filter> traits;
-
-  typedef typename traits::value_type value_type;
-  typedef typename traits::container  container;
 
   typedef typename traits::writer_type   writer_type;
   typedef typename traits::filter_type   filter_type;

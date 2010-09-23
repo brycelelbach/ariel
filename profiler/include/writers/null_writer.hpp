@@ -14,13 +14,10 @@
 namespace ariel {
 namespace profiler {
 
-template<template<class> class Filter, class Target>
-class null_writer: public Filter<null_writer<Filter, Target> > {
+template<template<class> class Filter>
+class null_writer: public Filter<null_writer<Filter> > {
  public:
   typedef production_traits<null_writer> traits;
-
-  typedef typename traits::value_type value_type;
-  typedef typename traits::container  container;
 
   typedef typename traits::writer_type   writer_type;
   typedef typename traits::filter_type   filter_type;

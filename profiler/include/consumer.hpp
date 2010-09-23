@@ -24,19 +24,18 @@ template<class Filter>
 class consumer;
 
 template<
-  template<template<class> class, class> class Writer,
-  template<class> class Filter, class Target
+  template<template<class> class> class Writer,
+  template<class> class Filter
 >
-class consumer<Filter<Writer<Filter, Target> > >: public clang::ASTConsumer {
+class consumer<Filter<Writer<Filter> > >: public clang::ASTConsumer {
  public:
   typedef production_traits<consumer> traits;
-
-  typedef typename traits::value_type value_type;
-  typedef typename traits::container  container;
 
   typedef typename traits::writer_type   writer_type;
   typedef typename traits::filter_type   filter_type;
   typedef typename traits::consumer_type consumer_type;
+
+  typedef typename target_traits<filter_type>::container container;
 
   // these aren't inherited, but plugin static_casts the Production
   // that it makes to a Production::consumer_type so we can avoid

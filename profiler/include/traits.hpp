@@ -19,59 +19,52 @@ struct consumer;
 template<class Production>
 struct production_traits;
 
-template<class Target>
-struct target_traits {
-  typedef Target        value_type;
-  typedef Target*       container;
-  typedef Target*       iterator;
-  typedef Target const* const_iterator;
-  typedef Target&       reference;
-  typedef Target const& const_reference;
-};
-
 // consumer specialization
 template<
-  template<template<class> class, class> class Writer,
-  template<class> class Filter, class Target
+  template<template<class> class> class Writer,
+  template<class> class Filter
 >
-struct production_traits<consumer<Filter<Writer<Filter, Target> > > > {
+struct production_traits<consumer<Filter<Writer<Filter> > > > {
  public:
-  typedef typename target_traits<Target>::value_type value_type;
-  typedef typename target_traits<Target>::container  container;
-
-  typedef Writer<Filter, Target> writer_type;
+  typedef Writer<Filter>         writer_type;
   typedef Filter<writer_type>    filter_type;
   typedef consumer<filter_type>  consumer_type;
 };
 
 // filter specialization
 template<
-  template<template<class> class, class> class Writer,
-  template<class> class Filter, class Target
+  template<template<class> class> class Writer,
+  template<class> class Filter
 >
-struct production_traits<Filter<Writer<Filter, Target> > > {
+struct production_traits<Filter<Writer<Filter> > > {
  public:
-  typedef typename target_traits<Target>::value_type value_type;
-  typedef typename target_traits<Target>::container  container;
-
-  typedef Writer<Filter, Target> writer_type;
+  typedef Writer<Filter>         writer_type;
   typedef Filter<writer_type>    filter_type;
   typedef consumer<filter_type>  consumer_type;
 };
 
 // writer specialization
 template<
-  template<template<class> class, class> class Writer,
-  template<class> class Filter, class Target
+  template<template<class> class> class Writer,
+  template<class> class Filter 
 >
-struct production_traits<Writer<Filter, Target> > {
+struct production_traits<Writer<Filter> > {
  public:
-  typedef typename target_traits<Target>::value_type value_type;
-  typedef typename target_traits<Target>::container  container;
-
-  typedef Writer<Filter, Target> writer_type;
+  typedef Writer<Filter>         writer_type;
   typedef Filter<writer_type>    filter_type;
   typedef consumer<filter_type>  consumer_type;
+};
+
+// defined to demonstrate the concept, this class should
+// be specialized by each filter
+template<typename Filter>
+struct target_traits {
+  typedef void*        value_type; 
+  typedef void**       container;
+  typedef void**       iterator;
+  typedef void* const* const_iterator;
+  typedef void*&       reference;
+  typedef void* const& const_reference;
 };
 
 } // profiler

@@ -14,6 +14,6 @@
 
 using namespace ariel::profiler;
 
-static clang::FrontendPluginRegistry::Add<plugin<null_writer<null_filter, void*> > >
+static clang::FrontendPluginRegistry::Add<plugin<null_writer<null_filter> > >
 X("ariel.profiler.null", "Profile C++ templates (emit nothing)");
 
