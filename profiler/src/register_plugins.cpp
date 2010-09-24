@@ -15,7 +15,7 @@
 using namespace ariel::profiler;
 
 static clang::FrontendPluginRegistry::Add<plugin<null_writer<null_filter> > >
-X("ariel-null-null", "Profile nothing and emit nothing (sanity test)");
+A("ariel-null-null", "Profile nothing and emit nothing (sanity test)");
 
 static clang::FrontendPluginRegistry::Add<plugin<null_writer<raw_class_specialization_filter> > >
-X("ariel-null-class-specs", "Profile class template specializations and emit nothing (sanity test)");
+B("ariel-null-class-specs", "Profile class template specializations and emit nothing (sanity test)");

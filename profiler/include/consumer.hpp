@@ -35,14 +35,6 @@ class consumer<Filter<Writer<Filter> > >: public clang::ASTConsumer {
   typedef typename traits::filter_type   filter_type;
   typedef typename traits::consumer_type consumer_type;
 
-  // these aren't inherited, but plugin static_casts the Production
-  // that it makes to a Production::consumer_type so we can avoid
-  // requiring that client classes friend plugin if they inherit from
-  // consumer
-  friend class plugin<writer_type>;
-  friend class plugin<filter_type>;
-  friend class plugin<consumer_type>;
-  
   void HandleTranslationUnit (clang::ASTContext& ctx) { 
     if (!static_cast<filter_type*>(this)->call(ctx)
     &&  !static_cast<filter_type*>(this)->error(ctx))
@@ -52,9 +44,12 @@ class consumer<Filter<Writer<Filter> > >: public clang::ASTConsumer {
       static_cast<writer_type*>(this)->error(ctx);
   }
 
- protected:
+  void set_name (std::string const& new_name) { name = new_name; }
+  void set_name (llvm::StringRef new_name) { name = new_name.data(); }
+  std::string const& get_name (void) const { return name; }
+
+ private:
   std::string name;
-  container   ir;
 };
 
 } // profiler

@@ -27,8 +27,8 @@ class plugin: public clang::PluginASTAction {
     clang::CompilerInstance& compiler,
     llvm::StringRef name
   ) {
-    Production* prod  = new Production();
-    static_cast<typename Production::consumer_type*>(prod)->name = name.data();
+    Production* prod = new Production();
+    prod->set_name(name);
     return prod;
   }
 

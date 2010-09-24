@@ -6,10 +6,10 @@
 // Relative to repository root: /doc/BOOST_LICENSE_1_0.rst
 // Online: http://www.boost.org/LICENSE_1_0.txt
 
-#if !defined(ARIEL_PROFILER_NULL_FILTER_HPP)
-#define ARIEL_PROFILER_NULL_FILTER_HPP
+#if !defined(ARIEL_PROFILER_FILTER_HPP)
+#define ARIEL_PROFILER_FILTER_HPP
 
 #include "profiler/include/filters/null_filter.hpp"
 #include "profiler/include/filters/raw_class_specialization_filter.hpp"
 
-#endif // ARIEL_PROFILER_NULL_FILTER_HPP
+#endif // ARIEL_PROFILER_FILTER_HPP

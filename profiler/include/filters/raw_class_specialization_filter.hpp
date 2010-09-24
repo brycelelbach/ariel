@@ -12,6 +12,9 @@
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/AST.h"
 
+#include "preprocessor/poly.hpp"
+#include "preprocessor/foreach.hpp"
+
 #include "profiler/include/traits.hpp"
 
 namespace ariel {
@@ -56,10 +59,12 @@ class raw_class_specialization_filter<Writer<raw_class_specialization_filter> >:
     
     ARIEL_FOREACH_LLVM(iterator, it, end, ctx, types_) {
       ARIEL_IF_DYN_CAST(clang::RecordType, rec, *it) continue;
-      ARIEL_IF_DYN_CAST(target, decl, rec->getDecl()) continue;
+      ARIEL_IF_DYN_CAST(target_type, decl, rec->getDecl()) continue;
   
       add(decl);
     }
+
+    return true;
   }
 
   bool error (clang::ASTContext& ctx) { return false; }
