@@ -9,11 +9,13 @@
 #include "clang/Frontend/FrontendPluginRegistry.h"
 
 #include "profiler/include/plugin.hpp"
-#include "profiler/include/writers/null_writer.hpp"
-#include "profiler/include/filters/null_filter.hpp"
+#include "profiler/include/writers.hpp"
+#include "profiler/include/filters.hpp"
 
 using namespace ariel::profiler;
 
 static clang::FrontendPluginRegistry::Add<plugin<null_writer<null_filter> > >
-X("ariel.profiler.null", "Profile C++ templates (emit nothing)");
+X("ariel-null-null", "Profile nothing and emit nothing (sanity test)");
 
+static clang::FrontendPluginRegistry::Add<plugin<null_writer<raw_class_specialization_filter> > >
+X("ariel-null-class-specs", "Profile class template specializations and emit nothing (sanity test)");

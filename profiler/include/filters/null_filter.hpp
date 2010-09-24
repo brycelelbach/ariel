@@ -25,6 +25,18 @@ template<template<template<class> class> class Writer>
 class null_filter<Writer<null_filter> >:
   public consumer<null_filter<Writer<null_filter> > >
 {
+ private:
+  // TODO: uncomment after implementation of ir::point
+  #if 0
+  std::list<ir::point> points;
+  #endif
+
+ protected:
+  // TODO: uncomment after implementation of ir::point
+  #if 0
+  std::list<ir::point>::iterator get (void) { return points.begin(); }
+  #endif
+ 
  public:
   typedef production_traits<null_filter> traits;
 

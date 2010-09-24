@@ -55,18 +55,6 @@ struct production_traits<Writer<Filter> > {
   typedef consumer<filter_type>  consumer_type;
 };
 
-// defined to demonstrate the concept, this class should
-// be specialized by each filter
-template<typename Filter>
-struct target_traits {
-  typedef void*        value_type; 
-  typedef void**       container;
-  typedef void**       iterator;
-  typedef void* const* const_iterator;
-  typedef void*&       reference;
-  typedef void* const& const_reference;
-};
-
 } // profiler
 } // ariel
 

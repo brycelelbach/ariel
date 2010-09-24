@@ -35,8 +35,6 @@ class consumer<Filter<Writer<Filter> > >: public clang::ASTConsumer {
   typedef typename traits::filter_type   filter_type;
   typedef typename traits::consumer_type consumer_type;
 
-  typedef typename target_traits<filter_type>::container container;
-
   // these aren't inherited, but plugin static_casts the Production
   // that it makes to a Production::consumer_type so we can avoid
   // requiring that client classes friend plugin if they inherit from
