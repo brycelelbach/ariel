@@ -1,11 +1,13 @@
 //              Copyright Jeroen Habraken 2010.
-// 
+//
 // Distributed under the Boost Software License, Version 1.0.
 //  (See accompanying file ../../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_CONSTRUE_CAST_HPP
 #define BOOST_CONSTRUE_CAST_HPP
+
+#include <boost/construe/iterable.hpp>
 
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
@@ -23,10 +25,6 @@
 #include <boost/static_assert.hpp>
 
 #include <cstddef>
-#include <cstdlib>
-#include <cstring>
-#include <cwchar>
-#include <string>
 #include <typeinfo>
 
 namespace boost {
@@ -35,172 +33,6 @@ namespace boost {
         : public std::bad_cast { };
 
     namespace construe {
-
-        namespace detail {
-
-            template <typename String>
-            struct string_wrapper;
-
-            template <>
-            struct string_wrapper<char const *> {
-                typedef char * iterator;
-                typedef char const * const_iterator;
-
-                string_wrapper(char const * value)
-                    : value_(value) { }
-
-                inline const_iterator const
-                begin() {
-                    return value_;
-                }
-
-                inline const_iterator const
-                end() {
-                    return value_ + length();
-                }
-
-                inline std::size_t const
-                length() {
-                    if (length_ == false)
-                        length_ = strlen(value_);
-
-                    return length_.get();
-                }
-
-                private:
-                    char const * value_;
-
-                    boost::optional<std::size_t> mutable length_;
-            };
-
-            template <>
-            struct string_wrapper<wchar_t const *> {
-                typedef wchar_t * iterator;
-                typedef wchar_t const * const_iterator;
-
-                string_wrapper(wchar_t const * value)
-                    : value_(value) { }
-
-                inline const_iterator const
-                begin() {
-                    return value_;
-                }
-
-                inline const_iterator const
-                end() {
-                    return value_ + length();
-                }
-
-                inline std::size_t const
-                length() {
-                    if (length_ == false)
-                        length_ = wcslen(value_);
-
-                    return length_.get();
-                }
-
-                private:
-                    wchar_t const * value_;
-
-                    boost::optional<std::size_t> mutable length_;
-            };
-
-            template <>
-            struct string_wrapper<char *>
-                : string_wrapper<char const *> {
-                template <typename T>
-                string_wrapper(T value)
-                    : string_wrapper<char const *>(value) { }
-            };
-
-            template <>
-            struct string_wrapper<wchar_t *>
-                : string_wrapper<wchar_t const *> {
-                template <typename T>
-                string_wrapper(T value)
-                    : string_wrapper<wchar_t const *>(value) { }
-            };
-
-            template <typename CharT, std::size_t N>
-            struct string_wrapper<CharT [N]> {
-                typedef CharT * iterator;
-                typedef CharT const * const_iterator;
-
-                string_wrapper(CharT const (&value)[N])
-                    : value_(value) { }
-
-                inline const_iterator const
-                begin() {
-                    return &value_[0];
-                }
-
-                inline const_iterator const
-                end() {
-                    return &value_[0] + length();
-                }
-
-                inline std::size_t const
-                length() {
-                    return value_[N - 1] == 0 ? N - 1 : N;
-                }
-
-                private:
-                    CharT const (&value_)[N];
-            };
-
-            template <typename CharT, std::size_t N>
-            struct string_wrapper<CharT const [N]>
-                : string_wrapper<CharT [N]> {
-                string_wrapper(CharT const (&value)[N])
-                    : string_wrapper<CharT [N]>(value) { }
-            };
-
-            template <typename CharT, std::size_t N>
-            struct string_wrapper<CharT (&)[N]>
-                : string_wrapper<CharT [N]> {
-                string_wrapper(CharT const (&value)[N])
-                    : string_wrapper<CharT [N]>(value) { }
-            };
-
-            template <typename CharT, std::size_t N>
-            struct string_wrapper<CharT const (&)[N]>
-                : string_wrapper<CharT [N]> {
-                string_wrapper(CharT const (&value)[N])
-                    : string_wrapper<CharT [N]>(value) { }
-            };
-
-            template <typename CharT, typename Traits, typename Allocator>
-            struct string_wrapper<std::basic_string<CharT, Traits, Allocator> > {
-                private:
-                    typedef std::basic_string<CharT, Traits, Allocator> string_t;
-
-                public:
-                    typedef typename string_t::iterator iterator;
-                    typedef typename string_t::const_iterator const_iterator;
-
-                    string_wrapper(string_t const & value)
-                        : value_(value) { }
-
-                    inline const_iterator const
-                    begin() {
-                        return value_.begin();
-                    }
-
-                    inline const_iterator const
-                    end() {
-                        return value_.end();
-                    }
-
-                    inline std::size_t const
-                    length() {
-                        return value_.length();
-                    }
-
-                private:
-                    string_t const & value_;
-            };
-
-        }  // namespace detail
 
         namespace traits {
 
@@ -428,7 +260,7 @@ namespace boost {
                 call(Source const & source) {
                     return do_call(
                         source,
-                        boost::spirit::traits::is_string<Source>(),
+                        traits::is_iterable<Source>(),
                         boost::spirit::traits::is_container<Target>());
                 }
  
@@ -437,20 +269,22 @@ namespace boost {
                     do_call(
                         Source const & source,
                         boost::mpl::true_ const,
-                        boost::mpl::false_ const
+                        bool const
                     ) {
-                        typedef boost::construe::detail::string_wrapper<Source> string_t;
-                        typedef typename string_t::const_iterator iterator_t;
+                        typedef traits::iterable<Source> iterable_t;
+                        typedef typename iterable_t::const_iterator iterator_t;
+
+                        iterable_t iterable(source);
+
+                        if (iterable.length() < 1)
+                            throw boost::bad_construe_cast();
 
                         Target target = Target();
 
-                        string_t string(source);
+                        call_reserve(target, iterable.length());
 
-                        if (string.length() < 1)
-                            throw boost::bad_construe_cast();
-
-                        iterator_t begin = string.begin(), iterator = begin;
-                        iterator_t end = string.end();
+                        iterator_t begin = iterable.begin(), iterator = begin;
+                        iterator_t end = iterable.end();
 
                         bool result = boost::spirit::qi::parse(
                             iterator, end, boost::construe::detail::tag_type<Target, Tag>::call(target));
@@ -480,33 +314,6 @@ namespace boost {
                             boost::construe::detail::tag_type<Source const, Tag>::call(source));
 
                         if (!result)
-                            throw boost::bad_construe_cast();
-
-                        return target;
-                    }
-
-                    static inline Target const
-                    do_call(
-                        Source const & source,
-                        boost::mpl::true_ const,
-                        boost::mpl::true_ const
-                    ) {
-                        typedef boost::construe::detail::string_wrapper<Source> string_t;
-                        typedef typename string_t::const_iterator iterator_t;
-
-                        Target target = Target();
-
-                        string_t string(source);
-
-                        call_reserve(target, string.length());
-
-                        iterator_t iterator = string.begin();
-                        iterator_t end = string.end();
-
-                        bool result = boost::spirit::qi::parse(
-                            iterator, end, boost::construe::detail::tag_type<Target, Tag>::call(target));
-
-                        if (!result || iterator != end)
                             throw boost::bad_construe_cast();
 
                         return target;
