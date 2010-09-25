@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<CLANG_XML>
+  <TranslationUnit>
+    <Typedef id="_1" context="_2" name="__int128_t" type="_4"/>
+    <Typedef id="_5" context="_2" name="__uint128_t" type="_7"/>
+    <CXXRecord id="_8" file="f1" line="102" col="16" context="_2" name="__va_list_tag" type="_9">
+      <Field id="_A" file="f1" line="102" col="42" context="_8" name="gp_offset" type="_C" access="public"/>
+      <Field id="_D" file="f1" line="102" col="63" context="_8" name="fp_offset" type="_C" access="public"/>
+      <Field id="_E" file="f1" line="102" col="81" context="_8" name="overflow_arg_area" type="_10" access="public"/>
+      <Field id="_13" file="f1" line="102" col="107" context="_8" name="reg_save_area" type="_10" access="public"/>
+    </CXXRecord>
+    <Typedef id="_14" file="f1" line="102" col="123" context="_2" name="__va_list_tag" type="_16"/>
+    <Typedef id="_18" file="f1" line="102" col="159" context="_2" name="__builtin_va_list" type="_1A"/>
+    <Template id="_1D" file="f2" line="1" col="25" context="_2" name="foo"/>
+    <Var id="_1E" file="f2" line="3" col="10" context="_2" name="f" type="_20"/>
+  </TranslationUnit>
+  <ReferenceSection>
+    <Types>
+      <Record name="__va_list_tag" kind="struct" context="_2" id="_9"/>
+      <FundamentalType kind="void" id="_12"/>
+      <ArrayType type="_1C" size="1" id="_1A"/>
+      <FundamentalType kind="__int128_t" id="_4"/>
+      <FundamentalType kind="__uint128_t" id="_7"/>
+      <Typedef type="_16" name="__va_list_tag" context="_2" id="_1C"/>
+      <FundamentalType kind="unsigned int" id="_C"/>
+      <TemplateSpecializationType id="_20"/>
+      <ElaboratedType keyword="struct" type="_9" id="_16"/>
+      <PointerType type="_12" id="_10"/>
+    </Types>
+    <Contexts>
+      <CXXRecord id="_8" name="__va_list_tag" type="_9" context="_2"/>
+      <TranslationUnit id="_2"/>
+    </Contexts>
+    <Files>
+      <File id="f1" name="&amp;lt;built-in&amp;gt;"/>
+      <File id="f2" name="implicit_instantiation.cpp"/>
+    </Files>
+  </ReferenceSection>
+</CLANG_XML>

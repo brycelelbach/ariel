@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<CLANG_XML>
+  <TranslationUnit>
+    <Typedef id="_1" context="_2" name="__int128_t" type="_4"/>
+    <Typedef id="_5" context="_2" name="__uint128_t" type="_7"/>
+    <CXXRecord id="_8" file="f1" line="102" col="16" context="_2" name="__va_list_tag" type="_9">
+      <Field id="_A" file="f1" line="102" col="42" context="_8" name="gp_offset" type="_C" access="public"/>
+      <Field id="_D" file="f1" line="102" col="63" context="_8" name="fp_offset" type="_C" access="public"/>
+      <Field id="_E" file="f1" line="102" col="81" context="_8" name="overflow_arg_area" type="_10" access="public"/>
+      <Field id="_13" file="f1" line="102" col="107" context="_8" name="reg_save_area" type="_10" access="public"/>
+    </CXXRecord>
+    <Typedef id="_14" file="f1" line="102" col="123" context="_2" name="__va_list_tag" type="_16"/>
+    <Typedef id="_18" file="f1" line="102" col="159" context="_2" name="__builtin_va_list" type="_1A"/>
+    <Template id="_1D" file="f2" line="2" col="8" context="_2" name="lazy_if_c"/>
+    <CXXRecord id="_1E" file="f2" line="8" col="8" context="_2" name="lazy_if_c" type="_1F"/>
+    <Template id="_20" file="f2" line="14" col="8" context="_2" name="lazy_if"/>
+    <Template id="_21" file="f2" line="17" col="8" context="_2" name="if_c"/>
+    <CXXRecord id="_22" file="f2" line="23" col="8" context="_2" name="if_c" type="_23"/>
+    <Template id="_24" file="f2" line="29" col="8" context="_2" name="if_"/>
+    <Template id="_25" file="f2" line="32" col="8" context="_2" name="identity"/>
+    <Template id="_26" file="f2" line="37" col="30" context="_2" name="bool_"/>
+    <Typedef id="_27" file="f2" line="39" col="22" context="_2" name="false_" type="_29"/>
+    <Typedef id="_2A" file="f2" line="40" col="21" context="_2" name="true_" type="_2C"/>
+    <Template id="_2D" file="f2" line="43" col="8" context="_2" name="is_same"/>
+    <CXXRecord id="_2E" file="f2" line="46" col="8" context="_2" name="is_same" type="_2F">
+      <Base id="_31" access="" is_virtual="0"/>
+    </CXXRecord>
+    <Function id="_32" file="f2" line="48" col="5" context="_2" name="main" type="_34" function_type="_35" num_args="0" main="1" global="1">
+      <Body>
+        <CompoundStmt file="f2" line="49" col="1" endline="64" endcol="1" num_stmts="2">
+          <CompoundStmt file="f2" line="50" col="5" endline="56" endcol="5" num_stmts="4">
+            <DeclStmt file="f2" line="51" col="9" endcol="81">
+              <Var id="_36" file="f2" line="51" col="80" context="_32" name="i" type="_38"/>
+            </DeclStmt>
+            <DeclStmt file="f2" line="52" col="9" endcol="90">
+              <Var id="_41" file="f2" line="52" col="89" context="_32" name="j" type="_43"/>
+            </DeclStmt>
+            <DeclStmt file="f2" line="54" col="9" endcol="80">
+              <Var id="_44" file="f2" line="54" col="79" context="_32" name="k" type="_46"/>
+            </DeclStmt>
+            <DeclStmt file="f2" line="55" col="9" endcol="89">
+              <Var id="_4F" file="f2" line="55" col="88" context="_32" name="l" type="_51"/>
+            </DeclStmt>
+          </CompoundStmt>
+          <CompoundStmt file="f2" line="57" col="5" endline="63" endcol="5" num_stmts="4">
+            <DeclStmt file="f2" line="58" col="9" endcol="56">
+              <Var id="_52" file="f2" line="58" col="55" context="_32" name="i" type="_54"/>
+            </DeclStmt>
+            <DeclStmt file="f2" line="59" col="9" endcol="64">
+              <Var id="_59" file="f2" line="59" col="63" context="_32" name="j" type="_5B"/>
+            </DeclStmt>
+            <DeclStmt file="f2" line="61" col="9" endcol="55">
+              <Var id="_5C" file="f2" line="61" col="54" context="_32" name="k" type="_5E"/>
+            </DeclStmt>
+            <DeclStmt file="f2" line="62" col="9" endcol="63">
+              <Var id="_63" file="f2" line="62" col="62" context="_32" name="l" type="_65"/>
+            </DeclStmt>
+          </CompoundStmt>
+        </CompoundStmt>
+      </Body>
+    </Function>
+  </TranslationUnit>
+  <ReferenceSection>
+    <Types>
+      <FundamentalType kind="void" id="_12"/>
+      <TemplateSpecializationType id="_2C"/>
+      <Typedef type="_2C" name="true_" context="_2" id="_31"/>
+      <Typedef type="_4A" name="type" context="_66" id="_48"/>
+      <ElaboratedType keyword="none" type="_48" id="_46"/>
+      <Typedef type="_16" name="__va_list_tag" context="_2" id="_1C"/>
+      <Record name="__va_list_tag" kind="struct" context="_2" id="_9"/>
+      <FundamentalType kind="int" id="_34"/>
+      <InjectedClassNameType id="_2F"/>
+      <SubstTemplateTypeParm id="_58"/>
+      <FundamentalType kind="unsigned int" id="_C"/>
+      <ElaboratedType keyword="none" type="_3A" id="_38"/>
+      <FundamentalType kind="__uint128_t" id="_7"/>
+      <InjectedClassNameType id="_23"/>
+      <ElaboratedType keyword="none" type="_48" id="_51"/>
+      <Typedef type="_3C" name="type" context="_67" id="_3A"/>
+      <FundamentalType kind="__int128_t" id="_4"/>
+      <ArrayType type="_1C" size="1" id="_1A"/>
+      <Typedef type="_4E" name="type" context="_68" id="_4C"/>
+      <InjectedClassNameType id="_1F"/>
+      <TemplateSpecializationType id="_29"/>
+      <SubstTemplateTypeParm id="_62"/>
+      <SubstTemplateTypeParm id="_4E"/>
+      <ElaboratedType keyword="struct" type="_9" id="_16"/>
+      <Typedef type="_40" name="type" context="_69" id="_3E"/>
+      <ElaboratedType keyword="typename" type="_3E" id="_3C"/>
+      <FunctionType result_type="_34" call_conv="" id="_35"/>
+      <ElaboratedType keyword="none" type="_3A" id="_43"/>
+      <PointerType type="_12" id="_10"/>
+      <ElaboratedType keyword="none" type="_56" id="_54"/>
+      <ElaboratedType keyword="none" type="_60" id="_65"/>
+      <SubstTemplateTypeParm id="_40"/>
+      <Typedef type="_58" name="type" context="_6A" id="_56"/>
+      <ElaboratedType keyword="none" type="_56" id="_5B"/>
+      <Typedef type="_62" name="type" context="_6B" id="_60"/>
+      <ElaboratedType keyword="typename" type="_4C" id="_4A"/>
+      <ElaboratedType keyword="none" type="_60" id="_5E"/>
+    </Types>
+    <Contexts>
+      <CXXRecord id="_8" name="__va_list_tag" type="_9" context="_2"/>
+      <TranslationUnit id="_2"/>
+      <ClassTemplatePartialSpecialization id="_22" name="if_c" type="_23" context="_2"/>
+      <ClassTemplateSpecialization id="_69" name="identity" type="_0" context="_2"/>
+      <ClassTemplateSpecialization id="_6B" name="if_c" type="_0" context="_2"/>
+      <ClassTemplateSpecialization id="_67" name="lazy_if_c" type="_0" context="_2"/>
+      <ClassTemplatePartialSpecialization id="_2E" name="is_same" type="_2F" context="_2"/>
+      <ClassTemplateSpecialization id="_6A" name="if_c" type="_0" context="_2"/>
+      <ClassTemplatePartialSpecialization id="_1E" name="lazy_if_c" type="_1F" context="_2"/>
+      <ClassTemplateSpecialization id="_68" name="identity" type="_0" context="_2"/>
+      <Function id="_32" name="main" type="_35" context="_2"/>
+      <ClassTemplateSpecialization id="_66" name="lazy_if_c" type="_0" context="_2"/>
+    </Contexts>
+    <Files>
+      <File id="f1" name="&amp;lt;built-in&amp;gt;"/>
+      <File id="f2" name="heller.cpp"/>
+    </Files>
+  </ReferenceSection>
+</CLANG_XML>
