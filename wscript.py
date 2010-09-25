@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Top-level waf build script
+top-level waf build script
 
 (C) Copyright 2010 Bryce Lelbach
 
@@ -14,10 +14,11 @@ Online: http://www.boost.org/LICENSE_1_0.txt
 
 from time import strftime
 
-top     = '.'
-out     = 'build'
-APPNAME = 'ariel'
-VERSION = strftime('%y.%m.%d')
+top       = '.'
+out       = 'build'
+APPNAME   = 'ariel'
+VERSION   = strftime('%y.%m.%d')
+LOCAL_CXX = 'c++'
 
 def set_options(opt):
   opt.tool_options('compiler_cxx')
@@ -49,9 +50,11 @@ def configure(conf):
   conf.env.LLVMPATH  = options.llvmdir
   conf.env.CLANGPATH = options.clangdir
 
+  conf.env.CXX = [LOCAL_CXX]
   conf.env.CXXFLAGS  += ['-g']
 
 def build(bld):
+  bld.recurse('utility')
   bld.recurse('profiler')
 
 if __name__ == '__main__':

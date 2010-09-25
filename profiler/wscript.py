@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-/Profiler waf build script
+/profiler waf build script
 
 (C) Copyright 2010 Bryce Lelbach
 
