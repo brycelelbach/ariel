@@ -9,24 +9,20 @@
 #if !defined(ARIEL_STATIC_BASE_POINTER_HPP)
 #define ARIEL_STATIC_BASE_POINTER_HPP
 
-#include <typeinfo>
-#include <cstring>
-#include <iostream>
-
 namespace ariel {
 
 class static_base_pointer {
  private:
-  char const* type;
+  std::size_t const type;
 
  public:
   template<class Derived>
   static_base_pointer (Derived const& derived):
-    type(typeid(Derived()).name()) { }
+    type(Derived::id::value) { }
 
   template<class Derived>
   bool isa (void) {
-    return !bool(std::strcmp(typeid(Derived()).name(), type));
+    return Derived::id::value == type; 
   }
 
   template<class Derived>

@@ -1,6 +1,8 @@
 #include <vector>
 #include <iostream>
 
+#include <boost/mpl/size_t.hpp>
+
 #include "utility/static_base_pointer.hpp"
 
 using namespace ariel;
@@ -13,10 +15,9 @@ template<class Derived> class base {
 };
 
 class foo: public base<foo>, public static_base_pointer {
- private:
-  std::vector<char*> foo_data;
- 
  public:
+  typedef boost::mpl::size_t<0> id;
+
   foo (void): static_base_pointer(*this) { }
   
   void implementation (void) {
@@ -25,10 +26,9 @@ class foo: public base<foo>, public static_base_pointer {
 };
 
 class bar: public base<bar>, public static_base_pointer {
- private:
-  std::vector<float> bar_data;
-
  public:
+  typedef boost::mpl::size_t<1> id;
+
   bar (void): static_base_pointer(*this) { }
 
   void implementation (void) {
@@ -56,13 +56,13 @@ int main (void) {
     if (it->isa<foo>()) { 
       foo* f = it->cast<foo>();
       f->interface();
-      delete f; // make sure foo_data is destroyed
+      delete f; // make sure foo data is destroyed
     }
  
     else if (it->isa<bar>()) { 
       bar* b = it->cast<bar>();
       b->interface();
-      delete b; // make sure bar_data is destroyed
+      delete b; // make sure bar data is destroyed
     }
 
     else delete it; // shouldn't be possible

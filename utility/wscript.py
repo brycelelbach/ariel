@@ -28,7 +28,7 @@ def build(bld):
     ],
 
     cxxflags     = [
-      '-fno-exceptions', '-fno-strict-aliasing', 
+      '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', 
       '-pedantic', '-Wall',
     ]
   );
