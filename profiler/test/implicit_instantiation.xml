@@ -11,7 +11,7 @@
     </CXXRecord>
     <Typedef id="_14" file="f1" line="102" col="123" context="_2" name="__va_list_tag" type="_16"/>
     <Typedef id="_18" file="f1" line="102" col="159" context="_2" name="__builtin_va_list" type="_1A"/>
-    <Template id="_1D" file="f2" line="1" col="25" context="_2" name="foo"/>
+    <Template id="_1D" file="f2" line="1" col="26" context="_2" name="foo"/>
     <Var id="_1E" file="f2" line="3" col="10" context="_2" name="f" type="_20"/>
   </TranslationUnit>
   <ReferenceSection>

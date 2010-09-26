@@ -10,11 +10,12 @@
 #define ARIEL_PROFILER_NULL_WRITER_HPP
 
 #include "profiler/include/traits.hpp"
+#include "profiler/include/writers/writer_builder.hpp"
 
 namespace ariel {
 namespace profiler {
 
-template<template<class> class Filter>
+ARIEL_WRITER_PARAMS(Filter)
 class null_writer: public Filter<null_writer<Filter> > {
  public:
   typedef production_traits<null_writer> traits;

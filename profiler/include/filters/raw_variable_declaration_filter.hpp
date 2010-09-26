@@ -6,16 +6,16 @@
 // Relative to repository root: /doc/BOOST_LICENSE_1_0.rst
 // Online: http://www.boost.org/LICENSE_1_0.txt
 
-#if !defined(ARIEL_PROFILER_RAW_CLASS_SPECIALIZATION_FILTER_HPP)
-#define ARIEL_PROFILER_RAW_CLASS_SPECIALIZATION_FILTER_HPP
+#if !defined(ARIEL_PROFILER_RAW_VARIABLE_DECLARATION_FILTER_HPP)
+#define ARIEL_PROFILER_RAW_VARIABLE_DECLARATION_FILTER_HPP
 
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/AST.h"
 
-#include "preprocessor/poly.hpp"
-#include "preprocessor/foreach.hpp"
+#include <boost/foreach.hpp>
 
 #include "profiler/include/traits.hpp"
+#include "profiler/include/filters/filter_visitor.hpp"
 #include "profiler/include/filters/filter_builder.hpp"
 
 namespace ariel {
@@ -25,14 +25,23 @@ namespace profiler {
 template<class Filter>
 class consumer;
 
+// forward declaration
+template<class Target>
+class filter_visitor;
+
+// specialization
+ARIEL_FILTER_VISITOR(VarDecl)
+
 template<class Writer>
-class raw_class_specialization_filter;
+struct raw_variable_declaration_filter;
 
 ARIEL_FILTER_PARAMS(Writer)
-class ARIEL_FILTER(raw_class_specialization_filter, Writer):
-  public consumer<ARIEL_FILTER(raw_class_specialization_filter, Writer)>
+class ARIEL_FILTER(raw_variable_declaration_filter, Writer):
+  public consumer<ARIEL_FILTER(raw_variable_declaration_filter, Writer)>
 {
  private:
+  filter_visitor<clang::VarDecl> visitor;
+
   // TODO: uncomment after implementation of ir::point
   #if 0
   std::list<ir::point> points;
@@ -45,23 +54,19 @@ class ARIEL_FILTER(raw_class_specialization_filter, Writer):
   #endif
   
  public:
-  typedef production_traits<raw_class_specialization_filter> traits;
-
+  typedef production_traits<raw_variable_declaration_filter> traits;
+  
   typedef typename traits::writer_type   writer_type;
   typedef typename traits::filter_type   filter_type;
   typedef typename traits::consumer_type consumer_type;
 
-  typedef clang::ClassTemplateSpecializationDecl target_type;
-  
+  typedef clang::VarDecl target_type;
+ 
   bool call (clang::ASTContext& ctx) {
-    typedef clang::ASTContext::type_iterator iterator;
-    
-    ARIEL_FOREACH_LLVM(iterator, it, end, ctx, types_) {
-      ARIEL_IF_DYN_CAST(clang::RecordType, rec, *it) continue;
-      ARIEL_IF_DYN_CAST(target_type, decl, rec->getDecl()) continue;
-  
-      add(decl);
-    }
+    if (!visitor.TraverseDecl(ctx.getTranslationUnitDecl()));
+      return false;
+
+    BOOST_FOREACH(target_type* i, visitor.get()) { add(i); }
 
     return true;
   }
@@ -76,4 +81,4 @@ class ARIEL_FILTER(raw_class_specialization_filter, Writer):
 } // profiler
 } // ariel
 
-#endif // ARIEL_PROFILER_RAW_CLASS_SPECIALIZATION_FILTER_HPP
+#endif // ARIEL_PROFILER_RAW_VARIABLE_DECLARATION_FILTER_HPP

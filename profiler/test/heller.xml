@@ -62,10 +62,29 @@
   </TranslationUnit>
   <ReferenceSection>
     <Types>
+      <Typedef type="_4E" name="type" context="_66" id="_4C"/>
+      <InjectedClassNameType id="_1F"/>
+      <TemplateSpecializationType id="_29"/>
+      <SubstTemplateTypeParm id="_62"/>
+      <SubstTemplateTypeParm id="_4E"/>
+      <ElaboratedType keyword="struct" type="_9" id="_16"/>
+      <Typedef type="_40" name="type" context="_67" id="_3E"/>
+      <ElaboratedType keyword="typename" type="_3E" id="_3C"/>
+      <FunctionType result_type="_34" call_conv="" id="_35"/>
+      <ElaboratedType keyword="none" type="_3A" id="_43"/>
+      <PointerType type="_12" id="_10"/>
+      <ElaboratedType keyword="none" type="_56" id="_54"/>
+      <ElaboratedType keyword="none" type="_60" id="_65"/>
+      <SubstTemplateTypeParm id="_40"/>
+      <Typedef type="_58" name="type" context="_68" id="_56"/>
+      <ElaboratedType keyword="none" type="_56" id="_5B"/>
+      <Typedef type="_62" name="type" context="_69" id="_60"/>
+      <ElaboratedType keyword="typename" type="_4C" id="_4A"/>
+      <ElaboratedType keyword="none" type="_60" id="_5E"/>
       <FundamentalType kind="void" id="_12"/>
       <TemplateSpecializationType id="_2C"/>
       <Typedef type="_2C" name="true_" context="_2" id="_31"/>
-      <Typedef type="_4A" name="type" context="_66" id="_48"/>
+      <Typedef type="_4A" name="type" context="_6A" id="_48"/>
       <ElaboratedType keyword="none" type="_48" id="_46"/>
       <Typedef type="_16" name="__va_list_tag" context="_2" id="_1C"/>
       <Record name="__va_list_tag" kind="struct" context="_2" id="_9"/>
@@ -77,42 +96,23 @@
       <FundamentalType kind="__uint128_t" id="_7"/>
       <InjectedClassNameType id="_23"/>
       <ElaboratedType keyword="none" type="_48" id="_51"/>
-      <Typedef type="_3C" name="type" context="_67" id="_3A"/>
+      <Typedef type="_3C" name="type" context="_6B" id="_3A"/>
       <FundamentalType kind="__int128_t" id="_4"/>
       <ArrayType type="_1C" size="1" id="_1A"/>
-      <Typedef type="_4E" name="type" context="_68" id="_4C"/>
-      <InjectedClassNameType id="_1F"/>
-      <TemplateSpecializationType id="_29"/>
-      <SubstTemplateTypeParm id="_62"/>
-      <SubstTemplateTypeParm id="_4E"/>
-      <ElaboratedType keyword="struct" type="_9" id="_16"/>
-      <Typedef type="_40" name="type" context="_69" id="_3E"/>
-      <ElaboratedType keyword="typename" type="_3E" id="_3C"/>
-      <FunctionType result_type="_34" call_conv="" id="_35"/>
-      <ElaboratedType keyword="none" type="_3A" id="_43"/>
-      <PointerType type="_12" id="_10"/>
-      <ElaboratedType keyword="none" type="_56" id="_54"/>
-      <ElaboratedType keyword="none" type="_60" id="_65"/>
-      <SubstTemplateTypeParm id="_40"/>
-      <Typedef type="_58" name="type" context="_6A" id="_56"/>
-      <ElaboratedType keyword="none" type="_56" id="_5B"/>
-      <Typedef type="_62" name="type" context="_6B" id="_60"/>
-      <ElaboratedType keyword="typename" type="_4C" id="_4A"/>
-      <ElaboratedType keyword="none" type="_60" id="_5E"/>
     </Types>
     <Contexts>
+      <ClassTemplatePartialSpecialization id="_2E" name="is_same" type="_2F" context="_2"/>
+      <ClassTemplateSpecialization id="_68" name="if_c" type="_0" context="_2"/>
+      <ClassTemplatePartialSpecialization id="_1E" name="lazy_if_c" type="_1F" context="_2"/>
+      <ClassTemplateSpecialization id="_66" name="identity" type="_0" context="_2"/>
+      <Function id="_32" name="main" type="_35" context="_2"/>
+      <ClassTemplateSpecialization id="_6A" name="lazy_if_c" type="_0" context="_2"/>
       <CXXRecord id="_8" name="__va_list_tag" type="_9" context="_2"/>
       <TranslationUnit id="_2"/>
       <ClassTemplatePartialSpecialization id="_22" name="if_c" type="_23" context="_2"/>
-      <ClassTemplateSpecialization id="_69" name="identity" type="_0" context="_2"/>
-      <ClassTemplateSpecialization id="_6B" name="if_c" type="_0" context="_2"/>
-      <ClassTemplateSpecialization id="_67" name="lazy_if_c" type="_0" context="_2"/>
-      <ClassTemplatePartialSpecialization id="_2E" name="is_same" type="_2F" context="_2"/>
-      <ClassTemplateSpecialization id="_6A" name="if_c" type="_0" context="_2"/>
-      <ClassTemplatePartialSpecialization id="_1E" name="lazy_if_c" type="_1F" context="_2"/>
-      <ClassTemplateSpecialization id="_68" name="identity" type="_0" context="_2"/>
-      <Function id="_32" name="main" type="_35" context="_2"/>
-      <ClassTemplateSpecialization id="_66" name="lazy_if_c" type="_0" context="_2"/>
+      <ClassTemplateSpecialization id="_67" name="identity" type="_0" context="_2"/>
+      <ClassTemplateSpecialization id="_69" name="if_c" type="_0" context="_2"/>
+      <ClassTemplateSpecialization id="_6B" name="lazy_if_c" type="_0" context="_2"/>
     </Contexts>
     <Files>
       <File id="f1" name="&amp;lt;built-in&amp;gt;"/>

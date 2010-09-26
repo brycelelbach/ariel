@@ -10,6 +10,7 @@
 #define ARIEL_PROFILER_NULL_FILTER_HPP
 
 #include "profiler/include/traits.hpp"
+#include "profiler/include/filters/filter_builder.hpp"
 
 namespace ariel {
 namespace profiler {
@@ -21,9 +22,9 @@ struct consumer;
 template<class Writer>
 struct null_filter;
 
-template<template<template<class> class> class Writer>
-class null_filter<Writer<null_filter> >:
-  public consumer<null_filter<Writer<null_filter> > >
+ARIEL_FILTER_PARAMS(Writer)
+class ARIEL_FILTER(null_filter, Writer):
+  public consumer<ARIEL_FILTER(null_filter, Writer)>
 {
  private:
   // TODO: uncomment after implementation of ir::point

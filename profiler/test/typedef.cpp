@@ -1,4 +1,4 @@
-template<class T> class foo { typedef T type; };
+template<class T> struct foo { typedef T type; };
 
 typedef foo<int> f;
 

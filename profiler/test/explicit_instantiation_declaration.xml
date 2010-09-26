@@ -12,28 +12,29 @@
     <Typedef id="_14" file="f1" line="102" col="123" context="_2" name="__va_list_tag" type="_16"/>
     <Typedef id="_18" file="f1" line="102" col="159" context="_2" name="__builtin_va_list" type="_1A"/>
     <Template id="_1D" file="f2" line="1" col="26" context="_2" name="foo"/>
-    <Typedef id="_1E" file="f2" line="3" col="18" context="_2" name="f" type="_20"/>
+    <CXXRecord id="_1E" file="f2" line="3" col="24" context="_2" name="foo" type="_1F"/>
   </TranslationUnit>
   <ReferenceSection>
     <Types>
-      <TemplateSpecializationType id="_20"/>
-      <ElaboratedType keyword="struct" type="_9" id="_16"/>
       <PointerType type="_12" id="_10"/>
-      <Record name="__va_list_tag" kind="struct" context="_2" id="_9"/>
-      <ArrayType type="_1C" size="1" id="_1A"/>
-      <FundamentalType kind="void" id="_12"/>
-      <FundamentalType kind="__uint128_t" id="_7"/>
       <Typedef type="_16" name="__va_list_tag" context="_2" id="_1C"/>
+      <Record name="foo" kind="struct" context="_2" id="_1F"/>
+      <ArrayType type="_1C" size="1" id="_1A"/>
       <FundamentalType kind="__int128_t" id="_4"/>
+      <FundamentalType kind="__uint128_t" id="_7"/>
       <FundamentalType kind="unsigned int" id="_C"/>
+      <Record name="__va_list_tag" kind="struct" context="_2" id="_9"/>
+      <FundamentalType kind="void" id="_12"/>
+      <ElaboratedType keyword="struct" type="_9" id="_16"/>
     </Types>
     <Contexts>
       <CXXRecord id="_8" name="__va_list_tag" type="_9" context="_2"/>
       <TranslationUnit id="_2"/>
+      <ClassTemplateSpecialization id="_1E" name="foo" type="_1F" context="_2"/>
     </Contexts>
     <Files>
       <File id="f1" name="&amp;lt;built-in&amp;gt;"/>
-      <File id="f2" name="typedef.cpp"/>
+      <File id="f2" name="explicit_instantiation_declaration.cpp"/>
     </Files>
   </ReferenceSection>
 </CLANG_XML>

@@ -11,8 +11,8 @@
     </CXXRecord>
     <Typedef id="_14" file="f1" line="102" col="123" context="_2" name="__va_list_tag" type="_16"/>
     <Typedef id="_18" file="f1" line="102" col="159" context="_2" name="__builtin_va_list" type="_1A"/>
-    <Template id="_1D" file="f2" line="1" col="25" context="_2" name="foo"/>
-    <CXXRecord id="_1E" file="f2" line="3" col="18" context="_2" name="foo" type="_1F"/>
+    <Template id="_1D" file="f2" line="1" col="26" context="_2" name="foo"/>
+    <CXXRecord id="_1E" file="f2" line="3" col="19" context="_2" name="foo" type="_1F"/>
   </TranslationUnit>
   <ReferenceSection>
     <Types>
@@ -25,7 +25,7 @@
       <Typedef type="_16" name="__va_list_tag" context="_2" id="_1C"/>
       <ElaboratedType keyword="struct" type="_9" id="_16"/>
       <PointerType type="_12" id="_10"/>
-      <Record name="foo" kind="class" context="_2" id="_1F"/>
+      <Record name="foo" kind="struct" context="_2" id="_1F"/>
     </Types>
     <Contexts>
       <ClassTemplateSpecialization id="_1E" name="foo" type="_1F" context="_2"/>

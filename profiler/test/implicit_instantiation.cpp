@@ -1,3 +1,3 @@
-template<class T> class foo { typedef T type; };
+template<class T> struct foo { typedef T type; };
 
-foo<int> f; 
+foo<int> f;

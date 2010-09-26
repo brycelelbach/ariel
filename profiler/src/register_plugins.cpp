@@ -19,3 +19,6 @@ A("ariel-null-null", "Profile nothing and emit nothing (sanity test)");
 
 static clang::FrontendPluginRegistry::Add<plugin<null_writer<raw_class_specialization_filter> > >
 B("ariel-null-class-specs", "Profile class template specializations and emit nothing (sanity test)");
+
+static clang::FrontendPluginRegistry::Add<plugin<null_writer<raw_variable_declaration_filter> > >
+C("ariel-null-var-decls", "Profile variable declarations and emit nothing (sanity test)");

@@ -11,30 +11,31 @@
     </CXXRecord>
     <Typedef id="_14" file="f1" line="102" col="123" context="_2" name="__va_list_tag" type="_16"/>
     <Typedef id="_18" file="f1" line="102" col="159" context="_2" name="__builtin_va_list" type="_1A"/>
-    <Template id="_1D" file="f2" line="1" col="25" context="_2" name="foo"/>
-    <CXXRecord id="_1E" file="f2" line="3" col="16" context="_2" name="foo" type="_1F"/>
+    <Template id="_1D" file="f2" line="1" col="26" context="_2" name="foo"/>
+    <Function id="_1E" file="f2" line="3" col="10" context="_2" name="f" type="_20" function_type="_21" num_args="0" global="1"/>
   </TranslationUnit>
   <ReferenceSection>
     <Types>
-      <ElaboratedType keyword="struct" type="_9" id="_16"/>
       <PointerType type="_12" id="_10"/>
-      <FundamentalType kind="unsigned int" id="_C"/>
+      <Typedef type="_16" name="__va_list_tag" context="_2" id="_1C"/>
+      <TemplateSpecializationType id="_20"/>
       <ArrayType type="_1C" size="1" id="_1A"/>
+      <FunctionType result_type="_20" call_conv="" id="_21"/>
       <FundamentalType kind="__int128_t" id="_4"/>
       <FundamentalType kind="__uint128_t" id="_7"/>
-      <FundamentalType kind="void" id="_12"/>
-      <Record name="foo" kind="class" context="_2" id="_1F"/>
+      <FundamentalType kind="unsigned int" id="_C"/>
       <Record name="__va_list_tag" kind="struct" context="_2" id="_9"/>
-      <Typedef type="_16" name="__va_list_tag" context="_2" id="_1C"/>
+      <FundamentalType kind="void" id="_12"/>
+      <ElaboratedType keyword="struct" type="_9" id="_16"/>
     </Types>
     <Contexts>
+      <Function id="_1E" name="f" type="_21" context="_2"/>
       <CXXRecord id="_8" name="__va_list_tag" type="_9" context="_2"/>
-      <ClassTemplateSpecialization id="_1E" name="foo" type="_1F" context="_2"/>
       <TranslationUnit id="_2"/>
     </Contexts>
     <Files>
       <File id="f1" name="&amp;lt;built-in&amp;gt;"/>
-      <File id="f2" name="explicit_instantiation.cpp"/>
+      <File id="f2" name="implicit_instantiation_explicit_ctor_call.cpp"/>
     </Files>
   </ReferenceSection>
 </CLANG_XML>
