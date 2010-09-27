@@ -33,6 +33,26 @@ def build(bld):
     ]
   );
 
+  bld.new_task_gen(
+    features     = ['cxx', 'cprogram'], 
+    target       = 'ariel.test.tst_insertation',
+
+    includes     = [
+      bld.srcnode.abspath(),
+      bld.env.LLVMPATH,
+      bld.env.CLANGPATH
+    ],
+    
+    source       = [
+      'test/tst_insertation.cpp',
+    ],
+
+    cxxflags     = [
+      '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', 
+      '-pedantic', '-Wall',
+    ]
+  );
+
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'
   print 'Execute the Waf driver from the top of the repository instead.\033[0m'
