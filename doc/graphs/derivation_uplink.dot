@@ -1,0 +1,6 @@
+digraph derivation_uplink {
+  base    [label="base"    shape="plaintext"];
+  derived [label="derived" shape="plaintext"];
+
+  derived -> base [dir="back"];
+};

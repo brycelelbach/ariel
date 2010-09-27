@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 
-#include <boost/mpl/size_t.hpp>
+#include <boost/mpl/integral_c.hpp>
 
 #include "utility/static_base_pointer.hpp"
 
@@ -16,7 +16,10 @@ template<class Derived> class base {
 
 class foo: public base<foo>, public static_base_pointer {
  public:
-  typedef boost::mpl::size_t<0> id;
+  #include "utility/unique_id.hpp"
+  typedef boost::mpl::integral_c<
+    ARIEL_UNIQUE_ID_TYPE, ARIEL_UNIQUE_ID
+  > id;
 
   foo (void): static_base_pointer(*this) { }
   
@@ -27,7 +30,10 @@ class foo: public base<foo>, public static_base_pointer {
 
 class bar: public base<bar>, public static_base_pointer {
  public:
-  typedef boost::mpl::size_t<1> id;
+  #include "utility/unique_id.hpp"
+  typedef boost::mpl::integral_c<
+    ARIEL_UNIQUE_ID_TYPE, ARIEL_UNIQUE_ID
+  > id;
 
   bar (void): static_base_pointer(*this) { }
 

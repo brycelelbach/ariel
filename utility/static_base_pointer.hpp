@@ -9,11 +9,16 @@
 #if !defined(ARIEL_STATIC_BASE_POINTER_HPP)
 #define ARIEL_STATIC_BASE_POINTER_HPP
 
+#if !defined(ARIEL_UNIQUE_ID_TYPE)
+  #include <boost/integer.hpp>
+  #define ARIEL_UNIQUE_ID_TYPE boost::uint_t<16>::fast
+#endif // ARIEL_UNIQUE_ID_TYPE
+
 namespace ariel {
 
 class static_base_pointer {
  private:
-  std::size_t const type;
+  ARIEL_UNIQUE_ID_TYPE const type;
 
  public:
   template<class Derived>
