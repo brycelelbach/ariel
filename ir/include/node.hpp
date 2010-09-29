@@ -9,6 +9,11 @@
 #if !defined(ARIEL_IR_NODE_HPP)
 #define ARIEL_IR_NODE_HPP
 
+#include <map>
+
+#include <boost/cstdint.hpp>
+#include <boost/variant/variant.hpp>
+
 #include "ir/include/links.hpp"
 
 namespace ariel {
@@ -33,15 +38,48 @@ namespace ir {
 
 class node {
  public:
-  boost::variant<std::string, boost::intmax_t> attribute_type;
+  typedef boost::variant<std::string, boost::intmax_t> attribute_type;
+
+  // this is possibly better implemented as a llvm::FoldingSet
+  typedef std::set<static_base_pointer*> link_set;
 
   // std::map is a stand-in here until tst hackery is complete
-  std::map<std::string, std::set<static_base_pointer*> > link_lookup;
-  std::map<std::string, attribute_type> attribute_lookup;
+  typedef std::map<std::string, link_set*> link_lookup;
+  typedef std::map<std::string, attribute_type> attribute_lookup;
+
+  struct link { }; // link tag for get
+  struct attribute { }; // attribute tag for get
 
  private:
   link_lookup links;
-  attribute_lookup attribute; 
+  attribute_lookup attribute;
+
+ public:
+  // forward declarations for get
+  template<class Tag> link_set* get (std::string const& key);
+  template<class Tag> link_set const* get (std::string const& key) const;
+  template<class Tag> attribute_type get (std::string const& key);
+  template<class Tag> attribute_type const get (std::string const& key) const;
+  
+  template<>
+  link_set* get<link> (std::string const& key) {
+    typename link_lookup::iterator it = links.find(key);
+  }
+
+  template<>
+  link_set const* get<link> (std::string const& key) const {
+    typename link_lookup::iterator it = links.find(key);
+  }
+
+  template<>
+  attribute_type get<attribute> (std::string const& key) {
+
+  }
+
+  template<>
+  attribute_type const get<attribute> (std::string const& key) const {
+
+  }
 };
 
 } // ir
