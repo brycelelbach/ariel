@@ -47,21 +47,21 @@ namespace boost {
 
                 inline const_iterator const
                 end() {
-                    return value_ + length();
+                    return value_ + size();
                 }
 
                 inline std::size_t const
-                length() {
-                    if (length_ == false)
-                        length_ = strlen(value_);
+                size() {
+                    if (size_ == false)
+                        size_ = strlen(value_);
 
-                    return length_.get();
+                    return size_.get();
                 }
 
                 private:
                     type const value_;
 
-                    optional<std::size_t> mutable length_;
+                    optional<std::size_t> mutable size_;
             };
 
             template <>
@@ -90,21 +90,21 @@ namespace boost {
 
                 inline const_iterator const
                 end() {
-                    return value_ + length();
+                    return value_ + size();
                 }
 
                 inline std::size_t const
-                length() {
-                    if (length_ == false)
-                        length_ = wcslen(value_);
+                size() {
+                    if (size_ == false)
+                        size_ = wcslen(value_);
 
-                    return length_.get();
+                    return size_.get();
                 }
 
                 private:
                     type const value_;
 
-                    optional<std::size_t> mutable length_;
+                    optional<std::size_t> mutable size_;
             };
 
             template <>
@@ -133,11 +133,11 @@ namespace boost {
 
                 inline const_iterator const
                 end() {
-                    return &value_[0] + length();
+                    return &value_[0] + size();
                 }
 
                 inline std::size_t const
-                length() {
+                size() {
                     return value_[N - 1] == 0 ? N - 1 : N;
                 }
 
@@ -193,8 +193,8 @@ namespace boost {
                 }
 
                 inline std::size_t const
-                length() {
-                    return value_.length();
+                size() {
+                    return value_.size();
                 }
 
                 private:

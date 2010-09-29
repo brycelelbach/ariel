@@ -276,12 +276,12 @@ namespace boost {
 
                         iterable_t iterable(source);
 
-                        if (iterable.length() < 1)
+                        if (iterable.size() < 1)
                             throw boost::bad_construe_cast();
 
                         Target target = Target();
 
-                        call_reserve(target, iterable.length());
+                        call_reserve(target, iterable.size());
 
                         iterator_t begin = iterable.begin(), iterator = begin;
                         iterator_t end = iterable.end();
