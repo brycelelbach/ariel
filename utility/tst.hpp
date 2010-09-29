@@ -26,12 +26,6 @@ template<
 >
 class tst;
 
-// identity function
-struct tst_pass_through {
-  template<typename Char>
-  Char operator() (Char c) { return c; }
-};
-
 template<typename Key, typename T>
 struct tst_node {
  public:
@@ -83,6 +77,26 @@ struct tst_node {
     return 0;
   }
 
+  // faster version of find that does not apply any filter at all
+  template<typename Iter>
+  static tst_node* fast_find (tst_node* start, Iter& first, Iter last) {
+    if (first == last) return 0;
+
+    for (tst_node* p = start; p;) {
+      typename boost::detail::iterator_traits<Iter>::value_type
+        c = *first; 
+
+      if (c == p->id) {
+        if (++first == last) return p; 
+        p = p->eq;
+      }
+      else if (c < p->id) p = p->lt;
+      else p = p->gt;
+    }
+
+    return 0;
+  }
+
   template<typename Iter, typename Alloc>
   static tst_node* add (
     tst_node*& start, Iter first, Iter last, param_type val, Alloc* alloc
@@ -120,12 +134,15 @@ struct tst_node {
         alloc->delete_data(p->data);
         p->data = 0;
       }
+      remove(p->eq, first, last, alloc);
     }
     else if (c < p->id) remove(p->lt, first, last, alloc);
     else remove(p->gt, first, last, alloc);
 
-    if (p->data == 0 && p->lt == 0 && p->eq == 0 && p->gt == 0) 
+    if (p->data == 0 && p->lt == 0 && p->eq == 0 && p->gt == 0) {
       alloc->delete_node(p);
+      p = 0;
+    }
 
     return;
   }
@@ -195,20 +212,23 @@ class tst {
   template<typename Iter, typename Filter>
   iterator find (Iter& first, Iter last, Filter filter) const {
     node_type* r = node_type::find(root, first, last, filter);
-    if (r) return *r->data;
+    if (r && r->data) return *r->data;
     return data_list.end();
   }
 
-  // alias for find with the filter parameter bound to tst_pass_through()
+  // we use a seperate find function here because the compiler
+  // doesn't seem to want to optimize out an identity filter 
   template<typename Iter>
   iterator find (Iter& first, Iter last) const {
-    return find(first, last, tst_pass_through());
+    node_type* r = node_type::fast_find(root, first, last);
+    if (r && r->data) return *r->data;
+    return data_list.end();
   }
 
   // STL AssociativeContainer
   iterator find (key_type const& key) const {
     typename key_type::const_iterator first = key.begin();
-    return find(first, key.end(), tst_pass_through());
+    return find(first, key.end());
   }
 
   // STL style lookup interface with filters
@@ -221,7 +241,7 @@ class tst {
   // STL AssociativeContainer
   std::pair<iterator, iterator> equal_range (key_type const& key) const {
     typename key_type::const_iterator first = key.begin();
-    iterator it = find(first, key.end(), tst_pass_through());
+    iterator it = find(first, key.end());
     return std::make_pair(it, it);
   }
 
@@ -229,7 +249,7 @@ class tst {
   template<typename Iter>
   iterator add (Iter first, Iter last, param_type val) {
     node_type* r = node_type::add(root, first, last, val, this);
-    if (r) return *r->data;
+    if (r && r->data) return *r->data;
     return data_list.end();
   }
 
@@ -262,8 +282,8 @@ class tst {
   }
   
   // STL AssociativeContainer
-  void erase (key_type const& key) const {
-    remove(key.end(), key.end());
+  void erase (key_type const& key) {
+    remove(key.begin(), key.end());
   }
 
   // STL AssociativeContainer 

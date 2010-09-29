@@ -45,6 +45,32 @@ def build(bld):
     cxxflags     = ['-pedantic', '-Wall']
   );
 
+  bld.new_task_gen(
+    features     = ['cxx', 'cprogram'], 
+    target       = 'ariel.test.tst_removal',
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/tst_removal.cpp'],
+    cxxflags     = ['-pedantic', '-Wall']
+  );
+
+  bld.new_task_gen(
+    features     = ['cxx', 'cprogram'], 
+    target       = 'ariel.test.tst_performance',
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/tst_performance.cpp'],
+    cxxflags     = ['-pedantic', '-Wall'],
+    libs         = ['rt']
+  );
+
+  bld.new_task_gen(
+    features     = ['cxx', 'cprogram'], 
+    target       = 'ariel.test.tst_iteration_performance',
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/tst_iteration_performance.cpp'],
+    cxxflags     = ['-pedantic', '-Wall'],
+    libs         = ['rt']
+  );
+
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'
   print 'Execute the Waf driver from the top of the repository instead.\033[0m'
