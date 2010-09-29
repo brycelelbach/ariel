@@ -55,6 +55,7 @@ def configure(conf):
 
 def build(bld):
   bld.recurse('utility')
+  bld.recurse('ir')
   bld.recurse('profiler')
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-/XML waf build script
+/ir waf build script
 
 (C) Copyright 2010 Bryce Lelbach
 
@@ -15,31 +15,10 @@ Boost online: http://www.boost.org/LICENSE_1_0.txt
 def build(bld):
   bld.new_task_gen(
     features     = ['cxx', 'cprogram'], 
-    target       = 'XMLTest',
-    libpath      = ['/usr/lib/', '/usr/local/lib/'],
-    lib          = ['LLVM-2.9svn'],
-
-    includes     = [
-      bld.srcnode.abspath(),
-      bld.env.LLVMPATH,
-      bld.env.CLANGPATH
-    ],
-    
-    source       = [
-      'test/main.cpp',
-      'impl/Document.cpp',
-      'impl/Tree.cpp',
-    ],
-
-    defines      = [
-      '__STDC_LIMIT_MACROS',
-      '__STDC_CONSTANT_MACROS'
-    ],
-    
-    cxxflags     = [
-      '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', '-fPIC',
-      '-pedantic', '-Wall',
-    ]
+    target       = 'ariel.ir.test.instantiation',
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/instantiation.cpp'],
+    cxxflags     = ['-pedantic', '-Wall']
   );
 
 if __name__ == '__main__':

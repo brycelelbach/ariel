@@ -13,8 +13,10 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/variant/variant.hpp>
+#include <boost/fusion/adapted/struct/adapt_struct.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
 
-#include "ir/include/links.hpp"
+#include "ir/include/link.hpp"
 
 namespace ariel {
 namespace ir {
@@ -36,54 +38,31 @@ namespace ir {
 // directed links will map to dot edges. Undirected links may be represented
 // as label data in record-shape dot nodes.
 
-class node {
+struct node {
  public:
-  typedef boost::variant<std::string, boost::intmax_t> attribute_type;
+  typedef std::size_t size_type;
 
-  // this is possibly better implemented as a llvm::FoldingSet
-  typedef std::set<static_base_pointer*> link_set;
+  typedef boost::variant<std::string, boost::intmax_t> attribute_type;
+  typedef std::pair<link*, size_type> link_set;
 
   // std::map is a stand-in here until tst hackery is complete
-  typedef std::map<std::string, link_set*> link_lookup;
+  typedef std::map<std::string, link_set> link_lookup;
   typedef std::map<std::string, attribute_type> attribute_lookup;
 
-  struct link { }; // link tag for get
-  struct attribute { }; // attribute tag for get
-
- private:
+  std::string name;
   link_lookup links;
-  attribute_lookup attribute;
-
- public:
-  // forward declarations for get
-  template<class Tag> link_set* get (std::string const& key);
-  template<class Tag> link_set const* get (std::string const& key) const;
-  template<class Tag> attribute_type get (std::string const& key);
-  template<class Tag> attribute_type const get (std::string const& key) const;
-  
-  template<>
-  link_set* get<link> (std::string const& key) {
-    typename link_lookup::iterator it = links.find(key);
-  }
-
-  template<>
-  link_set const* get<link> (std::string const& key) const {
-    typename link_lookup::iterator it = links.find(key);
-  }
-
-  template<>
-  attribute_type get<attribute> (std::string const& key) {
-
-  }
-
-  template<>
-  attribute_type const get<attribute> (std::string const& key) const {
-
-  }
+  attribute_lookup attributes;
 };
 
 } // ir
 } // ariel
+
+BOOST_FUSION_ADAPT_STRUCT(
+  ariel::ir::node,
+  (std::string, name)
+  (ariel::ir::node::link_lookup, links)
+  (ariel::ir::node::attribute_lookup, attributes)
+)
 
 #endif // ARIEL_IR_NODE_HPP
 

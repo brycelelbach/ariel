@@ -18,16 +18,16 @@ namespace ariel {
 
 class static_base_pointer {
  private:
-  ARIEL_UNIQUE_ID_TYPE const type;
+  ARIEL_UNIQUE_ID_TYPE const _type;
 
  public:
   template<class Derived>
   static_base_pointer (Derived const& derived):
-    type(Derived::id::value) { }
+    _type(Derived::id::value) { }
 
   template<class Derived>
   bool isa (void) {
-    return Derived::id::value == type; 
+    return Derived::id::value == _type; 
   }
 
   template<class Derived>
