@@ -16,41 +16,33 @@ def build(bld):
   bld.new_task_gen(
     features     = ['cxx', 'cprogram'], 
     target       = 'ariel.test.casting',
-
-    includes     = [
-      bld.srcnode.abspath(),
-      bld.env.LLVMPATH,
-      bld.env.CLANGPATH
-    ],
-    
-    source       = [
-      'test/casting.cpp',
-    ],
-
-    cxxflags     = [
-      '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', 
-      '-pedantic', '-Wall',
-    ]
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/casting.cpp'],
+    cxxflags     = ['-pedantic', '-Wall']
   );
 
   bld.new_task_gen(
     features     = ['cxx', 'cprogram'], 
-    target       = 'ariel.test.tst_insertation',
+    target       = 'ariel.test.tst_instantiation',
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/tst_instantiation.cpp'],
+    cxxflags     = ['-pedantic', '-Wall']
+  );
 
-    includes     = [
-      bld.srcnode.abspath(),
-      bld.env.LLVMPATH,
-      bld.env.CLANGPATH
-    ],
-    
-    source       = [
-      'test/tst_insertation.cpp',
-    ],
+  bld.new_task_gen(
+    features     = ['cxx', 'cprogram'], 
+    target       = 'ariel.test.tst_insertion',
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/tst_insertion.cpp'],
+    cxxflags     = ['-pedantic', '-Wall']
+  );
 
-    cxxflags     = [
-      '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', 
-      '-pedantic', '-Wall',
-    ]
+  bld.new_task_gen(
+    features     = ['cxx', 'cprogram'], 
+    target       = 'ariel.test.tst_lookup',
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/tst_lookup.cpp'],
+    cxxflags     = ['-pedantic', '-Wall']
   );
 
 if __name__ == '__main__':
