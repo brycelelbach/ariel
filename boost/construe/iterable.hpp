@@ -12,6 +12,7 @@
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 
 #include <cstddef>
 #include <cstring>
@@ -203,9 +204,15 @@ namespace boost {
 
             template <typename Type, typename Enable = void>
             struct iterable
-                : iterable_impl<typename remove_const<Type>::type> {
+                : iterable_impl<
+                    typename remove_const<
+                        typename remove_reference<Type>::type
+                    >::type> {
                 iterable(Type const & value)
-                    : iterable_impl<typename remove_const<Type>::type>(value) { }
+                    : iterable_impl<
+                        typename remove_const<
+                            typename remove_reference<Type>::type
+                        >::type>(value) { }
             };
 
             template <typename Type>
