@@ -36,12 +36,7 @@ class consumer<Filter<Writer<Filter> > >: public clang::ASTConsumer {
   typedef typename traits::consumer_type consumer_type;
 
   void HandleTranslationUnit (clang::ASTContext& ctx) { 
-    if (!static_cast<filter_type*>(this)->call(ctx)
-    &&  !static_cast<filter_type*>(this)->error(ctx))
-      return;
-
-    if (!static_cast<writer_type*>(this)->call(ctx))
-      static_cast<writer_type*>(this)->error(ctx);
+    static_cast<filter_type*>(this)->call(ctx);
   }
 
   void set_name (std::string const& new_name) { name = new_name; }

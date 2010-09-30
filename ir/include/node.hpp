@@ -9,6 +9,8 @@
 #if !defined(ARIEL_IR_NODE_HPP)
 #define ARIEL_IR_NODE_HPP
 
+#include <list>
+#include <vector>
 #include <map>
 
 #include <boost/cstdint.hpp>
@@ -40,14 +42,15 @@ namespace ir {
 
 struct node {
  public:
-  typedef std::size_t size_type;
-
   typedef boost::variant<std::string, boost::intmax_t> attribute_type;
-  typedef std::pair<link*, size_type> link_set;
+  typedef std::vector<std::list<link>::iterator> link_array;
 
   // std::map is a stand-in here until tst hackery is complete
-  typedef std::map<std::string, link_set> link_lookup;
+  typedef std::map<std::string, link_array> link_lookup;
   typedef std::map<std::string, attribute_type> attribute_lookup;
+  
+  typedef link_lookup::value_type add_link;
+  typedef attribute_lookup::value_type add_attribute;
 
   std::string name;
   link_lookup links;
@@ -60,8 +63,8 @@ struct node {
 BOOST_FUSION_ADAPT_STRUCT(
   ariel::ir::node,
   (std::string, name)
-  (ariel::ir::node::link_lookup, links)
   (ariel::ir::node::attribute_lookup, attributes)
+  (ariel::ir::node::link_lookup, links)
 )
 
 #endif // ARIEL_IR_NODE_HPP

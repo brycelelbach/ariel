@@ -9,6 +9,8 @@
 #if !defined(ARIEL_PROFILER_NULL_FILTER_HPP)
 #define ARIEL_PROFILER_NULL_FILTER_HPP
 
+#include "ir/include/node.hpp"
+
 #include "profiler/include/traits.hpp"
 #include "profiler/include/filters/filter_builder.hpp"
 
@@ -26,17 +28,8 @@ ARIEL_FILTER_PARAMS(Writer)
 class ARIEL_FILTER(null_filter, Writer):
   public consumer<ARIEL_FILTER(null_filter, Writer)>
 {
- private:
-  // TODO: uncomment after implementation of ir::point
-  #if 0
-  std::list<ir::point> points;
-  #endif
-
  protected:
-  // TODO: uncomment after implementation of ir::point
-  #if 0
-  std::list<ir::point>::iterator get (void) { return points.begin(); }
-  #endif
+  std::list<ir::node> _ir;
  
  public:
   typedef production_traits<null_filter> traits;
@@ -46,10 +39,7 @@ class ARIEL_FILTER(null_filter, Writer):
   typedef typename traits::consumer_type consumer_type;
 
   template<class Context>
-  bool call (Context& ctx) { return true; }
-  
-  template<class Context>
-  bool error (Context& ctx) { return false; }
+  void call (Context& ctx) { static_cast<writer_type*>(this)->call(ctx); }
 };
 
 } // profiler

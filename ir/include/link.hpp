@@ -9,6 +9,8 @@
 #if !defined(ARIEL_IR_LINK_HPP)
 #define ARIEL_IR_LINK_HPP
 
+#include <list>
+
 #include "ir/include/directionality.hpp"
 
 #include "utility/basic_iterator.hpp"
@@ -18,12 +20,12 @@ namespace ir {
 
 struct node;
 
-class link: public basic_iterator<node*> {
+class link: public basic_iterator<std::list<node>::iterator> {
  private:
   directionality _direction;
 
  public:
-  typedef basic_iterator<node*> base_type;
+  typedef basic_iterator<std::list<node>::iterator> base_type;
   typedef base_type::param_type param_type;
 
   // STL DefaultConstructible

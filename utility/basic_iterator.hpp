@@ -67,11 +67,11 @@ class basic_iterator {
   bool operator!= (basic_iterator const& rhs) const { return _data != rhs._data; }
 
   // STL TrivialIterator
-  reference operator* (void) const { return _data; }
- 
-  // alias for operator* 
-  reference get (void) const { return _data; }
+  reference operator* (void) const { return const_cast<T&>(_data); }
   
+  // alias for operator* 
+  reference get (void) const { return const_cast<T&>(_data); }
+ 
   // STL TrivialIterator
   pointer operator-> (void) const { return &_data; }
 };

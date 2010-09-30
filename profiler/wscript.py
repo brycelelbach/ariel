@@ -55,6 +55,14 @@ def build(bld):
       % bld.srcnode.abspath()
     ]
   );
+  
+  bld.new_task_gen(
+    features     = ['cxx', 'cprogram'], 
+    target       = 'ariel.profiler.test.dot_grammar',
+    includes     = [bld.srcnode.abspath()],
+    source       = ['test/dot_grammar.cpp'],
+    cxxflags     = ['-pedantic', '-Wall']
+  );
 
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'

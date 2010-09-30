@@ -10,7 +10,6 @@
 #define ARIEL_PROFILER_FILTER_HPP
 
 #include "profiler/include/filters/null_filter.hpp"
-#include "profiler/include/filters/raw_class_specialization_filter.hpp"
-#include "profiler/include/filters/raw_variable_declaration_filter.hpp"
+#include "profiler/include/filters/type_dependency_filter.hpp"
 
 #endif // ARIEL_PROFILER_FILTER_HPP
