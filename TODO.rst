@@ -15,10 +15,10 @@ ariel::profiler
 +---------------------------------------------------+-------------------------+
 | *graphml_writer*                                  | scrapped                |
 +---------------------------------------------------+-------------------------+
-| **chainable filters**                             | in progress             |
+| *chainable filters*                               | scrapped                |
 +---------------------------------------------------+-------------------------+
-| **filters to refine                               | in progress             |
-| raw_variable_declaration_filter**                 |                         |
+| *filters to refine*                               | scrapped                |
+| *raw_variable_declaration_filter*                 |                         |
 +---------------------------------------------------+-------------------------+
 | **dot_writer**                                    | incomplete              |
 +---------------------------------------------------+-------------------------+
@@ -45,7 +45,7 @@ ariel (utilities)
 +===================================================+=========================+
 | *static_base_pointer*                             | done 10.09.25           |
 +---------------------------------------------------+-------------------------+
-| **Move tst to it's own namespace, stop working on | in progress             |
-| it for now. Use std::map for node for the         |                         |
-| moment**                                          |                         |
+| **Move tst to it's own namespace, stop working**  | in progress             |
+| **it for now. Use std::map for node for the**     |                         |
+| **moment**                                        |                         |
 +---------------------------------------------------+-------------------------+

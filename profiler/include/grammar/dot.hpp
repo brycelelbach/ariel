@@ -18,32 +18,37 @@
 #include "ir/include/node.hpp"
 
 namespace karma = boost::spirit::karma;
+namespace px = boost::phoenix;
+namespace ascii = boost::spirit::ascii;
 
 namespace ariel {
 namespace profiler {
 
 template<class Iterator>
 struct dot_digraph_grammar: karma::grammar<Iterator, ir::node(void)> {
+  karma::rule<Iterator>
+    eol;
+
   karma::rule<Iterator, ir::node(void)>
-    root, node;
+    root;
 
-  karma::rule<Iterator, ir::node::link_lookup(void)>
+  karma::symbols<std::string, int>
+    names;
+
+  karma::rule<Iterator, std::string(void)>
+    name;
+
+  karma::rule<Iterator, ir::node(void)>
+    node;
+
+  karma::rule<Iterator, ir::link::metadata(void)>
+    direction, relation;
+
+  karma::rule<Iterator, ir::node::link_list(void)>
     links;
-
-  karma::rule<Iterator, ir::node::add_link(void)>
-    link_pair; 
-
-  karma::rule<Iterator, ir::node::link_array(void)>
-    link_array;
-  
-  karma::rule<Iterator, std::list<ir::link>::iterator(void)>
-    link_iterator;
 
   karma::rule<Iterator, ir::link(void)>
     link;
-
-  karma::rule<Iterator, std::list<ir::node>::iterator(void)>
-    node_iterator;
   
   karma::rule<Iterator, ir::node::attribute_lookup(void)>
     attributes;
@@ -54,38 +59,73 @@ struct dot_digraph_grammar: karma::grammar<Iterator, ir::node(void)> {
   karma::rule<Iterator, ir::node::attribute_type(void)> 
     attribute;
 
-  dot_digraph_grammar (void): dot_digraph_grammar::base_type(root) {
-    root = karma::lit("digraph {") << karma::eol << node << "};";
+  int count;
+  int from;
+  int to;
 
-    // ir::node 
-    node = karma::string << "[" << -attributes << "];" << karma::eol << -links; 
+  dot_digraph_grammar (void):
+    dot_digraph_grammar::base_type(root), count(0), from(0), to(0)
+  {
+    eol = karma::eol << "  ";
 
-    // std::map<std::string, std::vector<std::list<ir::link::iterator> >
-    links = *link_pair;
+    root  
+       = karma::lit("digraph {")
+      << eol
+      << node
+      << karma::eol
+      << "};";
 
-    // std::pair<std::string, std::vector<std::list<ir::link>::iterator> > 
-    link_pair = karma::string << link_array;
+    node
+       = "n" << karma::lazy(++px::ref(count))
+      << " [label=\""
+      << karma::string
+      << "\" " << attributes << "];"
+      << eol
+      << links;
 
-    // std::vector<std::list<ir::link>::iterator>
-    link_array = *link_iterator;
-    
-    // std::list<ir::link>::iterator
-    link_iterator = link[karma::_1 = *karma::_val];
+    karma::uint_generator<ir::link::metadata> meta;
 
-    // ir::link
-    link = node_iterator[karma::_1 = *karma::_val];
+    direction
+       = (
+           ( karma::omit[meta(ir::UPWARDS)]
+          << "n" << karma::lazy(px::ref(count) - 1)
+          << " -> n" << karma::lazy(px::ref(count))
+           )
+         |
+           ( karma::omit[meta(ir::DOWNWARDS)]
+          << "n" << karma::lazy(px::ref(count))
+          << " -> n" << karma::lazy(px::ref(count) - 1)
+           )
+         )
+      << "["
+    ;
 
-    // std::list<ir::node>::iterator
-    node_iterator = node[karma::_1 = *karma::_val];
-    
-    // std::map<std::string, boost::variant<std::string, boost::intmax_t> >
+    relation
+       = (  karma::omit[meta(ir::UNRELATED)]
+         | (karma::omit[meta(ir::INHERITANCE)] << "color=\"red\" ")
+         | (karma::omit[meta(ir::PARAMETRIC)]  << "color=\"blue\" ")
+         | (karma::omit[meta(ir::MEMBERSHIP)]  << "color=\"green\" ")
+         )
+      << "];"
+      << eol
+    ;
+
+    links = *link;
+
+    link
+       = node
+      << direction
+      << relation;
+
     attributes = *attribute_pair;
 
-    // std::pair<std::string, boost::variant<std::string, boost::intmax_t> >
-    attribute_pair = karma::string << attribute; 
-
-    // boost::variant<std::string, boost::intmax_t> 
-    attribute = karma::string | karma::int_generator<boost::intmax_t>();
+    attribute_pair
+       = karma::string
+      << attribute;
+ 
+    attribute
+       = karma::string
+       | karma::int_generator<boost::intmax_t>();
   }
 };
 

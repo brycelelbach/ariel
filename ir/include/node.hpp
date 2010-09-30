@@ -10,13 +10,10 @@
 #define ARIEL_IR_NODE_HPP
 
 #include <list>
-#include <vector>
 #include <map>
 
 #include <boost/cstdint.hpp>
 #include <boost/variant/variant.hpp>
-#include <boost/fusion/adapted/struct/adapt_struct.hpp>
-#include <boost/fusion/include/adapt_struct.hpp>
 
 #include "ir/include/link.hpp"
 
@@ -43,18 +40,78 @@ namespace ir {
 struct node {
  public:
   typedef boost::variant<std::string, boost::intmax_t> attribute_type;
-  typedef std::vector<std::list<link>::iterator> link_array;
+  typedef std::list<link> link_list;
 
   // std::map is a stand-in here until tst hackery is complete
-  typedef std::map<std::string, link_array> link_lookup;
   typedef std::map<std::string, attribute_type> attribute_lookup;
   
-  typedef link_lookup::value_type add_link;
   typedef attribute_lookup::value_type add_attribute;
 
+  // STL DefaultConstructible
+  node (void): name("node") { }
+
+  node (boost::call_traits<std::string>::param_type new_name):
+    name(new_name) { } 
+
+  // STL Assignable
+  node (node const& rhs):
+    name(rhs.name), attributes(rhs.attributes), links(rhs.links) { }
+ 
+  node (std::list<node>::iterator const& rhs):
+    name(rhs->name), attributes(rhs->attributes), links(rhs->links) { }
+  
+  node (link const& rhs):
+    name((*rhs)->name), attributes((*rhs)->attributes), links((*rhs)->links) { }
+ 
+  // STL Assignable 
+  node& operator= (node const& rhs) {
+    name = rhs.name;
+    attributes = rhs.attributes;
+    links = rhs.links;
+    return *this;
+  }
+  
+  node& operator= (std::list<link>::iterator const& rhs) {
+    return *this = *rhs;
+  }
+  
+  node& operator= (link const& rhs) {
+    return *this = **rhs;
+  }
+
+  // STL EqualityComparable
+  bool operator== (node const& rhs) const {
+    return (name == rhs.name)
+        && (attributes == rhs.attributes)
+        && (links == rhs.links);
+  }
+
+  // STL EqualityComparable
+  bool operator!= (node const& rhs) const {
+    return (name != rhs.name)
+        && (attributes != rhs.attributes)
+        && (links != rhs.links);
+  }
+  
+  bool operator== (std::list<link>::iterator const& rhs) const {
+    return *this == *rhs;
+  }
+
+  bool operator!= (std::list<link>::iterator const& rhs) const {
+    return *this != *rhs;
+  }
+  
+  bool operator== (link const& rhs) const {
+    return *this == **rhs;
+  }
+
+  bool operator!= (link const& rhs) const {
+    return *this != **rhs;
+  }
+  
   std::string name;
-  link_lookup links;
   attribute_lookup attributes;
+  link_list links;
 };
 
 } // ir
@@ -64,7 +121,7 @@ BOOST_FUSION_ADAPT_STRUCT(
   ariel::ir::node,
   (std::string, name)
   (ariel::ir::node::attribute_lookup, attributes)
-  (ariel::ir::node::link_lookup, links)
+  (ariel::ir::node::link_list, links)
 )
 
 #endif // ARIEL_IR_NODE_HPP

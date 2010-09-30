@@ -13,12 +13,15 @@ namespace ariel {
 namespace ir {
 
 enum directionality {
-  NONE = 0,
+  DIRECTIONLESS = 0,
+
   // held by a dependent actor; points to a dependency
   UPWARDS = 10,
+
   // held by a dependent or independent actor; points to an actor who
   // depends on this actor
   DOWNWARDS,
+
   // held by a dependent or independent actor; indicates a dependency
   // free relationship
   UNDIRECTED

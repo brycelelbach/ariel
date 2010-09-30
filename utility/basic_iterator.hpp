@@ -14,6 +14,8 @@
 #include <boost/swap.hpp>
 #include <boost/call_traits.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/fusion/adapted/struct/adapt_struct.hpp>
+#include <boost/fusion/include/adapt_struct.hpp> 
 
 namespace ariel {
 
@@ -21,11 +23,10 @@ struct trivial_iterator_tag { };
 
 // a pointer-like class fulfilling STL TrivialIterator
 template<typename T>
-class basic_iterator {
- private:
-  T _data;
-
+struct basic_iterator {
  public:
+  T data;
+
   typedef typename boost::call_traits<T>::param_type param_type;
 
   // STL TrivialIterator
@@ -38,45 +39,50 @@ class basic_iterator {
   typedef trivial_iterator_tag                       iterator_category;
 
   // STL DefaultConstructible
-  basic_iterator (void): _data() { } 
+  basic_iterator (void): data() { } 
 
-  basic_iterator (param_type new_data): _data(new_data) { } 
+  basic_iterator (param_type newdata): data(newdata) { } 
 
   // STL Assignable
-  basic_iterator (basic_iterator const& rhs): _data(rhs._data) { }
+  basic_iterator (basic_iterator const& rhs): data(rhs.data) { }
   
   // STL Assignable 
   basic_iterator& operator= (basic_iterator const& rhs) {
-    _data = rhs._data;
+    data = rhs.data;
     return *this;
   }
-
+ 
   // alias for operator=
   basic_iterator& assign (basic_iterator const& rhs) {
-    _data = rhs._data;
-    return *this;
-  }
-  
+    return *this = rhs;
+  } 
+ 
   // STL Assignable
   void swap (basic_iterator& rhs) { boost::swap(*this, rhs); }
 
   // STL EqualityComparable
-  bool operator== (basic_iterator const& rhs) const { return _data == rhs._data; }
+  bool operator== (basic_iterator const& rhs) const { return data == rhs.data; }
   
   // STL EqualityComparable
-  bool operator!= (basic_iterator const& rhs) const { return _data != rhs._data; }
+  bool operator!= (basic_iterator const& rhs) const { return data != rhs.data; }
 
   // STL TrivialIterator
-  reference operator* (void) const { return const_cast<T&>(_data); }
-  
-  // alias for operator* 
-  reference get (void) const { return const_cast<T&>(_data); }
+  reference operator* (void) const { return const_cast<T&>(data); }
+
+  // alias for operator*
+  reference get (void) const { return **this; }
  
   // STL TrivialIterator
-  pointer operator-> (void) const { return &_data; }
+  pointer operator-> (void) const { return &data; }
 };
 
 } // ariel
+
+BOOST_FUSION_ADAPT_TPL_STRUCT(
+  (T),
+  (ariel::basic_iterator) (T),
+  (T, data)
+)
 
 #endif // ARIEL_BASIC_ITERATOR_HPP
 

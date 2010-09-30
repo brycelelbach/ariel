@@ -14,10 +14,13 @@ namespace ir {
 
 enum relationship {
   UNRELATED = 0,
+
   // held by a base or derived class 
   INHERITANCE = 10,
+
   // held by a template class or template parameter
   PARAMETRIC,
+
   // held by a class or a member of a class
   MEMBERSHIP
 };
