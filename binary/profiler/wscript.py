@@ -8,7 +8,7 @@
 Use, modification and distribution of this software is subject to the Boost
 Software License, Version 1.0, and the new BSD License.
 
-Boost relative to repository root: /doc/BOOST_LICENSE_1_0.rst
+Boost relative to repository root: /credit/BOOST_LICENSE_1_0.rst
 Boost online: http://www.boost.org/LICENSE_1_0.txt
 """
 
@@ -24,7 +24,7 @@ def build(bld):
     ],
     
     source       = [
-      'src/register_plugins.cpp',
+      'register_plugins.cxx',
     ],
 
     defines      = [
@@ -51,17 +51,9 @@ def build(bld):
     
     linkflags    = [
       '-Wl,-R', '-Wl,\'$ORIGIN\'',
-      '-Wl,--version-script,%s/profiler/profiler.exports.map'
+      '-Wl,--version-script,%s/binary/profiler/profiler.exports.map'
       % bld.srcnode.abspath()
     ]
-  );
-  
-  bld.new_task_gen(
-    features     = ['cxx', 'cprogram'], 
-    target       = 'ariel.profiler.test.dot_grammar',
-    includes     = [bld.srcnode.abspath()],
-    source       = ['test/grammar/dot.cpp'],
-    cxxflags     = ['-pedantic', '-Wall']
   );
 
 if __name__ == '__main__':

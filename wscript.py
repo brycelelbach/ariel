@@ -8,7 +8,7 @@ top-level waf build script
 Use, modification and distribution of this software is subject to the Boost
 Software License, Version 1.0.
 
-Relative to repository root: /doc/BOOST_LICENSE_1_0.rst
+Relative to repository root: /credit/BOOST_LICENSE_1_0.rst
 Online: http://www.boost.org/LICENSE_1_0.txt
 """
 
@@ -54,7 +54,7 @@ def configure(conf):
   conf.env.CXXFLAGS  += ['-g']
 
 def build(bld):
-  bld.recurse('profiler')
+  bld.recurse('binary/profiler')
 
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'

@@ -9,7 +9,7 @@ driver for the waf build system (Ariel waf-light fork)
 Use, modification and distribution of this software is subject to the Boost
 Software License, Version 1.0, and the new BSD License.
 
-Boost relative to repository root: /doc/BOOST_LICENSE_1_0.rst
+Boost relative to repository root: /credit/BOOST_LICENSE_1_0.rst
 Boost online: http://www.boost.org/LICENSE_1_0.txt
 BSD relative to repository root: /doc/NEW_BSD_LICENSE.txt
 BSD online: http://www.opensource.org/licenses/bsd-license.php
