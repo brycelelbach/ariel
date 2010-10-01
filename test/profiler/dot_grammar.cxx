@@ -10,6 +10,8 @@
 
 #include <ariel/profiler/grammar/dot.hxx>
 
+#include <ariel/ir/make_link.hxx>
+
 #include <iostream>
 
 using namespace ariel;
@@ -23,9 +25,13 @@ int main (void) {
                         B = cont.insert(cont.begin(), ir::node("B")),
                         C = cont.insert(cont.begin(), ir::node("C"));
 
-  (*C).links.push_back(ir::link(C, A, ir::INHERITANCE));
-  (*C).links.push_back(ir::link(C, B, ir::INHERITANCE));
-  (*B).links.push_back(ir::link(B, A, ir::INHERITANCE));
+  
+  ir::make_link(C, A, ir::INHERITANCE);
+  ir::make_link(C, B, ir::INHERITANCE);
+  ir::make_link(B, A, ir::INHERITANCE);
+  //(*C).links.push_back(ir::link(C, A, ir::INHERITANCE));
+  //(*C).links.push_back(ir::link(C, B, ir::INHERITANCE));
+  //(*B).links.push_back(ir::link(B, A, ir::INHERITANCE));
 
   std::string generated;
   iterator sink(generated);
