@@ -1,6 +1,0 @@
-digraph derivation_downlink {
-  base    [shape="plaintext"];
-  derived [shape="plaintext"];
-
-  base -> derived [dir="forward"];
-};
