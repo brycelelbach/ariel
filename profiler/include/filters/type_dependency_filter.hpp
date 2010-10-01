@@ -12,7 +12,7 @@
 #include "clang/AST/ASTContext.h"
 #include "clang/AST/AST.h"
 
-#include "ir/include/node.hpp"
+#include "ir/node.hpp"
 
 #include "preprocessor/poly.hpp"
 #include "preprocessor/foreach.hpp"
@@ -58,12 +58,6 @@ class ARIEL_FILTER(type_dependency_filter, Writer):
 
   std::list<ir::node>::iterator add (target_type* data) {
     std::list<ir::node>::iterator it = _ir.insert(_ir.begin(), ir::node());
-
-    ir::node& node = *it;
-
-    node.attributes.insert(ir::node::add_attribute(
-      "name", get_type_name<clang::Type>::call(data)
-    ));
 
     return it;
   }

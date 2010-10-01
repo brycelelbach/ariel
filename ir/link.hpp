@@ -9,52 +9,54 @@
 #if !defined(ARIEL_IR_LINK_HPP)
 #define ARIEL_IR_LINK_HPP
 
-#include <list>
+#include <set>
 
 #include <boost/integer.hpp>
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 
-#include "ir/include/directionality.hpp"
-#include "ir/include/relationship.hpp"
+#include "ir/relationship.hpp"
 
-#include "utility/basic_iterator.hpp"
+#include "adt/adapt_iterator.hpp"
 
 namespace ariel {
 namespace ir {
 
 struct node;
 
-struct link: public basic_iterator<std::list<node>::iterator> {
+struct link {
  public:
   typedef boost::uint_t<8>::fast metadata; 
-  metadata direction;
+  typedef adapt_iterator<std::set<node>::iterator> value_type;
+  typedef value_type::param_type param_type;
+
+  value_type from;
+  value_type to;
   metadata relation;
 
-  typedef basic_iterator<std::list<node>::iterator> base_type;
-  typedef base_type::param_type param_type;
-
   // STL DefaultConstructible
-  link (void):
-    base_type(), direction(DIRECTIONLESS), relation(UNRELATED) { } 
+  link (void): from(), to(), relation(UNRELATED) { } 
 
-  link (
-    param_type new_data,
-    directionality new_direction,
-    relationship new_relation
-  ):
-    base_type(new_data), direction(new_direction), relation(new_relation) { }
+  link (param_type new_from, param_type new_to, relationship new_relation):
+    from(new_from), to(new_to), relation(new_relation) { }
 
   // STL Assignable
-  link (link const& rhs):
-    base_type(rhs), direction(rhs.direction), relation(rhs.relation) { }
+  link (link const& rhs): from(rhs.from), to(rhs.to), relation(rhs.relation) { }
   
   // STL Assignable 
   link& operator= (link const& rhs) {
-    static_cast<base_type*>(this)->assign(rhs);
-    direction = rhs.direction;
+    from = rhs.from;
+    to = rhs.to; 
     relation = rhs.relation;
     return *this;
+  }
+
+  bool operator== (link const& rhs) const {
+    return (from == rhs.from) && (to == rhs.to) && (relation == rhs.relation);
+  }
+  
+  bool operator!= (link const& rhs) const {
+    return (from != rhs.from) && (to != rhs.to) && (relation != rhs.relation);
   }
 }; 
 
@@ -63,8 +65,8 @@ struct link: public basic_iterator<std::list<node>::iterator> {
 
 BOOST_FUSION_ADAPT_STRUCT(
   ariel::ir::link,
-  (std::list<ariel::ir::node>::iterator, data)
-  (ariel::ir::link::metadata, direction)
+  (ariel::ir::link::value_type, from)
+  (ariel::ir::link::value_type, to)
   (ariel::ir::link::metadata, relation)
 )
 

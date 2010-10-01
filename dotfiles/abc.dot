@@ -1,0 +1,8 @@
+digraph {
+rankdir="BT";
+A;
+B;
+C;
+
+B -> A;C -> A;C -> B;
+}

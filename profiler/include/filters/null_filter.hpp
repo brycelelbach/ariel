@@ -9,7 +9,7 @@
 #if !defined(ARIEL_PROFILER_NULL_FILTER_HPP)
 #define ARIEL_PROFILER_NULL_FILTER_HPP
 
-#include "ir/include/node.hpp"
+#include "ir/node.hpp"
 
 #include "profiler/include/traits.hpp"
 #include "profiler/include/filters/filter_builder.hpp"

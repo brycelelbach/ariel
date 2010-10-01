@@ -14,118 +14,70 @@
 #include <boost/spirit/include/karma_stream.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/fusion/include/std_pair.hpp>
+#include <boost/fusion/sequence/intrinsic/at.hpp>
+#include <boost/fusion/include/at.hpp>
+#include <boost/fusion/container/vector.hpp>
+#include <boost/fusion/include/vector.hpp>
+#include <boost/fusion/container/vector/vector_fwd.hpp>
+#include <boost/fusion/include/vector_fwd.hpp>
 
-#include "ir/include/node.hpp"
+#include "ir/node.hpp"
 
 namespace karma = boost::spirit::karma;
 namespace px = boost::phoenix;
-namespace ascii = boost::spirit::ascii;
+namespace fusion = boost::fusion;
 
 namespace ariel {
 namespace profiler {
 
 template<class Iterator>
-struct dot_digraph_grammar: karma::grammar<Iterator, ir::node(void)> {
-  karma::rule<Iterator>
-    eol;
+struct dot_grammar:
+  karma::grammar<Iterator, ir::context(void)>
+{
+ public:
+  karma::rule<Iterator, ir::context(void)>
+    start;
+
+  karma::rule<Iterator, ir::context(void)>
+    context;
 
   karma::rule<Iterator, ir::node(void)>
-    root;
+    get_node_name, get_node_links;
 
-  karma::symbols<std::string, int>
-    names;
-
-  karma::rule<Iterator, std::string(void)>
-    name;
-
-  karma::rule<Iterator, ir::node(void)>
-    node;
-
-  karma::rule<Iterator, ir::link::metadata(void)>
-    direction, relation;
-
-  karma::rule<Iterator, ir::node::link_list(void)>
+  karma::rule<Iterator, std::list<ariel::ir::link>(ir::node)>
     links;
 
-  karma::rule<Iterator, ir::link(void)>
+  karma::rule<Iterator, ir::link(ir::node)>
     link;
-  
-  karma::rule<Iterator, ir::node::attribute_lookup(void)>
-    attributes;
 
-  karma::rule<Iterator, ir::node::add_attribute(void)> 
-    attribute_pair;
+  dot_grammar (void): dot_grammar::base_type(start) {
+    start =
+      karma::duplicate[
+        karma::lit("digraph {") <<
+        karma::eol <<
+        "rankdir=\"BT\";" <<
+        karma::eol <<
+        context <<
+        karma::eol <<
+        (*get_node_links) <<
+        karma::eol <<
+        "}" <<
+        karma::eol
+      ];
 
-  karma::rule<Iterator, ir::node::attribute_type(void)> 
-    attribute;
+    context = *(get_node_name << ";" << karma::eol);
 
-  int count;
-  int from;
-  int to;
-
-  dot_digraph_grammar (void):
-    dot_digraph_grammar::base_type(root), count(0), from(0), to(0)
-  {
-    eol = karma::eol << "  ";
-
-    root  
-       = karma::lit("digraph {")
-      << eol
-      << node
-      << karma::eol
-      << "};";
-
-    node
-       = "n" << karma::lazy(++px::ref(count))
-      << " [label=\""
-      << karma::string
-      << "\" " << attributes << "];"
-      << eol
-      << links;
-
-    karma::uint_generator<ir::link::metadata> meta;
-
-    direction
-       = (
-           ( karma::omit[meta(ir::UPWARDS)]
-          << "n" << karma::lazy(px::ref(count) - 1)
-          << " -> n" << karma::lazy(px::ref(count))
-           )
-         |
-           ( karma::omit[meta(ir::DOWNWARDS)]
-          << "n" << karma::lazy(px::ref(count))
-          << " -> n" << karma::lazy(px::ref(count) - 1)
-           )
-         )
-      << "["
-    ;
-
-    relation
-       = (  karma::omit[meta(ir::UNRELATED)]
-         | (karma::omit[meta(ir::INHERITANCE)] << "color=\"red\" ")
-         | (karma::omit[meta(ir::PARAMETRIC)]  << "color=\"blue\" ")
-         | (karma::omit[meta(ir::MEMBERSHIP)]  << "color=\"green\" ")
-         )
-      << "];"
-      << eol
-    ;
-
-    links = *link;
-
-    link
-       = node
-      << direction
-      << relation;
-
-    attributes = *attribute_pair;
-
-    attribute_pair
-       = karma::string
-      << attribute;
+    get_node_links = karma::skip[karma::string] << links(karma::_val);
  
-    attribute
-       = karma::string
-       | karma::int_generator<boost::intmax_t>();
+    get_node_name = karma::string << karma::skip[links(karma::_val)];
+
+    links = *link(karma::_r1);
+
+    karma::uint_generator<boost::uint_t<8>::fast> meta;
+
+    // the skip here is temporary, we need to modify shape/color
+    // of edges in dot according to relationship in ariel IR
+    link = get_node_name << " -> " << get_node_name << karma::skip[meta] << ";";
   }
 };
 

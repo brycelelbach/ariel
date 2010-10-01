@@ -60,7 +60,7 @@ def build(bld):
     features     = ['cxx', 'cprogram'], 
     target       = 'ariel.profiler.test.dot_grammar',
     includes     = [bld.srcnode.abspath()],
-    source       = ['test/dot_grammar.cpp'],
+    source       = ['test/grammar/dot.cpp'],
     cxxflags     = ['-pedantic', '-Wall']
   );
 
