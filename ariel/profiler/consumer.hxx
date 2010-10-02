@@ -19,9 +19,6 @@
 namespace ariel {
 namespace profiler {
 
-template<class Production>
-class plugin;
-
 template<class Filter>
 class consumer;
 
