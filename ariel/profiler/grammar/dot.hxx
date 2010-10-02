@@ -13,7 +13,6 @@
 #define ARIEL_PROFILER_DOT_GRAMMAR_HXX
 
 #include <boost/spirit/include/karma.hpp>
-#include <boost/spirit/include/karma_stream.hpp>
 
 #include <boost/spirit/include/phoenix.hpp>
 

@@ -16,5 +16,5 @@
 
 using namespace ariel::profiler;
 
-static clang::FrontendPluginRegistry::Add<plugin<null_writer<type_dependency_filter> > >
-C("ariel-type-dependencies", "Profile template instantiation costs");
+static clang::FrontendPluginRegistry::Add<plugin<dot_writer<type_dependency_filter> > >
+C("ariel-dot-type-dependencies", "Profile template instantiation costs (dot output)");

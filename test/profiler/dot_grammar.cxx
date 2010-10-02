@@ -24,7 +24,6 @@ int main (void) {
   ir::context::iterator A = cont.insert(cont.begin(), ir::node("A")),
                         B = cont.insert(cont.begin(), ir::node("B")),
                         C = cont.insert(cont.begin(), ir::node("C"));
-
   
   ir::make_link(C, A, ir::INHERITANCE);
   ir::make_link(C, B, ir::INHERITANCE);

@@ -30,9 +30,6 @@ ARIEL_FILTER_PARAMS(Writer)
 class ARIEL_FILTER(null_filter, Writer):
   public consumer<ARIEL_FILTER(null_filter, Writer)>
 {
- protected:
-  std::list<ir::node> _ir;
- 
  public:
   typedef production_traits<null_filter> traits;
 
@@ -40,8 +37,11 @@ class ARIEL_FILTER(null_filter, Writer):
   typedef typename traits::filter_type   filter_type;
   typedef typename traits::consumer_type consumer_type;
 
-  template<class Context>
-  void call (Context& ctx) { static_cast<writer_type*>(this)->call(ctx); }
+  template<class ClangContext>
+  void call (ClangContext& clang_ctx) {
+    ir::context ariel_ctx;
+    static_cast<writer_type*>(this)->call(clang_ctx, ariel_ctx);
+  }
 };
 
 } // profiler

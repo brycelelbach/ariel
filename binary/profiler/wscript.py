@@ -33,7 +33,7 @@ def build(bld):
     ],
     
     cxxflags     = [
-      '-fno-exceptions', '-fno-strict-aliasing', '-fno-rtti', '-fPIC',
+      '-fno-exceptions', '-fno-strict-aliasing', '-fPIC',
       '-fdiagnostics-show-option', '-pedantic', '-Wall',
       '-MD', '-MP', '-MF', '%s/profiler.d' % bld.path.abspath(bld.env),
       '-MT', '%s/profiler.o' % bld.path.abspath(bld.env)

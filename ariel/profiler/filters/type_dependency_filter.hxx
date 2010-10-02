@@ -36,9 +36,6 @@ ARIEL_FILTER_PARAMS(Writer)
 class ARIEL_FILTER(type_dependency_filter, Writer):
   public consumer<ARIEL_FILTER(type_dependency_filter, Writer)>
 {
- protected:
-  std::list<ir::node> _ir;
-  
  public:
   typedef production_traits<type_dependency_filter> traits;
 
@@ -48,17 +45,23 @@ class ARIEL_FILTER(type_dependency_filter, Writer):
 
   typedef clang::Type target_type;
   
-  template<class Context>
-  void call (Context& ctx) {
-    ARIEL_LLVM_FOREACH(typename Context::type_iterator, it, end, ctx, types_) {
-      add(*it);
+  template<class ClangContext>
+  void call (ClangContext& clang_ctx) {
+    ir::context ariel_ctx;
+
+    ARIEL_LLVM_FOREACH(
+      typename ClangContext::type_iterator, it, end, clang_ctx, types_
+    ) {
+      add(ariel_ctx, *it);
     }
 
-    static_cast<writer_type*>(this)->call(ctx);
+    static_cast<writer_type*>(this)->call(clang_ctx, ariel_ctx);
   }
 
-  std::list<ir::node>::iterator add (target_type* data) {
-    std::list<ir::node>::iterator it = _ir.insert(_ir.begin(), ir::node());
+  static ir::context::iterator add (ir::context& ariel_ctx, target_type* data) {
+    ir::context::iterator it = ariel_ctx.insert(
+      ir::node(get_type_name<clang::Type>::call(data)
+    )).first;
 
     return it;
   }
