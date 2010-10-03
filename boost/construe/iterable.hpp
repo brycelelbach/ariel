@@ -118,13 +118,13 @@ namespace boost {
             };
 
             template <typename CharT, std::size_t N>
-            struct iterable_impl<CharT const [N]> {
+            struct iterable_impl_extent {
                 typedef CharT const type[N];
 
                 typedef CharT * iterator;
                 typedef CharT const * const_iterator;
 
-                iterable_impl(type const & value)
+                iterable_impl_extent(CharT const (& value)[N])
                     : value_(value) { }
 
                 inline const_iterator const
@@ -143,34 +143,25 @@ namespace boost {
                 }
 
                 private:
-                    type const & value_;
+                    CharT const (& value_)[N];
             };
 
-            template <typename CharT, std::size_t N>
-            struct iterable_impl<CharT [N]>
-                : iterable_impl<CharT const [N]> {
-                typedef CharT const type[N];
+            template <std::size_t N>
+            struct iterable_impl<char [N]>
+                : iterable_impl_extent<char, N> {
+                typedef char const type[N];
 
                 iterable_impl(type const & value)
-                    : iterable_impl<CharT const [N]>(value) { }
+                    : iterable_impl_extent<char, N>(value) { }
             };
 
-            template <typename CharT, std::size_t N>
-            struct iterable_impl<CharT (&)[N]>
-                : iterable_impl<CharT const [N]> {
-                typedef CharT (&type)[N];
+            template <std::size_t N>
+            struct iterable_impl<wchar_t [N]>
+                : iterable_impl_extent<wchar_t, N> {
+                typedef wchar_t const type[N];
 
-                iterable_impl(type const value)
-                    : iterable_impl<CharT const [N]>(value) { }
-            };
-
-            template <typename CharT, std::size_t N>
-            struct iterable_impl<CharT const (&)[N]>
-                : iterable_impl<CharT const [N]> {
-                typedef CharT (&type)[N];
-
-                iterable_impl(type const value)
-                    : iterable_impl<CharT const [N]>(value) { }
+                iterable_impl(type const & value)
+                    : iterable_impl_extent<wchar_t, N>(value) { }
             };
 
             template <typename CharT, typename Traits, typename Allocator>
