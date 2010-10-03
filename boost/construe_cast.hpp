@@ -11,7 +11,6 @@
 #include <boost/construe/reserve.hpp>
 
 #include <boost/mpl/bool.hpp>
-#include <boost/optional.hpp>
 #include <boost/spirit/home/karma/auto.hpp>
 #include <boost/spirit/home/karma/numeric.hpp>
 #include <boost/spirit/home/qi/auto.hpp>
@@ -19,7 +18,6 @@
 #include <boost/spirit/home/qi/directive.hpp>
 #include <boost/spirit/home/qi/numeric.hpp>
 #include <boost/spirit/home/support/container.hpp>
-#include <boost/spirit/home/support/string_traits.hpp>
 #include <boost/spirit/home/support/unused.hpp>
 #include <boost/static_assert.hpp>
 
