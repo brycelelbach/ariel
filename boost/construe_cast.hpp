@@ -8,9 +8,8 @@
 #define BOOST_CONSTRUE_HPP
 
 #include <boost/construe/iterable.hpp>
+#include <boost/construe/reserve.hpp>
 
-#include <boost/config.hpp>
-#include <boost/limits.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/optional.hpp>
 #include <boost/spirit/home/karma/auto.hpp>
@@ -33,166 +32,6 @@ namespace boost {
         : public std::bad_cast { };
 
     namespace construe {
-
-        namespace traits {
-
-            template <typename Source>
-            struct reserve_size {
-                BOOST_STATIC_CONSTANT(std::size_t, value = 0);
-            };
-
-            template <typename Source>
-            struct reserve_size<Source const>
-                : reserve_size<Source> { };
-
-            template <>
-            struct reserve_size<char> {
-                BOOST_STATIC_CONSTANT(std::size_t, value = 1);
-            };
-
-            template <>
-            struct reserve_size<wchar_t> {
-                BOOST_STATIC_CONSTANT(std::size_t, value = 1);
-            };
-
-            template <>
-            struct reserve_size<bool> {
-                BOOST_STATIC_CONSTANT(std::size_t, value = 5);
-            };
-
-            template <typename Source>
-            struct reserve_size_integral {
-                BOOST_STATIC_CONSTANT(std::size_t, value =
-                    std::numeric_limits<Source>::is_signed +
-                    1 +
-                    std::numeric_limits<Source>::digits10);
-            };
-
-            template <>
-            struct reserve_size<int>
-                : reserve_size_integral<int> { };
-
-            template <>
-            struct reserve_size<short>
-                : reserve_size_integral<short> { };
-
-            template <>
-            struct reserve_size<long>
-                : reserve_size_integral<long> { };
-
-            template <>
-            struct reserve_size<unsigned int>
-                : reserve_size_integral<unsigned int> { };
-
-#ifndef BOOST_NO_INTRINSIC_WCHAR_T
-            template <>
-            struct reserve_size<unsigned short>
-                : reserve_size_integral<unsigned short> { };
-#endif
-
-            template <>
-            struct reserve_size<unsigned long>
-                : reserve_size_integral<unsigned long> { };
-
-#ifdef BOOST_HAS_LONG_LONG
-            template <>
-            struct reserve_size<boost::long_long_type>
-                : reserve_size_integral<boost::long_long_type> { };
-
-            template <>
-            struct reserve_size<boost::ulong_long_type>
-                : reserve_size_integral<boost::ulong_long_type> { };
-#endif
-
-            template <typename Source>
-            struct reserve_size_floating_point {
-                BOOST_STATIC_CONSTANT(std::size_t, value =
-                    std::numeric_limits<Source>::is_signed +
-                    8 +
-                    std::numeric_limits<Source>::digits10);
-            };
-
-            template <>
-            struct reserve_size<float>
-                : reserve_size_floating_point<float> { };
-
-            template <>
-            struct reserve_size<double>
-                : reserve_size_floating_point<double> { };
-
-            template <>
-            struct reserve_size<long double>
-                : reserve_size_floating_point<long double> { };
-
-            template <typename Source>
-            struct reserve_size<boost::optional<Source> >
-                : reserve_size<Source> { };
-
-        }  // namespace traits
-
-        namespace traits {
-
-            template <typename Sequence>
-            class has_reserve {
-                template <typename U, void (U::*)(typename U::size_type) = &U::reserve>
-                struct impl { };
-
-                template <typename U>
-                static boost::type_traits::yes_type test(U*, impl<U>* = 0);
-
-                template <typename U>
-                static boost::type_traits::no_type test(...);
-
-            public:
-                BOOST_STATIC_CONSTANT(bool, value =
-                    sizeof(test<Sequence>(0)) == sizeof(boost::type_traits::yes_type));
-                typedef boost::mpl::bool_<value> type;
-            };
-
-        }  // namespace traits
-
-        namespace detail {
-
-            template <typename Sequence>
-            inline void
-            call_reserve(
-                Sequence & sequence,
-                typename Sequence::size_type const size
-            ) {
-                call_reserve_impl(
-                    sequence, size, typename boost::construe::traits::has_reserve<Sequence>::type());
-            }
-
-            template <typename Sequence>
-            inline void
-            call_reserve(
-                Sequence const &,
-                std::size_t const
-            ) {
-                // Missing size_type
-            }
-
-            template <typename Sequence>
-            inline void
-            call_reserve_impl(
-                Sequence & sequence,
-                typename Sequence::size_type const size,
-                boost::mpl::true_ const
-            ) {
-                sequence.reserve(size);
-            }
-
-            template <typename Sequence>
-            inline void
-            call_reserve_impl(
-                Sequence const &,
-                typename Sequence::size_type const,
-                boost::mpl::false_ const
-            ) {
-                // Missing .reserve()
-            }
-
-        }  // namespace detail
 
         namespace detail {
 
@@ -303,7 +142,7 @@ namespace boost {
                     ) {
                         Target target = Target();
 
-                        call_reserve(target, boost::construe::traits::reserve_size<Source>::value);
+                        call_reserve(target, traits::reserve_size<Source, Tag>::call(source));
 
                         std::back_insert_iterator<Target> iterator(target);
                         bool result = boost::spirit::karma::generate(
