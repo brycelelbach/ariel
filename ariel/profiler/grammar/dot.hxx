@@ -12,7 +12,14 @@
 #if !defined(ARIEL_PROFILER_DOT_GRAMMAR_HXX)
 #define ARIEL_PROFILER_DOT_GRAMMAR_HXX
 
-#include <boost/spirit/include/karma.hpp>
+#include <boost/spirit/include/karma_action.hpp>
+#include <boost/spirit/include/karma_string.hpp>
+#include <boost/spirit/include/karma_nonterminal.hpp>
+#include <boost/spirit/include/karma_directive.hpp>
+#include <boost/spirit/include/karma_auxiliary.hpp>
+#include <boost/spirit/include/karma_char.hpp>
+#include <boost/spirit/include/karma_operator.hpp>
+#include <boost/spirit/include/karma_numeric.hpp>
 
 #include <boost/spirit/include/phoenix.hpp>
 

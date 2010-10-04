@@ -54,7 +54,7 @@ def configure(conf):
   conf.env.CXXFLAGS  += ['-g']
 
 def build(bld):
-  bld.recurse('binary/profiler')
+  bld.recurse('lib/profiler')
   bld.recurse('test/profiler')
 
 if __name__ == '__main__':
