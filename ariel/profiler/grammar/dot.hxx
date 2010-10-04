@@ -20,6 +20,7 @@
 #include <boost/spirit/include/karma_char.hpp>
 #include <boost/spirit/include/karma_operator.hpp>
 #include <boost/spirit/include/karma_numeric.hpp>
+#include <boost/spirit/include/karma_string.hpp>
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -49,14 +50,26 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
   karma::rule<Iterator, ir::context(void)>
     context;
 
+  karma::symbols<char, char const*>
+    escape;
+
+  karma::rule<Iterator, std::string(void)>
+    string;
+
   karma::rule<Iterator, ir::node(void)>
-    get_node_name, get_node_links;
+    get_node, get_name, get_links;
 
   karma::rule<Iterator, std::list<ariel::ir::link>(ir::node)>
     links;
 
   karma::rule<Iterator, ir::link(ir::node)>
     link;
+
+  karma::rule<Iterator, std::map<std::string, std::string>(void)>
+    attributes;
+
+  karma::rule<Iterator, std::pair<std::string, std::string>(void)>
+    attribute;
 
   dot_grammar (void): dot_grammar::base_type(start) {
     start =
@@ -67,17 +80,37 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
         << karma::eol 
         << context 
         << karma::eol 
-        << (*get_node_links) 
+        << (*get_links) 
         << karma::eol 
         << "}" 
         << karma::eol
       ];
 
-    context = *(get_node_name << ";" << karma::eol);
+    context = *(get_node << ";" << karma::eol);
 
-    get_node_links = karma::skip[karma::string] << links(karma::_val);
- 
-    get_node_name = karma::string << karma::skip[links(karma::_val)];
+    escape.add
+      ('<', "&lt;")
+      ('>', "&gt;")
+      ('&', "&amp;");
+
+    string = *(escape | karma::char_);
+
+    karma::uint_generator<std::size_t> id;
+
+    get_node = 
+         karma::lit("n") << id
+      << "[shape=\"record\" label=<<TABLE>" << attributes << "</TABLE>>]"
+      << karma::skip[links(karma::_val)];
+    
+    get_name = 
+         karma::lit("n") << id
+      << karma::skip[attributes]
+      << karma::skip[links(karma::_val)];
+
+    get_links =
+         karma::skip[id]
+      << karma::skip[attributes]
+      << links(karma::_val);
 
     links = *link(karma::_r1);
 
@@ -85,7 +118,21 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
 
     // the skip here is temporary, we need to modify shape/color
     // of edges in dot according to relationship in ariel IR
-    link = get_node_name << " -> " << get_node_name << karma::skip[meta] << ";";
+    link =
+         get_name
+      << " -> "
+      << get_name
+      << karma::skip[meta]
+      << ";" << karma::eol;
+
+    attributes = *attribute;
+
+    attribute = 
+         karma::lit("<TR><TD>")
+      << string
+      << "</TD><TD>"
+      << string
+      << "</TD></TR>";
   }
 };
 

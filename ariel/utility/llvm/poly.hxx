@@ -11,9 +11,9 @@
 #if !defined(ARIEL_PP_POLY_HXX)
 #define ARIEL_PP_POLY_HXX
 
-#define ARIEL_IF_DYN_CAST(Derived, Var, Value)    \
-  Derived *Var = llvm::dyn_cast<Derived>(Value);  \
-  if (!Var)                                       \
+#define ARIEL_IF_NOT_DYN_CAST(Derived, Var, Value)  \
+  Derived *Var = llvm::dyn_cast<Derived>(Value);    \
+  if (!Var)                                         \
   /**/
 
 #endif // ARIEL_PP_POLY_HXX

@@ -1,0 +1,31 @@
+digraph {
+rankdir="BT";
+n418227160[shape="record" label=<<TABLE><TR><TD>name</TD><TD>if_&lt;struct is_same&lt;float, float&gt;, int, short&gt;</TD></TR></TABLE>>];
+n563860170[shape="record" label=<<TABLE><TR><TD>name</TD><TD>lazy_if&lt;struct is_same&lt;float, float&gt;, struct identity&lt;int&gt;, struct identity&lt;short&gt; &gt;</TD></TR></TABLE>>];
+n897571425[shape="record" label=<<TABLE><TR><TD>name</TD><TD>identity&lt;short&gt;</TD></TR></TABLE>>];
+n1451625291[shape="record" label=<<TABLE><TR><TD>name</TD><TD>bool_&lt;1&gt;</TD></TR></TABLE>>];
+n1978041342[shape="record" label=<<TABLE><TR><TD>name</TD><TD>lazy_if&lt;struct is_same&lt;float, double&gt;, struct identity&lt;int&gt;, struct identity&lt;short&gt; &gt;</TD></TR></TABLE>>];
+n2206450294[shape="record" label=<<TABLE><TR><TD>name</TD><TD>is_same&lt;float, double&gt;</TD></TR></TABLE>>];
+n2435734550[shape="record" label=<<TABLE><TR><TD>name</TD><TD>if_&lt;struct is_same&lt;float, double&gt;, int, short&gt;</TD></TR></TABLE>>];
+n2625472026[shape="record" label=<<TABLE><TR><TD>name</TD><TD>is_same&lt;float, float&gt;</TD></TR></TABLE>>];
+n2762470105[shape="record" label=<<TABLE><TR><TD>name</TD><TD>if_c&lt;1, int, short&gt;</TD></TR></TABLE>>];
+n2910871485[shape="record" label=<<TABLE><TR><TD>name</TD><TD>bool_&lt;0&gt;</TD></TR></TABLE>>];
+n3466006236[shape="record" label=<<TABLE><TR><TD>name</TD><TD>identity&lt;int&gt;</TD></TR></TABLE>>];
+n3636771054[shape="record" label=<<TABLE><TR><TD>name</TD><TD>lazy_if_c&lt;1, struct identity&lt;int&gt;, struct identity&lt;short&gt; &gt;</TD></TR></TABLE>>];
+n3842541376[shape="record" label=<<TABLE><TR><TD>name</TD><TD>if_c&lt;0, int, short&gt;</TD></TR></TABLE>>];
+n4107359874[shape="record" label=<<TABLE><TR><TD>name</TD><TD>lazy_if_c&lt;0, struct identity&lt;int&gt;, struct identity&lt;short&gt; &gt;</TD></TR></TABLE>>];
+
+n418227160 -> n2625472026;
+n563860170 -> n2625472026;
+n563860170 -> n3466006236;
+n563860170 -> n897571425;
+n1978041342 -> n2206450294;
+n1978041342 -> n3466006236;
+n1978041342 -> n897571425;
+n2435734550 -> n2206450294;
+n3636771054 -> n3466006236;
+n3636771054 -> n897571425;
+n4107359874 -> n3466006236;
+n4107359874 -> n897571425;
+
+}

@@ -11,6 +11,7 @@
 #include <ariel/profiler/grammar/dot.hxx>
 
 #include <ariel/ir/make_link.hxx>
+#include <ariel/ir/make_attribute.hxx>
 
 #include <iostream>
 
@@ -21,16 +22,17 @@ int main (void) {
   typedef profiler::dot_grammar<iterator> grammar; 
 
   ir::context cont;
-  ir::context::iterator A = cont.insert(cont.begin(), ir::node("A")),
-                        B = cont.insert(cont.begin(), ir::node("B")),
-                        C = cont.insert(cont.begin(), ir::node("C"));
-  
+  ir::context::iterator A = cont.insert(cont.begin(), ir::node(0)),
+                        B = cont.insert(cont.begin(), ir::node(1)),
+                        C = cont.insert(cont.begin(), ir::node(2));
+
+  ir::make_attribute(A, "name", "A");
+  ir::make_attribute(B, "name", "B");
+  ir::make_attribute(C, "name", "C");
+
   ir::make_link(C, A, ir::INHERITANCE);
   ir::make_link(C, B, ir::INHERITANCE);
   ir::make_link(B, A, ir::INHERITANCE);
-  //(*C).links.push_back(ir::link(C, A, ir::INHERITANCE));
-  //(*C).links.push_back(ir::link(C, B, ir::INHERITANCE));
-  //(*B).links.push_back(ir::link(B, A, ir::INHERITANCE));
 
   std::string generated;
   iterator sink(generated);

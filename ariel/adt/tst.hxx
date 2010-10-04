@@ -1,14 +1,16 @@
+//===-----------------------------------------------------------*- C++ -*-===//
 // Copyright 2010 Bryce Lelbach
-// Copyright (c) 2001-2010 Joel de Guzman (derived from Boost.Spirit's tst)
-// 
+// Copyright 2001-2010 Joel de Guzman 
+//
 // Use, modification and distribution of this software is subject to the Boost
 // Software License, Version 1.0.
 //
 // Relative to repository root: /credit/BOOST_LICENSE_1_0.rst
 // Online: http://www.boost.org/LICENSE_1_0.txt
+//===----------------------------------------------------------------------===//
 
-#if !defined(ARIEL_ADT_TST_HPP)
-#define ARIEL_ADT_TST_HPP
+#if !defined(ARIEL_ADT_TST_HXX)
+#define ARIEL_ADT_TST_HXX
 
 #include <memory>
 #include <list>
@@ -185,7 +187,7 @@ class tst {
   typedef typename Alloc<value_type>::difference_type difference_type;
   typedef typename Alloc<value_type>::size_type size_type;
  
-  // STL Associative Container 
+  // STL AssociativeContainer 
   typedef Key key_type;
 
   // STL DefaultConstructible 
@@ -243,6 +245,13 @@ class tst {
     typename key_type::const_iterator first = key.begin();
     iterator it = find(first, key.end());
     return std::make_pair(it, it);
+  }
+
+  // STL AssociativeContainer
+  size_type count (key_type const& key) const {
+    typename key_type::const_iterator first = key.begin();
+    iterator it = find(first, key.end());
+    return (it == end() ? 0 : 1);
   }
 
   // iterator-based insertation
@@ -305,9 +314,6 @@ class tst {
   // STL Container (this value is dependent on key sizes in reality)
   size_type max_size (void) const { return data_list.max_size(); }
   
-  // STL AssociativeContainer
-  size_type count (void) const { return data_list.count(); }
-
   // STL Container 
   iterator begin (void) const { return data_list.begin(); }
   
@@ -338,7 +344,6 @@ class tst {
   // data creation internal interface
   data_iterator* new_data (value_type val) {
     data_iterator* r = data_alloc.allocate(1);
-//    data_list.push_front(val);
     data_alloc.construct(r, data_list.insert(data_list.begin(), val));
     return r;
   }
@@ -369,4 +374,4 @@ Alloc<typename tst<Key, T, Alloc>::node_type> tst<Key, T, Alloc>::node_alloc;
 
 } // ariel
 
-#endif // ARIEL_ADT_TST_HPP
+#endif // ARIEL_ADT_TST_HXX

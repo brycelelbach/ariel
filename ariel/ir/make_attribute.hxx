@@ -8,10 +8,21 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
-#if !defined(ARIEL_PROFILER_FILTER_HXX)
-#define ARIEL_PROFILER_FILTER_HXX
+#if !defined(ARIEL_IR_MAKE_ATTRIBUTE_HXX)
+#define ARIEL_IR_MAKE_ATTRIBUTE_HXX
 
-#include <ariel/profiler/filters/null_filter.hxx>
-#include <ariel/profiler/filters/dependency_filter.hxx>
+#include <ariel/ir/node.hxx>
 
-#endif // ARIEL_PROFILER_FILTER_HXX
+namespace ariel {
+namespace ir {
+
+void make_attribute (
+  link::param_type node, std::string const& key, std::string const& val
+) {
+  (*node).attributes.insert(attributes::value_type(key, val));
+}
+
+} // ir 
+} // ariel
+
+#endif // ARIEL_IR_MAKE_ATTRIBUTE_HXX
