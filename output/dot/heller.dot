@@ -1,5 +1,6 @@
 digraph {
-rankdir="BT";
+//rankdir="BT";
+rankdir="LR";
 n418227160[shape="record" label=<<TABLE><TR><TD>name</TD><TD>if_&lt;struct is_same&lt;float, float&gt;, int, short&gt;</TD></TR></TABLE>>];
 n563860170[shape="record" label=<<TABLE><TR><TD>name</TD><TD>lazy_if&lt;struct is_same&lt;float, float&gt;, struct identity&lt;int&gt;, struct identity&lt;short&gt; &gt;</TD></TR></TABLE>>];
 n897571425[shape="record" label=<<TABLE><TR><TD>name</TD><TD>identity&lt;short&gt;</TD></TR></TABLE>>];
