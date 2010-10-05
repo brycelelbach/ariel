@@ -35,12 +35,16 @@ struct link_bases<clang::ClassTemplateSpecializationDecl, Filter> {
   static void call (
     ir::context& ariel_ctx, ir::context::iterator root, param_type x
   ) {
-    if (!x) return;
+    if (!x || !x->hasDefinition()) return;
 
-    iterator b_it  = x->bases_begin(),
-             b_end = x->bases_end(),
-             v_it  = x->vbases_begin(),
-             v_end = x->vbases_end();
+    clang::CXXRecordDecl* def = x->getDefinition();
+
+    if (!def) return; 
+
+    iterator b_it  = def->bases_begin(),
+             b_end = def->bases_end(),
+             v_it  = def->vbases_begin(),
+             v_end = def->vbases_end();
 
     for (; b_it !=  b_end; ++b_it) {
       clang::QualType qual = b_it->getType();
