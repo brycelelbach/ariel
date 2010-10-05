@@ -42,12 +42,20 @@ struct get_name<clang::ClassTemplateSpecializationDecl> {
   static value_type call (param_type x) {
     if (!x) return "";
   
+    #if 0
     clang::LangOptions LO;
     std::string name;
 
     x->getNameForDiagnostic(name, clang::PrintingPolicy(LO), true);
 
     return name;
+    #endif
+
+    clang::ClassTemplateDecl* decl = x->getSpecializedTemplate();
+
+    if (!decl) return "";
+
+    return decl->getNameAsString();
   }
 };
 

@@ -22,6 +22,7 @@
 #include <ariel/profiler/filters/get_name.hxx>
 #include <ariel/profiler/filters/get_id.hxx>
 #include <ariel/profiler/filters/link_children.hxx>
+#include <ariel/profiler/filters/link_bases.hxx>
 
 namespace ariel {
 namespace profiler {
@@ -70,6 +71,10 @@ class ARIEL_FILTER(dependency_filter, Writer):
     if (r.second == false) return r.first;
 
     link_children<target_type, dependency_filter>::call(
+      ariel_ctx, r.first, data
+    );
+
+    link_bases<target_type, dependency_filter>::call(
       ariel_ctx, r.first, data
     );
 
