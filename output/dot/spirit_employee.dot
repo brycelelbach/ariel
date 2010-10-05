@@ -1,5 +1,5 @@
 digraph {
-rankdir="LR";
+rankdir="BT";
 n47799[shape="record" label=<<TABLE><TR><TD>name</TD><TD>apply_transform</TD></TR></TABLE>>];
 n1294500[shape="record" label=<<TABLE><TR><TD>name</TD><TD>resolve_bind_arg</TD></TR></TABLE>>];
 n2357068[shape="record" label=<<TABLE><TR><TD>name</TD><TD>and_</TD></TR></TABLE>>];
