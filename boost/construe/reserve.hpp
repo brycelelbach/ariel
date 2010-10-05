@@ -8,6 +8,8 @@
 #ifndef BOOST_CONSTRUE_RESERVE_HPP
 #define BOOST_CONSTRUE_RESERVE_HPP
 
+#include <boost/construe/tag.hpp>
+
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
 #include <boost/optional.hpp>
@@ -44,14 +46,32 @@ namespace boost {
             };
 
             template <typename Type, typename Tag>
-            struct reserve_size_impl_integral;
-
-            template <typename Type>
-            struct reserve_size_impl_integral<Type, boost::spirit::unused_type> {
+            struct reserve_size_impl_integral {
                 BOOST_STATIC_CONSTANT(std::size_t, value =
                     std::numeric_limits<Type>::is_signed +
                     1 +
                     std::numeric_limits<Type>::digits10);
+            };
+
+            template <typename Type>
+            struct reserve_size_impl_integral<Type, tag::bin> {
+                BOOST_STATIC_CONSTANT(std::size_t, value =
+                    1 +
+                    std::numeric_limits<Type>::digits);
+            };
+
+            template <typename Type>
+            struct reserve_size_impl_integral<Type, tag::oct> {
+                BOOST_STATIC_CONSTANT(std::size_t, value =
+                    1 +
+                    (std::numeric_limits<Type>::digits / 3));
+            };
+
+            template <typename Type>
+            struct reserve_size_impl_integral<Type, tag::hex> {
+                BOOST_STATIC_CONSTANT(std::size_t, value =
+                    1 +
+                    (std::numeric_limits<Type>::digits / 4));
             };
 
             template <typename Tag>
