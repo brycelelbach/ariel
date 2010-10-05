@@ -15,14 +15,10 @@
 #include <clang/AST/AST.h>
 
 #include <ariel/ir/node.hxx>
-#include <ariel/ir/make_attribute.hxx>
 #include <ariel/utility/llvm.hxx>
 #include <ariel/profiler/traits.hxx>
 #include <ariel/profiler/filters/filter_builder.hxx>
-#include <ariel/profiler/filters/get_name.hxx>
-#include <ariel/profiler/filters/get_id.hxx>
-#include <ariel/profiler/filters/link_children.hxx>
-#include <ariel/profiler/filters/link_bases.hxx>
+#include <ariel/profiler/filters/add_node.hxx>
 
 namespace ariel {
 namespace profiler {
@@ -55,32 +51,12 @@ class ARIEL_FILTER(dependency_filter, Writer):
       typename ClangContext::type_iterator, it, end, clang_ctx, types_
     ) {
       ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, *it) continue;
-      ARIEL_IF_NOT_DYN_CAST(target_type, decl, rec->getDecl()) continue;
+      ARIEL_IF_NOT_DYN_CAST(target_type, data, rec->getDecl()) continue;
       
-      add(ariel_ctx, decl);
+      add_node<target_type>::call(ariel_ctx, data);
     }
 
     static_cast<writer_type*>(this)->call(clang_ctx, ariel_ctx);
-  }
-
-  static ir::context::iterator add (ir::context& ariel_ctx, target_type* data) {
-    std::pair<ir::context::iterator, bool> r = ariel_ctx.insert(
-      ir::node(get_id<target_type>::call(data))
-    );
-
-    if (r.second == false) return r.first;
-
-    link_children<target_type, dependency_filter>::call(
-      ariel_ctx, r.first, data
-    );
-
-    link_bases<target_type, dependency_filter>::call(
-      ariel_ctx, r.first, data
-    );
-
-    ir::make_attribute(r.first, "name", get_name<target_type>::call(data));
-
-    return r.first;
   }
 };
 

@@ -13,14 +13,15 @@ Boost online: http://www.boost.org/LICENSE_1_0.txt
 """
 
 def build(bld):
-  bld.new_task_gen(
-    features     = ['cxx', 'cprogram'], 
-    source       = 'dot_grammar.cxx',
-    includes     = [bld.srcnode.abspath()],
-    target       = 'dot_grammar',
-    vnum         = bld.env.ARIEL,
-    cxxflags     = ['-Wall', '-pedantic']
-  );
+  pass
+#  bld.new_task_gen(
+#    features     = ['cxx', 'cprogram'], 
+#    source       = 'dot_grammar.cxx',
+#    includes     = [bld.srcnode.abspath()],
+#    target       = 'dot_grammar',
+#    vnum         = bld.env.ARIEL,
+#    cxxflags     = ['-Wall', '-pedantic']
+#  );
 
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'

@@ -14,14 +14,30 @@
 #include <map>
 #include <list>
 
+#include <boost/fusion/container/vector.hpp>
+#include <boost/fusion/include/vector.hpp>
+#include <boost/fusion/container/vector/vector_fwd.hpp>
+#include <boost/fusion/include/vector_fwd.hpp>
+#include <boost/fusion/sequence/comparison.hpp>
+#include <boost/fusion/include/comparison.hpp>
+#include <boost/fusion/sequence/intrinsic/at_c.hpp>
+#include <boost/fusion/include/at_c.hpp>
+
+#include <ariel/ir/kind.hxx>
 #include <ariel/ir/link.hxx>
 
 namespace ariel {
+
+namespace fusion = boost::fusion;
+
 namespace ir {
+
+// first integral contains the kind, second contains the hash
+typedef fusion::vector2<std::size_t, std::size_t> unique_id; 
 
 struct node {
  public:
-  std::size_t id;
+  unique_id id;
   // temporary use of map until tst has been tested more extensively
   mutable std::map<std::string, std::string> attributes;
   // sets don't provide mutable keys; links isn't used for
@@ -29,11 +45,11 @@ struct node {
   mutable std::list<link> links;
 
   // STL DefaultConstructible
-  node (void): id(0), attributes(), links() { }
+  node (void): id(), attributes(), links() { }
 
-  node (std::size_t new_id): id(new_id), links() { } 
+  node (unique_id new_id): id(new_id), links() { } 
 
-  node (link::value_type const& it): id(0) {
+  node (link::value_type const& it): id() {
     id = (*it).id;
     attributes = (*it).attributes;
     links = (*it).links;
@@ -73,7 +89,7 @@ typedef std::map<std::string, std::string> attributes;
 
 BOOST_FUSION_ADAPT_STRUCT(
   ariel::ir::node,
-  (std::size_t, id)
+  (ariel::ir::unique_id, id)
   (ariel::ir::attributes, attributes)
   (std::list<ariel::ir::link>, links)
 )

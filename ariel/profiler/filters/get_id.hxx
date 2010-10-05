@@ -13,8 +13,9 @@
 
 #include <clang/AST/AST.h>
 
-#include <boost/cstdint.hpp>
-#include <boost/call_traits.hpp>
+#include <boost/type_traits.hpp>
+
+#include <ariel/profiler/filters/filter_builder.hxx>
 
 namespace ariel {
 namespace profiler {
@@ -24,25 +25,33 @@ struct get_id;
 
 template<>
 struct get_id<clang::Type> {
-  typedef typename boost::call_traits<clang::Type*>::param_type param_type;
-  typedef std::size_t value_type;
+  typedef clang::Type target;
 
-  static value_type call (param_type x) {
+  typedef std::size_t result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
     if (!x) return 0;
     
     typedef llvm::PointerLikeTypeTraits<clang::QualType> traits;
-    return (value_type) traits::getAsVoidPointer(x->getCanonicalTypeInternal());
+    return (result) traits::getAsVoidPointer(x->getCanonicalTypeInternal());
   }
 };
 
 template<>
 struct get_id<clang::ClassTemplateSpecializationDecl> {
-  typedef typename boost::call_traits<
-    clang::ClassTemplateSpecializationDecl*
-  >::param_type param_type;
-  typedef std::size_t value_type;
+  typedef clang::ClassTemplateSpecializationDecl target;
 
-  static value_type call (param_type x) {
+  typedef std::size_t result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
     if (!x) return 0;
     
     llvm::FoldingSetNodeID id;

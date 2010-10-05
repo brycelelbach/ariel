@@ -34,11 +34,11 @@
 
 #include <ariel/ir/node.hxx>
 
+namespace ariel {
+
 namespace karma = boost::spirit::karma;
 namespace px = boost::phoenix;
-namespace fusion = boost::fusion;
 
-namespace ariel {
 namespace profiler {
 
 template<class Iterator>
@@ -58,6 +58,9 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
 
   karma::rule<Iterator, ir::node(void)>
     get_node, get_name, get_links;
+
+  karma::rule<Iterator, ir::unique_id(void)>
+    id;
 
   karma::rule<Iterator, std::list<ariel::ir::link>(ir::node)>
     links;
@@ -95,22 +98,24 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
 
     string = *(escape | karma::char_);
 
-    karma::uint_generator<std::size_t> id;
-
     get_node = 
-         karma::lit("n") << id
-      << "[shape=\"record\" label=<<TABLE>" << attributes << "</TABLE>>]"
+         karma::lit("n") << id 
+      << "[label=\"" << attributes << "\"]"
       << karma::skip[links(karma::_val)];
     
     get_name = 
-         karma::lit("n") << id
+         karma::lit("n") << id 
       << karma::skip[attributes]
       << karma::skip[links(karma::_val)];
 
     get_links =
-         karma::skip[id]
+         karma::skip[id] 
       << karma::skip[attributes]
       << links(karma::_val);
+
+    karma::uint_generator<std::size_t> id_element;
+
+    id = id_element << id_element;
 
     links = *link(karma::_r1);
 
@@ -127,12 +132,7 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
 
     attributes = *attribute;
 
-    attribute = 
-         karma::lit("<TR><TD>")
-      << string
-      << "</TD><TD>"
-      << string
-      << "</TD></TR>";
+    attribute = karma::omit[string] << string;
   }
 };
 

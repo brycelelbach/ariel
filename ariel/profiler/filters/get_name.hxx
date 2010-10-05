@@ -13,7 +13,9 @@
 
 #include <clang/AST/AST.h>
 
-#include <boost/call_traits.hpp>
+#include <boost/type_traits.hpp>
+
+#include <ariel/profiler/filters/filter_builder.hxx>
 
 namespace ariel {
 namespace profiler {
@@ -23,10 +25,15 @@ struct get_name;
 
 template<>
 struct get_name<clang::Type> {
-  typedef typename boost::call_traits<clang::Type*>::param_type param_type;
-  typedef std::string value_type;
+  typedef clang::Type target;
 
-  static value_type call (param_type x) {
+  typedef std::string result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
     if (!x) return "";
     return x->getCanonicalTypeInternal().getAsString();
   }
@@ -34,22 +41,16 @@ struct get_name<clang::Type> {
 
 template<>
 struct get_name<clang::ClassTemplateSpecializationDecl> {
-  typedef typename boost::call_traits<
-    clang::ClassTemplateSpecializationDecl*
-  >::param_type param_type;
-  typedef std::string value_type;
+  typedef clang::ClassTemplateSpecializationDecl target;
 
-  static value_type call (param_type x) {
+  typedef std::string result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
     if (!x) return "";
-  
-    #if 0
-    clang::LangOptions LO;
-    std::string name;
-
-    x->getNameForDiagnostic(name, clang::PrintingPolicy(LO), true);
-
-    return name;
-    #endif
 
     clang::ClassTemplateDecl* decl = x->getSpecializedTemplate();
 

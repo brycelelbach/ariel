@@ -8,38 +8,37 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
-#if !defined(ARIEL_PROFILER_LINK_BASES_HXX)
+// include by including add_node.hxx
+#if !defined(ARIEL_PROFILER_LINK_BASES_HXX) \
+    && defined(ARIEL_PROFILER_ADD_NODE_HXX)
 #define ARIEL_PROFILER_LINK_BASES_HXX
-
-#include <clang/AST/AST.h>
-
-#include <boost/call_traits.hpp>
-
-#include <ariel/ir/node.hxx>
-#include <ariel/ir/make_link.hxx>
-#include <ariel/utility/llvm.hxx>
 
 namespace ariel {
 namespace profiler {
 
-template<class ASTNode, class Filter>
+template<class ASTNode>
 struct link_bases;
 
-template<class Filter>
-struct link_bases<clang::ClassTemplateSpecializationDecl, Filter> {
-  typedef clang::ClassTemplateSpecializationDecl target_type;
-  typedef typename boost::call_traits<target_type*>::param_type param_type;
+template<>
+struct link_bases<clang::ClassTemplateSpecializationDecl> {
+  typedef clang::ClassTemplateSpecializationDecl target;
 
-  typedef clang::CXXRecordDecl::base_class_iterator iterator;
+  typedef void result;
 
-  static void call (
-    ir::context& ariel_ctx, ir::context::iterator root, param_type x
-  ) {
+  ARIEL_3ARY_CALL_PARAMS(
+    boost::add_reference<ir::context>::type,
+    ir::context::iterator,
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_3ARY_CALL(ariel_ctx, root, x) {
     if (!x || !x->hasDefinition()) return;
 
     clang::CXXRecordDecl* def = x->getDefinition();
 
     if (!def) return; 
+
+    typedef clang::CXXRecordDecl::base_class_iterator iterator;
 
     iterator b_it  = def->bases_begin(),
              b_end = def->bases_end(),
@@ -57,10 +56,15 @@ struct link_bases<clang::ClassTemplateSpecializationDecl, Filter> {
       // retrieve the canonical type (e.g. record)
       clang::QualType canon = type->getCanonicalTypeInternal();
       
-      ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, canon.getTypePtr()) continue;
-      ARIEL_IF_NOT_DYN_CAST(target_type, decl, rec->getDecl()) continue;
+      ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, canon.getTypePtr())
+        continue;
+
+      ARIEL_IF_NOT_DYN_CAST(target, data, rec->getDecl())
+        continue;
       
-      ir::make_link(root, Filter::add(ariel_ctx, decl), ir::INHERITANCE);
+      ir::make_link(
+        root, add_node<target>::call(ariel_ctx, data), ir::INHERITANCE
+      );
     } 
 
     for (; v_it !=  v_end; ++v_it) {
@@ -74,10 +78,15 @@ struct link_bases<clang::ClassTemplateSpecializationDecl, Filter> {
       // retrieve the canonical type (e.g. record)
       clang::QualType canon = type->getCanonicalTypeInternal();
       
-      ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, canon.getTypePtr()) continue;
-      ARIEL_IF_NOT_DYN_CAST(target_type, decl, rec->getDecl()) continue;
+      ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, canon.getTypePtr())
+        continue;
+
+      ARIEL_IF_NOT_DYN_CAST(target, data, rec->getDecl())
+        continue;
       
-      ir::make_link(root, Filter::add(ariel_ctx, decl), ir::INHERITANCE);
+      ir::make_link(
+        root, add_node<target>::call(ariel_ctx, data), ir::INHERITANCE
+      );
     } 
   }
 };
