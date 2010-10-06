@@ -77,6 +77,23 @@ struct get_name<clang::ClassTemplateSpecializationDecl> {
   }
 };
 
+template<>
+struct get_name<llvm::APSInt> {
+  typedef llvm::APSInt target;
+
+  typedef std::string result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_pointer<boost::add_const<target>::type>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
+    if (!x) return "";
+
+    return std::string("0x") + x->toString(16);
+  }
+};
+
 } // profiler
 } // ariel
 

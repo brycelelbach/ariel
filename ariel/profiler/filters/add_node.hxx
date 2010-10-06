@@ -85,6 +85,20 @@ struct add_node<clang::ClassTemplateSpecializationDecl> {
   ARIEL_2ARY_CALL(ariel_ctx, x);
 };
 
+template<>
+struct add_node<llvm::APSInt> {
+  typedef llvm::APSInt target;
+
+  typedef ir::context::iterator result;
+
+  ARIEL_2ARY_CALL_PARAMS(
+    boost::add_reference<ir::context>::type,
+    boost::add_pointer<boost::add_const<target>::type>::type
+  );
+
+  ARIEL_2ARY_CALL(ariel_ctx, x);
+};
+
 } // profiler
 } // ariel
 
@@ -140,6 +154,20 @@ ARIEL_2ARY_CALL_DEF(
   link_parameters<target>::call(ariel_ctx, r.first, x);
 
   link_bases<target>::call(ariel_ctx, r.first, x);
+
+  return r.first;
+}
+
+ARIEL_2ARY_CALL_DEF(
+  add_node, llvm::APSInt, ariel_ctx, x
+) {
+  ir::unique_id id(ir::INTEGRAL, get_id<target>::call(x));
+
+  std::pair<ir::context::iterator, bool> r = ariel_ctx.insert(ir::node(id));
+
+  if (r.second == false) return r.first;
+
+  ir::make_attribute(r.first, "name", get_name<target>::call(x));
 
   return r.first;
 }

@@ -67,6 +67,15 @@ struct link_parameters<clang::ClassTemplateSpecializationDecl> {
             root, add_node<target>::call(ariel_ctx, data), ir::PARAMETRIC
           );
         } break;
+        case clang::TemplateArgument::Integral: {
+          llvm::APSInt const* data = arg.getAsIntegral();
+
+          if (!data) break;
+
+          ir::make_link(
+            root, add_node<llvm::APSInt>::call(ariel_ctx, data), ir::PARAMETRIC
+          );
+        } break;
         default: break; 
       }
     }

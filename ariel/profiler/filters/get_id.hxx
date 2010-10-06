@@ -78,6 +78,25 @@ struct get_id<clang::ClassTemplateSpecializationDecl> {
   }
 };
 
+template<>
+struct get_id<llvm::APSInt> {
+  typedef llvm::APSInt target;
+
+  typedef std::size_t result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_pointer<boost::add_const<target>::type>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
+    if (!x) return 0;
+    
+    llvm::FoldingSetNodeID id;
+    x->Profile(id);
+    return id.ComputeHash();
+  }
+};
+
 } // profiler
 } // ariel
 
