@@ -47,15 +47,24 @@ namespace boost {
             struct construe_cast {
                 static inline Target const
                 call(Source const & source) {
-                    return do_call(
+                    Target target = Target();
+
+                    bool result = do_call(
+                        target,
                         source,
                         traits::is_iterable<Source>(),
                         boost::spirit::traits::is_container<Target>());
+
+                    if (!result)
+                        throw boost::bad_construe_cast();
+
+                    return target;
                 }
  
                 private:
-                    static inline Target const
+                    static inline bool const
                     do_call(
+                        Target & target,
                         Source const & source,
                         boost::mpl::true_ const,
                         bool const
@@ -66,9 +75,7 @@ namespace boost {
                         iterable_t iterable(source);
 
                         if (iterable.size() < 1)
-                            throw boost::bad_construe_cast();
-
-                        Target target = Target();
+                            return false;
 
                         call_reserve(target, iterable.size());
 
@@ -76,22 +83,21 @@ namespace boost {
                         iterator_t end = iterable.end();
 
                         bool result = boost::spirit::qi::parse(
-                            iterator, end, boost::construe::detail::tag_type<Target, Tag>::call(target));
+                            iterator, end, tag_type<Target, Tag>::call(target));
 
                         if (!result || !((iterator < end && *iterator == 0) || iterator == end))
-                            throw boost::bad_construe_cast();
+                            return false;
 
-                        return target;
+                        return true;
                     }
 
-                    static inline Target const
+                    static inline bool const
                     do_call(
+                        Target & target,
                         Source const & source,
                         boost::mpl::false_ const,
                         boost::mpl::true_ const
                     ) {
-                        Target target = Target();
-
                         call_reserve(target, traits::reserve_size<Source, Tag>::call(source));
 
                         std::back_insert_iterator<Target> iterator(target);
@@ -100,16 +106,14 @@ namespace boost {
 #if SPIRIT_VERSION <= 0x2030
                             boost::spirit::karma::auto_,
 #endif
-                            boost::construe::detail::tag_type<Source const, Tag>::call(source));
+                            tag_type<Source const, Tag>::call(source));
 
-                        if (!result)
-                            throw boost::bad_construe_cast();
-
-                        return target;
+                        return result;
                     }
 
                     static inline Target const
                     do_call(
+                        Target & target,
                         Source const & source,
                         boost::mpl::false_ const,
                         boost::mpl::false_ const
