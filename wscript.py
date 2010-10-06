@@ -55,7 +55,6 @@ def configure(conf):
 
 def build(bld):
   bld.recurse('lib/profiler')
-  bld.recurse('test/profiler')
 
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'

@@ -8,22 +8,22 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
-#if !defined(ARIEL_PROFILER_DOT_WRITER_HXX)
-#define ARIEL_PROFILER_DOT_WRITER_HXX
+#if !defined(ARIEL_PROFILER_NAIVE_DOT_WRITER_HXX)
+#define ARIEL_PROFILER_NAIVE_DOT_WRITER_HXX
 
 #include <iostream>
 
 #include <ariel/profiler/traits.hxx>
 #include <ariel/profiler/writers/writer_builder.hxx>
-#include <ariel/profiler/grammar/dot.hxx>
+#include <ariel/profiler/grammar/naive_dot.hxx>
 
 namespace ariel {
 namespace profiler {
 
 ARIEL_WRITER_PARAMS(Filter)
-class dot_writer: public Filter<dot_writer<Filter> > {
+class naive_dot_writer: public Filter<naive_dot_writer<Filter> > {
  public:
-  typedef production_traits<dot_writer> traits;
+  typedef production_traits<naive_dot_writer> traits;
 
   typedef typename traits::writer_type   writer_type;
   typedef typename traits::filter_type   filter_type;
@@ -35,7 +35,7 @@ class dot_writer: public Filter<dot_writer<Filter> > {
     
     std::string generated;
     iterator sink(generated);
-    dot_grammar<iterator> gram;
+    naive_dot_grammar<iterator> gram;
   
     if (!karma::generate(sink, gram, ariel_ctx))
       std::cout << "generation failed\n";
@@ -48,4 +48,4 @@ class dot_writer: public Filter<dot_writer<Filter> > {
 } // profiler
 } // ariel
 
-#endif // ARIEL_PROFILER_DOT_WRITER_HXX
+#endif // ARIEL_PROFILER_NAIVE_DOT_WRITER_HXX

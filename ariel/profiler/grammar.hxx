@@ -11,6 +11,7 @@
 #if !defined(ARIEL_PROFILER_GRAMMAR_HXX)
 #define ARIEL_PROFILER_GRAMMAR_HXX
 
-#include <ariel/profiler/grammar/dot.hxx>
+#include <ariel/profiler/grammar/naive_dot.hxx>
+#include <ariel/profiler/grammar/cross_dot.hxx>
 
 #endif // ARIEL_PROFILER_GRAMMAR_HXX

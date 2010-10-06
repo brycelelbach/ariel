@@ -9,8 +9,8 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
-#if !defined(ARIEL_PROFILER_DOT_GRAMMAR_HXX)
-#define ARIEL_PROFILER_DOT_GRAMMAR_HXX
+#if !defined(ARIEL_PROFILER_NAIVE_DOT_GRAMMAR_HXX)
+#define ARIEL_PROFILER_NAIVE_DOT_GRAMMAR_HXX
 
 #include <boost/spirit/include/karma_action.hpp>
 #include <boost/spirit/include/karma_string.hpp>
@@ -42,7 +42,7 @@ namespace px = boost::phoenix;
 namespace profiler {
 
 template<class Iterator>
-struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
+struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
  public:
   karma::rule<Iterator, ir::context(void)>
     start;
@@ -50,22 +50,19 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
   karma::rule<Iterator, ir::context(void)>
     context;
 
-  karma::symbols<char, char const*>
-    escape;
-
-  karma::rule<Iterator, std::string(void)>
-    string;
-
   karma::rule<Iterator, ir::node(void)>
-    get_node, get_name, get_links;
+    get_node;
+
+  karma::rule<Iterator, ir::node(unsigned)>
+    get_name;
 
   karma::rule<Iterator, ir::unique_id(void)>
     id;
 
-  karma::rule<Iterator, std::list<ariel::ir::link>(ir::node)>
+  karma::rule<Iterator, std::list<ariel::ir::link>(unsigned)>
     links;
 
-  karma::rule<Iterator, ir::link(ir::node)>
+  karma::rule<Iterator, ir::link(unsigned)>
     link;
 
   karma::rule<Iterator, std::map<std::string, std::string>(void)>
@@ -74,44 +71,33 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
   karma::rule<Iterator, std::pair<std::string, std::string>(void)>
     attribute;
 
-  dot_grammar (void): dot_grammar::base_type(start) {
+  unsigned count;
+
+  naive_dot_grammar (void): naive_dot_grammar::base_type(start), count(1) {
     start =
-      karma::duplicate[
-           karma::lit("digraph {") 
-        << karma::eol 
-        << "rankdir=\"BT\";" 
-        << karma::eol 
-        << context 
-        << karma::eol 
-        << (*get_links) 
-        << karma::eol 
-        << "}" 
-        << karma::eol
-      ];
+         karma::lit("digraph {") 
+      << karma::eol 
+      << "rankdir=\"BT\";" 
+      << karma::eol 
+      << context 
+      << karma::eol 
+      << "}" 
+      << karma::eol;
 
-    context = *(get_node << ";" << karma::eol);
-
-    escape.add
-      ('<', "&lt;")
-      ('>', "&gt;")
-      ('&', "&amp;");
-
-    string = *(escape | karma::char_);
+    context = *(get_node);
 
     get_node = 
-         karma::lit("n") << id 
-      << "[label=\"" << attributes << "\"]"
-      << karma::skip[links(karma::_val)];
+         karma::lit("n") << id
+      << karma::lit("_") << karma::lit(px::ref(count)++)
+      << "[label=\"" << attributes << "\"];"
+      << karma::eol
+      << links(px::val(count));
     
     get_name = 
          karma::lit("n") << id 
+      << karma::lit("_") << karma::lit(karma::_r1)
       << karma::skip[attributes]
-      << karma::skip[links(karma::_val)];
-
-    get_links =
-         karma::skip[id] 
-      << karma::skip[attributes]
-      << links(karma::_val);
+      << karma::skip[links(px::val(count))];
 
     karma::uint_generator<std::size_t> id_element;
 
@@ -124,20 +110,20 @@ struct dot_grammar: karma::grammar<Iterator, ir::context(void)> {
     // the skip here is temporary, we need to modify shape/color
     // of edges in dot according to relationship in ariel IR
     link =
-         get_name
+         get_name(karma::_r1)
       << " -> "
-      << get_name
+      << get_name(karma::_r1)
       << karma::skip[meta]
       << ";" << karma::eol;
 
     attributes = *attribute;
 
-    attribute = karma::omit[string] << string;
+    attribute = karma::omit[karma::string] << karma::string;
   }
 };
 
 } // profiler
 } // ariel
 
-#endif // ARIEL_PROFILER_DOT_GRAMMAR_HXX
+#endif // ARIEL_PROFILER_NAIVE_DOT_GRAMMAR_HXX
 

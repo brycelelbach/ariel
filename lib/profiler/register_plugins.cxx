@@ -16,5 +16,17 @@
 
 using namespace ariel::profiler;
 
-static clang::FrontendPluginRegistry::Add<plugin<dot_writer<dependency_filter> > >
-C("ariel-dot-dependencies", "Profile template instantiation dependencies (dot output)");
+static clang::FrontendPluginRegistry::Add<plugin<
+  naive_dot_writer<dependency_filter> >
+> ariel_naive_costs(
+  "ariel-naive-costs",
+  "Generate DOT output describing template instantiation costs (naive style)"
+);
+
+static clang::FrontendPluginRegistry::Add<plugin<
+  cross_dot_writer<dependency_filter> >
+> ariel_cross_costs(
+  "ariel-cross-costs",
+  "Generate DOT output describing template instantiation costs (cross style)"
+);
+
