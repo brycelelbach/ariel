@@ -30,6 +30,48 @@ template<class ASTNode>
 struct add_node;
 
 template<>
+struct add_node<clang::Type> {
+  typedef clang::Type target;
+
+  typedef ir::context::iterator result;
+
+  ARIEL_2ARY_CALL_PARAMS(
+    boost::add_reference<ir::context>::type,
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_2ARY_CALL(ariel_ctx, x);
+};
+
+template<>
+struct add_node<clang::RecordType> {
+  typedef clang::RecordType target;
+
+  typedef ir::context::iterator result;
+
+  ARIEL_2ARY_CALL_PARAMS(
+    boost::add_reference<ir::context>::type,
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_2ARY_CALL(ariel_ctx, x);
+};
+
+template<>
+struct add_node<clang::CXXRecordDecl> {
+  typedef clang::CXXRecordDecl target;
+
+  typedef ir::context::iterator result;
+
+  ARIEL_2ARY_CALL_PARAMS(
+    boost::add_reference<ir::context>::type,
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_2ARY_CALL(ariel_ctx, x);
+};
+
+template<>
 struct add_node<clang::ClassTemplateSpecializationDecl> {
   typedef clang::ClassTemplateSpecializationDecl target;
 
@@ -53,6 +95,38 @@ namespace ariel {
 namespace profiler {
 
 ARIEL_2ARY_CALL_DEF(
+  add_node, clang::Type, ariel_ctx, x
+) {
+  ir::unique_id id(ir::TYPE, get_id<target>::call(x));
+
+  std::pair<ir::context::iterator, bool> r = ariel_ctx.insert(ir::node(id));
+
+  if (r.second == false) return r.first;
+
+  ir::make_attribute(r.first, "name", get_name<target>::call(x));
+
+  return r.first;
+}
+
+ARIEL_2ARY_CALL_DEF(
+  add_node, clang::RecordType, ariel_ctx, x
+) {
+  ir::unique_id id(ir::TYPE, get_id<target>::call(x));
+
+  std::pair<ir::context::iterator, bool> r = ariel_ctx.insert(ir::node(id));
+
+  if (r.second == false) return r.first;
+  
+  ir::make_attribute(r.first, "name", get_name<target>::call(x));
+  
+  ARIEL_IF_NOT_DYN_CAST(clang::CXXRecordDecl, y, x->getDecl()) return r.first;
+
+  link_bases<clang::CXXRecordDecl>::call(ariel_ctx, r.first, y);
+
+  return r.first;
+}
+
+ARIEL_2ARY_CALL_DEF(
   add_node, clang::ClassTemplateSpecializationDecl, ariel_ctx, x
 ) {
   ir::unique_id id(ir::TEMPLATE | ir::CLASS, get_id<target>::call(x));
@@ -61,11 +135,11 @@ ARIEL_2ARY_CALL_DEF(
 
   if (r.second == false) return r.first;
 
+  ir::make_attribute(r.first, "name", get_name<target>::call(x));
+  
   link_parameters<target>::call(ariel_ctx, r.first, x);
 
   link_bases<target>::call(ariel_ctx, r.first, x);
-
-  ir::make_attribute(r.first, "name", get_name<target>::call(x));
 
   return r.first;
 }

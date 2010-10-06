@@ -40,12 +40,28 @@ struct link_parameters<clang::ClassTemplateSpecializationDecl> {
       switch (arg.getKind()) {
         case clang::TemplateArgument::Type: {
           clang::QualType qual = arg.getAsType();
-          
-          ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, qual.getTypePtr())
-            break;
+         
+          clang::Type* type = qual.getTypePtr();
 
-          ARIEL_IF_NOT_DYN_CAST(target, data, rec->getDecl())
+          if (!type) break;
+ 
+          ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, type) {
+            ir::make_link(
+              root,
+              add_node<clang::Type>::call(ariel_ctx, type),
+              ir::PARAMETRIC
+            );
             break;
+          }
+
+          ARIEL_IF_NOT_DYN_CAST(target, data, rec->getDecl()) {
+            ir::make_link(
+              root,
+              add_node<clang::RecordType>::call(ariel_ctx, rec),
+              ir::PARAMETRIC
+            );
+            break;
+          }
           
           ir::make_link(
             root, add_node<target>::call(ariel_ctx, data), ir::PARAMETRIC

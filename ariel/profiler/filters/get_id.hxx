@@ -42,6 +42,24 @@ struct get_id<clang::Type> {
 };
 
 template<>
+struct get_id<clang::RecordType> {
+  typedef clang::RecordType target;
+
+  typedef std::size_t result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
+    if (!x) return 0;
+    
+    typedef llvm::PointerLikeTypeTraits<clang::QualType> traits;
+    return (result) traits::getAsVoidPointer(x->getCanonicalTypeInternal());
+  }
+};
+
+template<>
 struct get_id<clang::ClassTemplateSpecializationDecl> {
   typedef clang::ClassTemplateSpecializationDecl target;
 

@@ -40,6 +40,22 @@ struct get_name<clang::Type> {
 };
 
 template<>
+struct get_name<clang::RecordType> {
+  typedef clang::RecordType target;
+
+  typedef std::string result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_pointer<target>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
+    if (!x) return "";
+    return x->getCanonicalTypeInternal().getAsString();
+  }
+};
+
+template<>
 struct get_name<clang::ClassTemplateSpecializationDecl> {
   typedef clang::ClassTemplateSpecializationDecl target;
 
@@ -56,6 +72,7 @@ struct get_name<clang::ClassTemplateSpecializationDecl> {
 
     if (!decl) return "";
 
+    // FIXME: make nested name specifiers show up
     return decl->getNameAsString();
   }
 };
