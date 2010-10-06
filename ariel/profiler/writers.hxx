@@ -12,6 +12,7 @@
 #define ARIEL_PROFILER_WRITERS_HXX
 
 #include <ariel/profiler/writers/null_writer.hxx>
-#include <ariel/profiler/writers/dot_writer.hxx>
+#include <ariel/profiler/writers/naive_dot_writer.hxx>
+#include <ariel/profiler/writers/cross_dot_writer.hxx>
 
 #endif // ARIEL_PROFILER_WRITERS_HXX
