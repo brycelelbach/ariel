@@ -58,20 +58,6 @@ struct add_node<clang::RecordType> {
 };
 
 template<>
-struct add_node<clang::CXXRecordDecl> {
-  typedef clang::CXXRecordDecl target;
-
-  typedef ir::context::iterator result;
-
-  ARIEL_2ARY_CALL_PARAMS(
-    boost::add_reference<ir::context>::type,
-    boost::add_pointer<target>::type
-  );
-
-  ARIEL_2ARY_CALL(ariel_ctx, x);
-};
-
-template<>
 struct add_node<clang::ClassTemplateSpecializationDecl> {
   typedef clang::ClassTemplateSpecializationDecl target;
 

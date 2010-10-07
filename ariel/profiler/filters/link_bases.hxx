@@ -20,8 +20,8 @@ template<class ASTNode>
 struct link_bases;
 
 template<>
-struct link_bases<clang::CXXRecordDecl> {
-  typedef clang::CXXRecordDecl target;
+struct link_bases<clang::ClassTemplateSpecializationDecl> {
+  typedef clang::ClassTemplateSpecializationDecl target;
 
   typedef void result;
 
@@ -92,8 +92,8 @@ struct link_bases<clang::CXXRecordDecl> {
 };
 
 template<>
-struct link_bases<clang::ClassTemplateSpecializationDecl> {
-  typedef clang::ClassTemplateSpecializationDecl target;
+struct link_bases<clang::CXXRecordDecl> {
+  typedef clang::CXXRecordDecl target;
 
   typedef void result;
 
@@ -105,6 +105,11 @@ struct link_bases<clang::ClassTemplateSpecializationDecl> {
 
   ARIEL_3ARY_CALL(ariel_ctx, root, x) {
     if (!x || !x->hasDefinition()) return;
+    
+    ARIEL_IF_DYN_CAST(clang::ClassTemplateSpecializationDecl, temp, x)
+      link_bases<clang::ClassTemplateSpecializationDecl>::call(
+        ariel_ctx, root, temp
+      );
 
     clang::CXXRecordDecl* def = x->getDefinition();
 
@@ -128,14 +133,11 @@ struct link_bases<clang::ClassTemplateSpecializationDecl> {
       // retrieve the canonical type (e.g. record)
       clang::QualType canon = type->getCanonicalTypeInternal();
       
-      ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, canon.getTypePtr())
+      ARIEL_IF_NOT_DYN_CAST(clang::RecordType, data, canon.getTypePtr())
         continue;
 
-      ARIEL_IF_NOT_DYN_CAST(target, data, rec->getDecl())
-        continue;
-      
       ir::make_link(
-        root, add_node<target>::call(ariel_ctx, data), ir::INHERITANCE
+        root, add_node<clang::RecordType>::call(ariel_ctx, data), ir::INHERITANCE
       );
     } 
 
@@ -150,14 +152,11 @@ struct link_bases<clang::ClassTemplateSpecializationDecl> {
       // retrieve the canonical type (e.g. record)
       clang::QualType canon = type->getCanonicalTypeInternal();
       
-      ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, canon.getTypePtr())
+      ARIEL_IF_NOT_DYN_CAST(clang::RecordType, data, canon.getTypePtr())
         continue;
 
-      ARIEL_IF_NOT_DYN_CAST(target, data, rec->getDecl())
-        continue;
-      
       ir::make_link(
-        root, add_node<target>::call(ariel_ctx, data), ir::INHERITANCE
+        root, add_node<clang::RecordType>::call(ariel_ctx, data), ir::INHERITANCE
       );
     } 
   }
