@@ -56,17 +56,11 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
   karma::rule<Iterator, ir::unique_id(void)>
     id;
 
-  karma::rule<Iterator, std::list<ariel::ir::link>(void)>
+  karma::rule<Iterator, std::vector<ir::link>(void)>
     links;
 
-  karma::rule<Iterator, ir::link(void)>
+  karma::rule<Iterator, ir::link(std::size_t)>
     link;
-
-  karma::rule<Iterator, std::map<std::string, std::string>(void)>
-    attributes;
-
-  karma::rule<Iterator, std::pair<std::string, std::string>(void)>
-    attribute;
 
   cross_dot_grammar (void): cross_dot_grammar::base_type(start) {
     start =
@@ -87,40 +81,45 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
 
     get_node = 
          karma::lit("n") << id 
-      << "[label=\"" << attributes << "\"];"
+      << "[label=\"" << karma::string << "\"];"
       << karma::eol
+      << karma::skip[links]
+      << karma::skip[links]
       << karma::skip[links];
     
     get_name = 
          karma::lit("n") << id 
-      << karma::skip[attributes]
+      << karma::skip[karma::string]
+      << karma::skip[links]
+      << karma::skip[links]
       << karma::skip[links];
 
+    // FIXME: handle each optional link collection, e.g. formatting, etc
     get_links =
          karma::skip[id] 
-      << karma::skip[attributes]
+      << karma::skip[karma::string]
+      << links
+      << links
       << links;
 
     karma::uint_generator<std::size_t> id_element;
 
     id = id_element << id_element;
-
-    links = *link;
+    
+    // FIXME: do stuff with the vector size in link, if this link
+    // collection is parametric (break into more rules)
+    links = *link(px::size(karma::_val));
 
     karma::uint_generator<boost::uint_t<8>::fast> meta;
 
-    // the skip here is temporary, we need to modify shape/color
-    // of edges in dot according to relationship in ariel IR
+    // FIXME: the skip here is temporary, we need to modify shape/color of edges
+    // in dot according to relationship in ariel IR
     link =
          get_name
       << " -> "
       << get_name
       << karma::skip[meta]
       << ";" << karma::eol;
-
-    attributes = *attribute;
-
-    attribute = karma::omit[karma::string] << karma::string;
   }
 };
 

@@ -46,25 +46,21 @@ struct link_parameters<clang::ClassTemplateSpecializationDecl> {
           if (!type) break;
  
           ARIEL_IF_NOT_DYN_CAST(clang::RecordType, rec, type) {
-            ir::make_link(
-              root,
-              add_node<clang::Type>::call(ariel_ctx, type),
-              ir::PARAMETRIC
+            ir::make_link<ir::PARAMETRIC>::call(
+              root, add_node<clang::Type>::call(ariel_ctx, type)
             );
             break;
           }
 
           ARIEL_IF_NOT_DYN_CAST(target, data, rec->getDecl()) {
-            ir::make_link(
-              root,
-              add_node<clang::RecordType>::call(ariel_ctx, rec),
-              ir::PARAMETRIC
+            ir::make_link<ir::PARAMETRIC>::call(
+              root, add_node<clang::RecordType>::call(ariel_ctx, rec)
             );
             break;
           }
           
-          ir::make_link(
-            root, add_node<target>::call(ariel_ctx, data), ir::PARAMETRIC
+          ir::make_link<ir::PARAMETRIC>::call(
+            root, add_node<target>::call(ariel_ctx, data)
           );
         } break;
         case clang::TemplateArgument::Integral: {
@@ -72,8 +68,8 @@ struct link_parameters<clang::ClassTemplateSpecializationDecl> {
 
           if (!data) break;
 
-          ir::make_link(
-            root, add_node<llvm::APSInt>::call(ariel_ctx, data), ir::PARAMETRIC
+          ir::make_link<ir::PARAMETRIC>::call(
+            root, add_node<llvm::APSInt>::call(ariel_ctx, data)
           );
         } break;
         default: break; 

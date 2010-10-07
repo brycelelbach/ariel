@@ -11,18 +11,58 @@
 #if !defined(ARIEL_IR_MAKE_LINK_HXX)
 #define ARIEL_IR_MAKE_LINK_HXX
 
+#include <boost/mpl/int.hpp>
+
+#include <ariel/utility/call_builder.hxx>
 #include <ariel/ir/node.hxx>
 
 namespace ariel {
 namespace ir {
 
-link& make_link (
-  link::param_type from, link::param_type to, relationship relation
-) {
-  (*from).links.push_back(link(from, to, relation));
+template<relationship Relation>
+struct make_link;
 
-  return (*from).links.back();
-}
+template<>
+struct make_link<INHERITANCE> {
+  typedef boost::mpl::int_<INHERITANCE> target;
+  typedef boost::add_reference<link>::type result;
+
+  ARIEL_2ARY_CALL_PARAMS(link::param_type, link::param_type);
+
+  ARIEL_2ARY_CALL(from_it, to_it) {
+    node const& from = *from_it;
+    from.bases.push_back(link(from_it, to_it, INHERITANCE));
+    return from.bases.back();
+  }
+};
+
+template<>
+struct make_link<PARAMETRIC> {
+  typedef boost::mpl::int_<PARAMETRIC> target;
+  typedef boost::add_reference<link>::type result;
+
+  ARIEL_2ARY_CALL_PARAMS(link::param_type, link::param_type);
+
+  ARIEL_2ARY_CALL(from_it, to_it) {
+    node const& from = *from_it;
+    from.bases.push_back(link(from_it, to_it, PARAMETRIC));
+    return from.bases.back();
+  }
+};
+
+template<>
+struct make_link<MEMBERSHIP> {
+  typedef boost::mpl::int_<MEMBERSHIP> target;
+  typedef boost::add_reference<link>::type result;
+
+  ARIEL_2ARY_CALL_PARAMS(link::param_type, link::param_type);
+
+  ARIEL_2ARY_CALL(from_it, to_it) {
+    node const& from = *from_it;
+    from.bases.push_back(link(from_it, to_it, MEMBERSHIP));
+    return from.bases.back();
+  }
+};
 
 } // ir 
 } // ariel

@@ -53,27 +53,21 @@ struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
   karma::rule<Iterator, ir::node(void)>
     get_node;
 
-  karma::rule<Iterator, ir::node(unsigned)>
+  karma::rule<Iterator, ir::node(std::size_t)>
     get_name;
 
   karma::rule<Iterator, ir::unique_id(void)>
     id;
 
-  karma::rule<Iterator, std::list<ariel::ir::link>(unsigned)>
+  karma::rule<Iterator, std::vector<ir::link>(std::size_t)>
     links;
 
-  karma::rule<Iterator, ir::link(unsigned)>
+  karma::rule<Iterator, ir::link(std::size_t, std::size_t)>
     link;
 
-  karma::rule<Iterator, std::map<std::string, std::string>(void)>
-    attributes;
+  std::size_t count;
 
-  karma::rule<Iterator, std::pair<std::string, std::string>(void)>
-    attribute;
-
-  unsigned count;
-
-  naive_dot_grammar (void): naive_dot_grammar::base_type(start), count(1) {
+  naive_dot_grammar (void): naive_dot_grammar::base_type(start), count(0) {
     start =
          karma::lit("digraph {") 
       << karma::eol 
@@ -86,39 +80,42 @@ struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
 
     context = *(get_node);
 
+    // FIXME: handle each optional link collection, e.g. formatting, etc
     get_node = 
          karma::lit("n") << id
-      << karma::lit("_") << karma::lit(px::ref(count)++)
-      << "[label=\"" << attributes << "\"];"
+      << "_" << karma::lit(++px::ref(count))
+      << "[label=\"" << karma::string << "\"];"
       << karma::eol
-      << links(px::val(count));
+      << links(px::ref(count))
+      << links(px::ref(count))
+      << links(px::ref(count));
     
     get_name = 
          karma::lit("n") << id 
-      << karma::lit("_") << karma::lit(karma::_r1)
-      << karma::skip[attributes]
-      << karma::skip[links(px::val(count))];
+      << "_" << karma::lit(karma::_r1)
+      << karma::skip[karma::string]
+      << karma::skip[links(px::ref(count))]
+      << karma::skip[links(px::ref(count))]
+      << karma::skip[links(px::ref(count))];
 
     karma::uint_generator<std::size_t> id_element;
 
     id = id_element << id_element;
 
-    links = *link(karma::_r1);
+    // FIXME: do stuff with the vector size in link, if this link
+    // collection is parametric (break into more rules)
+    links = *link(karma::_r1, px::size(karma::_val));
 
     karma::uint_generator<boost::uint_t<8>::fast> meta;
 
-    // the skip here is temporary, we need to modify shape/color
-    // of edges in dot according to relationship in ariel IR
+    // FIXME: the skip here is temporary, we need to modify shape/color of edges
+    // in dot according to relationship in ariel IR
     link =
          get_name(karma::_r1)
       << " -> "
       << get_name(karma::_r1)
       << karma::skip[meta]
       << ";" << karma::eol;
-
-    attributes = *attribute;
-
-    attribute = karma::omit[karma::string] << karma::string;
   }
 };
 

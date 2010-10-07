@@ -11,20 +11,16 @@
 #if !defined(ARIEL_IR_RELATIONSHIP_HXX)
 #define ARIEL_IR_RELATIONSHIP_HXX
 
+#include <boost/utility/binary.hpp>
+
 namespace ariel {
 namespace ir {
 
 enum relationship {
-  UNRELATED = 0,
-
-  // held by a base or derived class 
-  INHERITANCE = 10,
-
-  // held by a template class or template parameter
-  PARAMETRIC,
-
-  // held by a class or a member of a class
-  MEMBERSHIP
+  UNRELATED   = BOOST_BINARY(0 0 0 0 0 0 0 0),
+  INHERITANCE = BOOST_BINARY(0 0 0 0 0 0 0 1),
+  PARAMETRIC  = BOOST_BINARY(0 0 0 0 0 0 1 0),
+  MEMBERSHIP  = BOOST_BINARY(0 0 0 0 0 1 0 0)
 };
 
 } // ir

@@ -20,7 +20,7 @@ ariel::profiler
 | *filters to refine*                               | scrapped                |
 | *raw_variable_declaration_filter*                 |                         |
 +---------------------------------------------------+-------------------------+
-| **dot_writer**                                    | incomplete              |
+| *dot_writer*                                      | done 10.09.30           |
 +---------------------------------------------------+-------------------------+
 | **test suite for the profiler**                   | incomplete              |
 +---------------------------------------------------+-------------------------+
@@ -45,7 +45,7 @@ ariel (utilities)
 +===================================================+=========================+
 | *static_base_pointer*                             | done 10.09.25           |
 +---------------------------------------------------+-------------------------+
-| **Move tst to it's own namespace, stop working**  | in progress             |
-| **it for now. Use std::map for node for the**     |                         |
-| **moment**                                        |                         |
+| *Move tst to it's own namespace, stop working*    | done 10.09.26           |
+| *it for now. Use std::map for node for the*       |                         |
+| *moment*                                          |                         |
 +---------------------------------------------------+-------------------------+

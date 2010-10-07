@@ -61,7 +61,9 @@ struct tst_node {
   }
 
   template<typename Iter, typename Filter>
-  static tst_node* find (tst_node* start, Iter& first, Iter last, Filter filter) {
+  static tst_node* find (
+    tst_node* start, Iter& first, Iter last, Filter filter
+  ) {
     if (first == last) return 0;
 
     for (tst_node* p = start; p;) {

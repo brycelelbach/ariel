@@ -8,13 +8,13 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
-#if !defined(ARIEL_PROFILER_CALL_BUILDER_HXX)
-#define ARIEL_PROFILER_CALL_BUILDER_HXX
+#if !defined(ARIEL_CALL_BUILDER_HXX)
+#define ARIEL_CALL_BUILDER_HXX
 
 #include <boost/fusion/include/at.hpp>
 #include <boost/fusion/sequence/intrinsic/at.hpp>
 
-// this all could be done with Boost.PP in less LOC
+// FIXME: this all could be done with Boost.PP in less LOC
 
 #define ARIEL_1ARY_CALL_PARAMS(_0)                                \
   typedef boost::fusion::vector1<_0> parameters                   \
@@ -116,4 +116,4 @@
   )                                                         \
   /**/
 
-#endif // ARIEL_PROFILER_CALL_BUILDER_HXX
+#endif // ARIEL_CALL_BUILDER_HXX

@@ -11,8 +11,7 @@
 #if !defined(ARIEL_IR_NODE_HXX)
 #define ARIEL_IR_NODE_HXX
 
-#include <map>
-#include <list>
+#include <vector>
 
 #include <boost/fusion/container/vector.hpp>
 #include <boost/fusion/include/vector.hpp>
@@ -35,54 +34,54 @@ namespace ir {
 // first integral contains the kind, second contains the hash
 typedef fusion::vector2<std::size_t, std::size_t> unique_id; 
 
+typedef std::vector<link> link_collection;
+
 struct node {
  public:
-  unique_id id;
-  // temporary use of map until tst has been tested more extensively
-  mutable std::map<std::string, std::string> attributes;
-  // sets don't provide mutable keys; links isn't used for
-  // equality/ordering, though, so this is fine for now
-  mutable std::list<link> links;
+  unique_id   id;
+  std::string name;
 
-  // STL DefaultConstructible
-  node (void): id(), attributes(), links() { }
+  mutable link_collection parameters, bases, members;
 
-  node (unique_id new_id): id(new_id), links() { } 
-
-  node (link::value_type const& it): id() {
-    id = (*it).id;
-    attributes = (*it).attributes;
-    links = (*it).links;
+ private:
+  // shared implementation details for Assignable and DefaultConstructible 
+  void copy (node const& rhs) {
+    id = rhs.id;
+    name = rhs.name;
+    parameters = rhs.parameters;
+    bases = rhs.bases;
+    members = rhs.members;
   }
 
+ public:
+  // STL DefaultConstructible
+  node (void): id(0, 0), name("null") { }
+
+  node (unique_id new_id, std::string new_name): id(new_id), name(new_name) { } 
+
+  node (link::value_type const& it) { copy(*it); }
+
   // STL Assignable
-  node (node const& rhs):
-    id(rhs.id), attributes(rhs.attributes), links(rhs.links) { } 
+  node (node const& rhs) { copy(rhs); }
 
   // STL EqualityComparable
   bool operator== (node const& rhs) const { return (id == rhs.id); }
   bool operator!= (node const& rhs) const { return (id != rhs.id); }
 
   // STL LessThanComparable
-  bool operator< (node const& rhs) const { return (id < rhs.id); }
-  bool operator<= (node const& rhs) const { return (id <= rhs.id); }
-  bool operator> (node const& rhs) const { return (id > rhs.id); }
-  bool operator>= (node const& rhs) const { return (id >= rhs.id); }
+  bool operator< (node const& rhs) const { return (name < rhs.name); }
+  bool operator<= (node const& rhs) const { return (name <= rhs.name); }
+  bool operator> (node const& rhs) const { return (name > rhs.name); }
+  bool operator>= (node const& rhs) const { return (name >= rhs.name); }
  
   // STL Assignable 
   node& operator= (node const& rhs) {
-    if (*this == rhs) {
-      id = rhs.id;
-      attributes = rhs.attributes;
-      links = rhs.links;
-    }
+    if (*this == rhs) copy(rhs);
     return *this;
   }
 };
 
 typedef std::set<node> context;
-
-typedef std::map<std::string, std::string> attributes;
 
 } // ir
 } // ariel
@@ -90,8 +89,10 @@ typedef std::map<std::string, std::string> attributes;
 BOOST_FUSION_ADAPT_STRUCT(
   ariel::ir::node,
   (ariel::ir::unique_id, id)
-  (ariel::ir::attributes, attributes)
-  (std::list<ariel::ir::link>, links)
+  (std::string, name)
+  (ariel::ir::link_collection, parameters)
+  (ariel::ir::link_collection, bases)
+  (ariel::ir::link_collection, members)
 )
 
 #endif // ARIEL_IR_NODE_HXX
