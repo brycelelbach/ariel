@@ -13,3 +13,4 @@ project construe_cast_test :
 unit-test construe_cast : construe_cast.cpp ;
 unit-test karma : karma.cpp ;
 unit-test qi : qi.cpp ;
+unit-test tag : tag.cpp ;
