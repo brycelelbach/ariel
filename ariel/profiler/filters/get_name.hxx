@@ -52,7 +52,7 @@ struct get_name<clang::RecordType> {
   ARIEL_1ARY_CALL(x) {
     if (!x) return "";
 
-    ARIEL_IF_NOT_DYN_CAST(clang::RecordDecl, decl, x->getDecl()); return "";
+    ARIEL_IF_NOT_DYN_CAST(clang::RecordDecl, decl, x->getDecl()) return "";
 
     return decl->getNameAsString();
   }

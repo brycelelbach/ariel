@@ -21,10 +21,10 @@ namespace profiler {
 
 // forward declaration
 template<class Filter>
-struct consumer;
+class consumer;
 
 template<class Writer>
-struct null_filter;
+class null_filter;
 
 ARIEL_FILTER_PARAMS(Writer)
 class ARIEL_FILTER(null_filter, Writer):

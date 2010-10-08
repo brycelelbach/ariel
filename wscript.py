@@ -32,6 +32,8 @@ def configure(conf):
   conf.env.ARIEL_APPNAME  = APPNAME 
   conf.env.ARIEL_VERSION  = VERSION 
 
+  conf.env.CXX = 'clang++'
+
 def build(bld):
   bld.recurse('fanged')
 

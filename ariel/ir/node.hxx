@@ -65,23 +65,27 @@ struct node {
   node (node const& rhs) { copy(rhs); }
 
   // STL EqualityComparable
-  bool operator== (node const& rhs) const { return (id == rhs.id); }
-  bool operator!= (node const& rhs) const { return (id != rhs.id); }
+  #define M0(_)                                                       \
+    bool operator _ (node const& rhs) const { return (id _ rhs.id); } \
+    /**/
 
-  // STL LessThanComparable
-  bool operator< (node const& rhs) const { return (name < rhs.name); }
-  bool operator<= (node const& rhs) const { return (name <= rhs.name); }
-  bool operator> (node const& rhs) const { return (name > rhs.name); }
-  bool operator>= (node const& rhs) const { return (name >= rhs.name); }
- 
+  M0(==)
+  M0(!=)
+
+  #undef M0
+
   // STL Assignable 
   node& operator= (node const& rhs) {
-    if (*this == rhs) copy(rhs);
+    if (*this != rhs) copy(rhs);
     return *this;
   }
 };
 
-typedef std::set<node> context;
+std::size_t hash_value (node const& n) {
+  boost::hash<std::string> hasher; return hasher(n.name);
+}
+
+typedef boost::unordered_set<node> context;
 
 } // ir
 } // ariel

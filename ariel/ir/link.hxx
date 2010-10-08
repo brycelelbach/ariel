@@ -11,8 +11,7 @@
 #if !defined(ARIEL_IR_LINK_HXX)
 #define ARIEL_IR_LINK_HXX
 
-#include <set>
-
+#include <boost/unordered_set.hpp>
 #include <boost/call_traits.hpp>
 #include <boost/integer.hpp>
 #include <boost/fusion/adapted/struct/adapt_struct.hpp>
@@ -28,7 +27,7 @@ struct node;
 struct link {
  public:
   typedef boost::uint_t<8>::fast metadata; 
-  typedef std::set<node>::iterator value_type;
+  typedef boost::unordered_set<node>::iterator value_type;
   typedef boost::call_traits<value_type>::param_type param_type;
 
   value_type from;

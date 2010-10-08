@@ -96,13 +96,10 @@ namespace profiler {
 ARIEL_2ARY_CALL_DEF(
   add_node, clang::Type, ariel_ctx, x
 ) {
-  std::pair<ir::context::iterator, bool> r =
-    ariel_ctx.insert(ir::node(
-      get_id<target>::call(x),
-      get_name<target>::call(x)
-    ));
-
-  return r.first;
+  return ariel_ctx.insert(ir::node(
+    get_id<target>::call(x),
+    get_name<target>::call(x)
+  )).first;
 }
 
 ARIEL_2ARY_CALL_DEF(
@@ -131,7 +128,7 @@ ARIEL_2ARY_CALL_DEF(
       get_id<target>::call(x),
       get_name<target>::call(x)
     ));
-
+  
   if (r.second == false) return r.first;
 
   link_parameters<target>::call(ariel_ctx, r.first, x);
