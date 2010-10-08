@@ -22,17 +22,15 @@ APPNAME   = 'ariel'
 VERSION   = strftime('%y.%m.%d')
 
 def set_options(opt):
-  opt.tool_options('compiler_cxx')
+  opt.tool_options('clangxx')
 
 def configure(conf):
-  conf.check_tool('compiler_cxx')
+  conf.check_tool('clangxx')
 
   conf.env.ARIEL_RELEASE  = RELEASE
   conf.env.ARIEL_CODENAME = CODENAME 
   conf.env.ARIEL_APPNAME  = APPNAME 
   conf.env.ARIEL_VERSION  = VERSION 
-
-  conf.env.CXX = 'clang++'
 
 def build(bld):
   bld.recurse('fanged')
