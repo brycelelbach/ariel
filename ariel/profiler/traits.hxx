@@ -16,7 +16,7 @@ namespace profiler {
 
 // forward declaration
 template<class Filter>
-struct consumer;
+class consumer;
 
 template<class Production>
 struct production_traits;

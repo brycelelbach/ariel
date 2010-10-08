@@ -16,45 +16,24 @@ from time import strftime
 
 top       = '.'
 out       = 'build'
+RELEASE   = 1
+CODENAME  = 'Admiral Ackbar'
 APPNAME   = 'ariel'
 VERSION   = strftime('%y.%m.%d')
-LOCAL_CXX = 'c++'
 
 def set_options(opt):
   opt.tool_options('compiler_cxx')
 
-  opt.add_option(
-    '--llvmdir', 
-    action  = 'store',
-    default = '/usr/local/include/',
-    help    = 'LLVM include directory [default: /usr/local/include/]'
-  )
-  
-  opt.add_option(
-    '--clangdir',
-    action  = 'store',
-    default = '/usr/local/include/',
-    help    = 'clang include directory [default: /usr/local/include/]'
-  )
-
 def configure(conf):
   conf.check_tool('compiler_cxx')
 
-  conf.env.__ARIEL__ = VERSION 
-  conf.env.__ariel__ = VERSION
-  conf.env.ARIEL     = VERSION
-  conf.env.ariel     = VERSION
-
-  from Options import options
-
-  conf.env.LLVMPATH  = options.llvmdir
-  conf.env.CLANGPATH = options.clangdir
-
-  conf.env.CXX = [LOCAL_CXX]
-  conf.env.CXXFLAGS  += ['-g']
+  conf.env.ARIEL_RELEASE  = RELEASE
+  conf.env.ARIEL_CODENAME = CODENAME 
+  conf.env.ARIEL_APPNAME  = APPNAME 
+  conf.env.ARIEL_VERSION  = VERSION 
 
 def build(bld):
-  bld.recurse('lib/profiler')
+  bld.recurse('fanged')
 
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'
