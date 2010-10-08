@@ -27,10 +27,9 @@ if __name__ == '__main__':
   cwd        = getcwd()
   wafadmin   = join(cwd, 'wafadmin')
   tools      = join(wafadmin, 'Tools')
-  thirdparty = join(wafadmin, '3rdparty')
 
   # add the local waf install to the search path
-  sys.path = [wafadmin, tools, thirdparty] + sys.path
+  sys.path = [wafadmin, tools] + sys.path
 
   # now we can boostrap waf
   from Scripting import prepare
