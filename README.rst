@@ -15,6 +15,6 @@ Contact
 
 :Mailing List: `ariel.devel <http://groups.google.com/group/ariel_devel>`_
 :Repository: `ariel at GitHub <http://github/brycelelbach/ariel>`_
-:IRC: ##boost at `irc.freenode.net <http://freenode.net>`_ 
+:IRC: ##ariel at `irc.freenode.net <http://freenode.net>`_ 
 :POC: `Bryce Lelbach (aka wash) <admin@thefireflyproject.us>`_
 
