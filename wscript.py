@@ -16,10 +16,10 @@ from time import strftime
 
 top       = '.'
 out       = 'build'
+APPNAME   = 'ariel'
 RELEASE   = 1
 CODENAME  = 'Admiral Ackbar'
-APPNAME   = 'ariel'
-VERSION   = strftime('%y.%m.%d')
+VERSION   = strftime('%Y.%m.%d_%H.%M.%S')
 
 def set_options(opt):
   opt.tool_options('clangxx')
