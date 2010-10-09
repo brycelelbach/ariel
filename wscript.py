@@ -27,10 +27,11 @@ def set_options(opt):
 def configure(conf):
   conf.check_tool('clangxx')
 
-  conf.env.ARIEL_RELEASE  = RELEASE
-  conf.env.ARIEL_CODENAME = CODENAME 
-  conf.env.ARIEL_APPNAME  = APPNAME 
-  conf.env.ARIEL_VERSION  = VERSION 
+  conf.env.CXXDEFINES += [
+    'ARIEL_RELEASE=%s' % RELEASE,
+    'ARIEL_CODENAME="%s"' % CODENAME, 
+    'ARIEL_VERSION="%s"' % VERSION 
+  ]
 
 def build(bld):
   bld.recurse('bin')
