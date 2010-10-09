@@ -65,17 +65,21 @@ class compiler: public clang::CompilerInstance {
     ))
   {
     // set up default options
-    getTargetOpts()             = Config::template get<tag::target>();
-    getFrontendOpts()           = Config::template get<tag::frontend>();
-    getAnalyzerOpts()           = Config::template get<tag::analyzer>();
-    getCodeGenOpts()            = Config::template get<tag::code_generation>();
-    getDependencyOutputOpts()   = Config::template get<tag::dependency_output>();
-    getDiagnosticOpts()         = Config::template get<tag::diagnostic>();
-    getHeaderSearchOpts()       = Config::template get<tag::header_search>();
-    getPreprocessorOpts()       = Config::template get<tag::preprocessor>();
-    getPreprocessorOutputOpts() = Config::template get<tag::preprocessor_output>();
-    getLangOpts()               = Config::template get<tag::language>();
+    #define M0(y) Config::template get<tag:: y >(av[0], main_addr)
+
+    getTargetOpts()             = M0(target);
+    getFrontendOpts()           = M0(frontend);
+    getAnalyzerOpts()           = M0(analyzer);
+    getCodeGenOpts()            = M0(code_generation);
+    getDependencyOutputOpts()   = M0(dependency_output);
+    getDiagnosticOpts()         = M0(diagnostic);
+    getHeaderSearchOpts()       = M0(header_search);
+    getPreprocessorOpts()       = M0(preprocessor);
+    getPreprocessorOutputOpts() = M0(preprocessor_output);
+    getLangOpts()               = M0(language);
     
+    #undef M0
+
     // set up diagnostics
     DiagPrinter* diag_printer = new DiagPrinter(getDiagnosticOpts());
     diag_printer->setPrefix(path->getBasename());

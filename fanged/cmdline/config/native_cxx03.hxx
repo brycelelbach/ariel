@@ -11,6 +11,8 @@
 #if !defined(FANGED_CMDLINE_NATIVE_CXX03_HXX)
 #define FANGED_CMDLINE_NATIVE_CXX03_HXX
 
+#include <clang/Frontend/CompilerInvocation.h>
+
 #include <fanged/config_tags.hxx>
 
 namespace fanged {
@@ -18,13 +20,13 @@ namespace cmdline {
 
 struct native_cxx03 {
  public:
-  template<class Tag> static typename Tag::type get (void) {
+  template<class Tag> static typename Tag::type get (char const*, void*) {
     return typename Tag::type();
   }
 };
 
 template<> tag::target::type
-native_cxx03::get<tag::target> (void) {
+native_cxx03::get<tag::target> (char const* av, void* main_addr) {
   tag::target::type opt;
 
   opt.Triple = llvm::sys::getHostTriple();
@@ -33,7 +35,7 @@ native_cxx03::get<tag::target> (void) {
 }
 
 template<> tag::diagnostic::type
-native_cxx03::get<tag::diagnostic> (void) {
+native_cxx03::get<tag::diagnostic> (char const* av, void* main_addr) {
   tag::diagnostic::type opt;
 
   opt.ShowColors = true;
@@ -43,7 +45,7 @@ native_cxx03::get<tag::diagnostic> (void) {
 }
 
 template<> tag::language::type
-native_cxx03::get<tag::language> (void) {
+native_cxx03::get<tag::language> (char const* av, void* main_addr) {
   tag::language::type opt;
 
   opt.CPlusPlus = true;
@@ -51,6 +53,15 @@ native_cxx03::get<tag::language> (void) {
   opt.RTTI = true;
   opt.Exceptions = true;
   opt.AccessControl = true;
+
+  return opt;
+}
+
+template<> tag::header_search::type
+native_cxx03::get<tag::header_search> (char const* av, void* main_addr) {
+  tag::header_search::type opt;
+
+  opt.ResourceDir = clang::CompilerInvocation::GetResourcesPath(av, main_addr);
 
   return opt;
 }
