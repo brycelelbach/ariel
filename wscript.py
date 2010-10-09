@@ -33,7 +33,7 @@ def configure(conf):
   conf.env.ARIEL_VERSION  = VERSION 
 
 def build(bld):
-  bld.recurse('fanged')
+  bld.recurse('bin')
 
 if __name__ == '__main__':
   print '\033[91mError: Waf scripts should not be executed directly.'
