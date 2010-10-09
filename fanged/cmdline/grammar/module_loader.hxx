@@ -29,6 +29,8 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
+#include <boost/scoped_ptr.hpp>
+
 #include <fanged/cmdline/builtins.hxx>
 
 namespace fanged {
@@ -84,6 +86,8 @@ class module_loader_grammar: public qi::grammar<Iterator> {
 
   px::function<help_printer> help;
   px::function<version_printer> version;
+
+  boost::scoped_ptr<clang::PluginASTAction> module;
 
   module_loader_grammar (clang::CompilerInstance& new_comp):
     module_loader_grammar::base_type(start),

@@ -15,17 +15,36 @@
 #include <llvm/Support/raw_ostream.h>
 
 #include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/seq/pop_back.hpp>
 
-#define FANGED_CMDLINE_REGISTERED_BUILTINS \
-  ("profile.naive.dot")                    \
-  ("profile.cross.dot")                    \
+#include <ariel/profiler/filters.hxx>
+#include <ariel/profiler/writers.hxx>
+#include <ariel/profiler/module.hxx>
+
+#define FANGED_CMDLINE_REGISTERED_BUILTINS   \
+  (                                          \
+    ("profile.naive.dot")                    \
+    (ariel::profiler::module<                \
+      ariel::profiler::naive_dot_writer<     \
+        ariel::profiler::dependency_filter   \
+      >                                      \
+     >)                                      \
+  )                                          \
+  (                                          \
+    ("profile.cross.dot")                    \
+    (ariel::profiler::module<                \
+      ariel::profiler::cross_dot_writer<     \
+        ariel::profiler::dependency_filter   \
+      >                                      \
+     >)                                      \
+  )                                          \
   /**/
 
 namespace fanged {
 namespace cmdline {
 
 void list_builtins (llvm::raw_ostream& os) {
-  #define M0(r, data, elem) << "  " << elem << "\n"
+  #define M0(r, data, elem) << "  " << BOOST_PP_SEQ_POP_BACK(elem) << "\n"
 
   os
     BOOST_PP_SEQ_FOR_EACH(M0, _, FANGED_CMDLINE_REGISTERED_BUILTINS)

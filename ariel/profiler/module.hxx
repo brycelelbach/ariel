@@ -8,8 +8,8 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
-#if !defined(ARIEL_PROFILER_PLUGIN_HXX)
-#define ARIEL_PROFILER_PLUGIN_HXX
+#if !defined(ARIEL_PROFILER_MODULE_HXX)
+#define ARIEL_PROFILER_MODULE_HXX
 
 #include <clang/AST/ASTConsumer.h>
 #include <clang/AST/AST.h>
@@ -23,7 +23,7 @@ namespace ariel {
 namespace profiler {
 
 template<class Production>
-class plugin: public clang::PluginASTAction {
+class module: public clang::PluginASTAction {
  protected:
   clang::ASTConsumer* CreateASTConsumer (
     clang::CompilerInstance& compiler,
@@ -50,4 +50,4 @@ class plugin: public clang::PluginASTAction {
 } // profiler
 } // ariel 
 
-#endif // ARIEL_PROFILER_PLUGIN_HXX
+#endif // ARIEL_PROFILER_MODULE_HXX

@@ -89,18 +89,27 @@ class compiler: public clang::CompilerInstance {
     ClParser grammar(*this);
 
     // process the command line arguments
-    for (int i = 1; i < ac; ++i) {
+    if (ac > 1) {
       // create a temporary string, because karma::parse requires a mutable
       // iterator to work on 
-      std::string arg(av[i]);
+      std::string arg(av[1]);
 
       std::string::iterator it = arg.begin();
 
       if (!qi::parse(it, arg.end(), grammar) || (it != arg.end()))
         llvm::report_fatal_error(
           std::string("couldn't parse command line argument \"")
-              .append(av[i]).append("\"")
+              .append(av[1]).append("\"")
         );
+    }
+
+    // are we loading a module?
+    if (!grammar.module) exit(1);
+
+    // the rest of the arguments are for the loaded module
+    tag::frontend::type& frontend_opts = getFrontendOpts();
+    for (int i = 2; i < ac; ++i) {
+      frontend_opts.PluginArgs.push_back(av[i]);
     }
     
     // set up the LLVM threading context
