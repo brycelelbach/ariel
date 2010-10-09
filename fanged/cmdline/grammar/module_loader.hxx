@@ -31,6 +31,11 @@
 
 #include <boost/scoped_ptr.hpp>
 
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/seq/pop_back.hpp>
+#include <boost/preprocessor/seq/pop_front.hpp>
+#include <boost/preprocessor/seq/cat.hpp>
+
 #include <fanged/cmdline/builtins.hxx>
 
 namespace fanged {
@@ -87,14 +92,30 @@ class module_loader_grammar: public qi::grammar<Iterator> {
   px::function<help_printer> help;
   px::function<version_printer> version;
 
-  boost::scoped_ptr<clang::PluginASTAction> module;
+  clang::PluginASTAction* module;
 
   module_loader_grammar (clang::CompilerInstance& new_comp):
     module_loader_grammar::base_type(start),
-    comp(new_comp)
+    comp(new_comp),
+    module(0)
   {
+    #define M0(r, data, elem)                               \
+      / qi::kwd BOOST_PP_SEQ_POP_BACK(elem) [qi::eps[       \
+        px::ref(module) = px::new_<                         \
+          BOOST_PP_SEQ_CAT(BOOST_PP_SEQ_POP_FRONT(elem))>() \
+        ]]                                                  \
+      /**/
+
     start %= qi::kwd("help")    [qi::eps[help()]]
-           / qi::kwd("version") [qi::eps[version()]];
+           / qi::kwd("version") [qi::eps[version()]]
+           BOOST_PP_SEQ_FOR_EACH(M0, _, FANGED_CMDLINE_REGISTERED_BUILTINS)
+    ;
+
+    #undef M0
+  }
+
+  virtual ~module_loader_grammar (void) {
+    if (module) delete module;
   }
 };
 
