@@ -51,76 +51,63 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
     context;
 
   karma::rule<Iterator, ir::node(void)>
-    get_node, get_name, get_links;
+    node, dependencies, name;
 
   karma::rule<Iterator, ir::unique_id(void)>
-    id;
+    node_id, name_id;
 
-  karma::rule<Iterator, std::vector<ir::link>(void)>
+  karma::rule<Iterator, std::vector<ir::link>(void), karma::locals<std::size_t> >
     links;
 
   karma::rule<Iterator, ir::link(std::size_t)>
     link;
 
+  karma::uint_generator<std::size_t>
+    hash;
+
+  karma::uint_generator<boost::uint_t<8>::fast>
+    relation;
+
   cross_dot_grammar (void): cross_dot_grammar::base_type(start) {
-    start =
-      karma::duplicate[
-           karma::lit("digraph {") 
-        << karma::eol 
-        << "rankdir=\"BT\";" 
-        << karma::eol 
-        << context 
-        << karma::eol 
-        << (*get_links) 
-        << karma::eol 
-        << "}" 
-        << karma::eol
-      ];
+    using karma::skip;
+    using karma::omit;
+    using karma::lit;
+    using karma::duplicate;
+    using karma::string;
+    using karma::_a;
+    using karma::_r1;
+    using px::ref;
 
-    // FIXME: possibly not needed
-    context = *(get_node);
-
-    get_node = 
-         karma::lit("n") << id 
-      << "[label=\"" << karma::string << "\"];"
-      << karma::eol
-      << karma::skip[links]
-      << karma::skip[links]
-      << karma::skip[links];
+    start = duplicate
+          [ lit("digraph {\n  rankdir=\"BT\";\n")
+         << (*node)
+         << (*dependencies)
+         << "}\n"
+          ];
     
-    get_name = 
-         karma::lit("n") << id 
-      << karma::skip[karma::string]
-      << karma::skip[links]
-      << karma::skip[links]
-      << karma::skip[links];
-
     // FIXME: handle each optional link collection, e.g. formatting, etc
-    get_links =
-         karma::skip[id] 
-      << karma::skip[karma::string]
-      << links
-      << links
-      << links;
-
-    karma::uint_generator<std::size_t> id_element;
-
-    id = id_element << id_element;
+    node = node_id << "label=\"" << string << "\"];\n"
+        << skip[links] << skip[links] << skip[links];
     
-    // FIXME: do stuff with the vector size in link, if this link
-    // collection is parametric (break into more rules)
-    links = *link(px::size(karma::_val));
+    dependencies = skip[node_id] << skip[string] << links << links << links;
+    
+    name = name_id << skip[string] << skip[links] << skip[links] << skip[links];
 
-    karma::uint_generator<boost::uint_t<8>::fast> meta;
+    // FIXME: style nodes by kind
+    node_id = lit("  n") << hash << "_" << hash << "[";
 
-    // FIXME: the skip here is temporary, we need to modify shape/color of edges
-    // in dot according to relationship in ariel IR
-    link =
-         get_name
-      << " -> "
-      << get_name
-      << karma::skip[meta]
-      << ";" << karma::eol;
+    name_id = lit("n") << hash << "_" << hash;
+    
+    links = *(link(++_a));
+
+    link = lit("  ") << name << " -> " << name << "[" <<
+         ( (&relation(ir::INHERITANCE)
+            << "color=\"blue\"")
+         | (&relation(ir::MEMBERSHIP) 
+            << "color=\"green\"")
+         | (&relation(ir::PARAMETRIC) 
+            << "color=\"red\" label=\"" << lit(_r1) << "\"")
+         ) << "];\n"; 
   }
 };
 
