@@ -27,7 +27,7 @@ def build(bld):
     ],
     
     cxxflags     = [
-      '-fno-strict-aliasing', '-fPIC', '-fno-rtti', '-g',
+      '-fno-strict-aliasing', '-fPIC', '-fno-rtti',
       '-fdiagnostics-show-option', '-pedantic', '-Wall',
     ],
 
