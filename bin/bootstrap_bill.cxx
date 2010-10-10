@@ -29,5 +29,8 @@ int main (int const argc, char const** argv) {
     new fanged::cmdline::compiler<>(argc, argv, tautology())
   );
 
+  // time for liftoff
+  cc->launch();
+
   llvm::llvm_shutdown();
 }

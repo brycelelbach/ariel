@@ -62,6 +62,9 @@ native_cxx03::get<tag::header_search> (char const* av, void* main_addr) {
   tag::header_search::type opt;
 
   opt.ResourceDir = clang::CompilerInvocation::GetResourcesPath(av, main_addr);
+  opt.UseStandardIncludes = true;
+  opt.UseStandardCXXIncludes = true;
+  opt.UseBuiltinIncludes = true;
 
   return opt;
 }

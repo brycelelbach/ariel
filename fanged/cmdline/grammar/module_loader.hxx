@@ -29,14 +29,13 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
-#include <boost/scoped_ptr.hpp>
-
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/seq/pop_back.hpp>
 #include <boost/preprocessor/seq/pop_front.hpp>
 #include <boost/preprocessor/seq/cat.hpp>
 
 #include <fanged/cmdline/builtins.hxx>
+#include <fanged/module_action.hxx>
 
 namespace fanged {
 
@@ -92,7 +91,7 @@ class module_loader_grammar: public qi::grammar<Iterator> {
   px::function<help_printer> help;
   px::function<version_printer> version;
 
-  clang::PluginASTAction* module;
+  module_action* module;
 
   module_loader_grammar (clang::CompilerInstance& new_comp):
     module_loader_grammar::base_type(start),

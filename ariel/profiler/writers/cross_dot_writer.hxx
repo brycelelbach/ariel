@@ -11,7 +11,7 @@
 #if !defined(ARIEL_PROFILER_CROSS_DOT_WRITER_HXX)
 #define ARIEL_PROFILER_CROSS_DOT_WRITER_HXX
 
-#include <iostream>
+#include <llvm/Support/raw_ostream.h>
 
 #include <ariel/profiler/traits.hxx>
 #include <ariel/profiler/writers/writer_builder.hxx>
@@ -38,10 +38,10 @@ class cross_dot_writer: public Filter<cross_dot_writer<Filter> > {
     cross_dot_grammar<iterator> gram;
   
     if (!karma::generate(sink, gram, ariel_ctx))
-      std::cout << "generation failed\n";
+      llvm::outs() << "generation failed\n";
 
     else
-      std::cout << generated;
+      llvm::outs() << generated;
   }
 };
 

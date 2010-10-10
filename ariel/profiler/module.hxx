@@ -16,34 +16,51 @@
 #include <clang/Frontend/CompilerInstance.h>
 
 #include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/ErrorHandling.h>
 
 #include <ariel/profiler/consumer.hxx>
+#include <ariel/profiler/grammar/cmdline.hxx>
+
+#include <fanged/module_action.hxx>
 
 namespace ariel {
 namespace profiler {
 
 template<class Production>
-class module: public clang::PluginASTAction {
+class module: public fanged::module_action {
  protected:
   clang::ASTConsumer* CreateASTConsumer (
-    clang::CompilerInstance& compiler,
-    llvm::StringRef name
+    clang::CompilerInstance& cc,
+    llvm::StringRef file
   ) {
     Production* prod = new Production();
-    prod->set_name(name);
+    prod->set_name(file);
     return prod;
   }
 
-  bool ParseArgs (
-    clang::CompilerInstance const& compiler,
-    std::vector<std::string> const& args
-  ) {
-    // FIXME: implement
-    return true;
-  }
- 
-  void PrintHelp (llvm::raw_ostream& out) {
-    // FIXME: implement
+ public:
+  virtual void parse_args (clang::CompilerInstance& cc) {
+    std::vector<std::string> const& av = cc.getFrontendOpts().PluginArgs;
+    std::vector<std::string>::size_type const ac = av.size();
+
+    if (ac < 1) llvm::report_fatal_error("module argument vector is empty");
+
+    cmdline_grammar<std::string::iterator> grammar(cc, av[0]);
+
+    // process the command line arguments
+    for (unsigned i = 1; i < ac; ++i) {
+      // create a temporary string, because karma::parse requires a mutable
+      // iterator to work on, and we don't want to mutate av
+      std::string arg(av[i]);
+
+      std::string::iterator it = arg.begin();
+
+      if (!qi::parse(it, arg.end(), grammar) || (it != arg.end())) 
+        llvm::report_fatal_error(
+          std::string("module couldn't parse command line argument \"")
+              .append(av[i]).append("\"")
+        );
+    }
   }
 };
 

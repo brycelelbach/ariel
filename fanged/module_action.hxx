@@ -8,11 +8,20 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
-#if !defined(ARIEL_PROFILER_GRAMMAR_HXX)
-#define ARIEL_PROFILER_GRAMMAR_HXX
+#if !defined(FANGED_MODULE_ACTION_HXX)
+#define FANGED_MODULE_ACTION_HXX
 
-#include <ariel/profiler/grammar/naive_dot.hxx>
-#include <ariel/profiler/grammar/cross_dot.hxx>
-#include <ariel/profiler/grammar/cmdline.hxx>
+#include <clang/AST/ASTConsumer.h>
+#include <clang/AST/AST.h>
+#include <clang/Frontend/CompilerInstance.h>
 
-#endif // ARIEL_PROFILER_GRAMMAR_HXX
+namespace fanged {
+
+class module_action: public clang::ASTFrontendAction {
+ public:
+  virtual void parse_args (clang::CompilerInstance& cc) = 0;
+};
+
+} // fanged 
+
+#endif // FANGED_MODULE_ACTION_HXX
