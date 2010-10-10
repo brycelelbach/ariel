@@ -47,85 +47,76 @@ struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
   karma::rule<Iterator, ir::context(void)>
     start;
 
-  karma::rule<Iterator, ir::context(std::size_t)>
-    context_nodes, context_links;
+  karma::rule<Iterator, ir::context(void)>
+    context;
 
   karma::rule<Iterator, ir::node(void)>
-    get_name;
-
-  karma::rule<Iterator, ir::node(std::size_t)>
-    get_node, get_links;
+    name, node;
 
   karma::rule<Iterator, ir::unique_id(void)>
-    id;
+    id, styled_id;
 
-  karma::rule<Iterator, std::vector<ir::link>(void)>
-    links, local_links;
+  karma::rule<Iterator, std::vector<ir::link>(void), karma::locals<unsigned> >
+    links;
 
   karma::rule<Iterator, ir::link(std::size_t)>
-    print_link, link, local_link;
+    link, relationship, dependency;
 
   karma::uint_generator<std::size_t>
-    id_element;
+    hash;
 
   karma::uint_generator<boost::uint_t<8>::fast>
-    meta;
+    relation;
 
   std::size_t count;
 
-  naive_dot_grammar (void): naive_dot_grammar::base_type(start) {
+  naive_dot_grammar (void): naive_dot_grammar::base_type(start), count(0) {
     using karma::skip;
-    using karma::eol;
+    using karma::omit;
     using karma::lit;
     using karma::duplicate;
     using karma::string;
+    using karma::_a;
     using karma::_r1;
     using karma::_val;
     using px::size;
     using px::ref;
 
-    start = //duplicate
-      /*[*/ lit("digraph {") 
-     << eol 
-     << "rankdir=\"BT\";" 
-     << eol 
-     << context_nodes(ref(count) = 0)
-     << eol 
-//     << context_links(ref(count) = 0)
-     << eol 
-     << "}" 
-     << eol
-     /* ]*/;
+    start = lit("digraph {\n  rankdir=\"BT\"; clusterrank=\"local\";\n")
+         << context
+         << "}\n";
 
-    context_nodes = *(get_node(++ref(count)));
+    context = *( lit("  subgraph cluster_") << lit(++ref(count))
+              << " {\n" << node << "  };\n"
+               );
     
-//    context_links = *(get_links(++ref(count)));
-
-    get_node = id << "[label=\"" << string << "\"];" << eol
-            << local_links << local_links << local_links;
-    
-    get_name = id << skip[string]
-            << skip[local_links] << skip[local_links] << skip[local_links];
-
     // FIXME: handle each optional link collection, e.g. formatting, etc
- //   get_links = skip[id] << skip[string]
-   //          << links << links << links;
-
-    id = lit("n") << lit(ref(count)) << "_" << id_element << "_" << id_element;
+    node = styled_id << "label=\"" << string << "\"];\n"
+        << links << links << links;
     
-    // FIXME: do stuff with the vector size in link, if this link
-    // collection is parametric (break into more rules)
-   // links = *link(size(_val));
+    name = id << skip[string]
+        << skip[links] << skip[links] << skip[links];
 
-    local_links = *link(size(_val));
+    // FIXME: style nodes by kind
+    styled_id = lit("    n") << lit(ref(count)) << "_" << hash << "_" << hash
+             << "[";
+    
+    id = lit("n") << lit(ref(count)) << "_" << hash << "_" << hash;
+    
+    links = *link(++_a);
 
-    // FIXME: the skip here is temporary, we need to modify shape/color of edges
-    // in dot according to relationship in ariel IR
-    link = duplicate[print_link(_r1) << local_link(_r1)];
-   
-    print_link = get_name << " -> " << get_name << skip[meta] << ";" << eol;
+    link = duplicate[relationship(_r1) << dependency(_r1)];        
  
-    local_link = skip[get_name] << get_node(0) << skip[meta];
+    relationship = lit("    ") << name << " -> " << name << "[" <<
+      ( (&relation(ir::INHERITANCE)
+         << "color=\"blue\"")
+      | (&relation(ir::MEMBERSHIP) 
+         << "color=\"green\"")
+      | (&relation(ir::PARAMETRIC) 
+         << "color=\"red\" label=\"" << lit(_r1) << "\"")
+      ) << "];\n"; 
+ 
+    dependency = skip[name] << node << skip[relation];
   }
 };
 
