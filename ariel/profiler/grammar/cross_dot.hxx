@@ -77,6 +77,7 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
         << karma::eol
       ];
 
+    // FIXME: possibly not needed
     context = *(get_node);
 
     get_node = 
