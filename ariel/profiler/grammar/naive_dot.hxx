@@ -51,13 +51,14 @@ struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
     context;
 
   karma::rule<Iterator, ir::node(void)>
-    name, node;
+    from, to, node;
 
   karma::rule<Iterator, ir::unique_id(void)>
-    id, styled_id;
+    from_id, to_id, node_id;
 
-  karma::rule<Iterator, std::vector<ir::link>(void), karma::locals<unsigned> >
-    links;
+  karma::rule<
+    Iterator, std::vector<ir::link>(void), karma::locals<std::size_t, std::size_t>
+  > links;
 
   karma::rule<Iterator, ir::link(std::size_t)>
     link, relationship, dependency;
@@ -77,10 +78,12 @@ struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
     using karma::duplicate;
     using karma::string;
     using karma::_a;
+    using karma::_b;
     using karma::_r1;
     using karma::_val;
     using px::size;
     using px::ref;
+    using px::val;
 
     start = lit("digraph {\n  rankdir=\"BT\"; clusterrank=\"local\";\n")
          << context
@@ -91,23 +94,27 @@ struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
                );
     
     // FIXME: handle each optional link collection, e.g. formatting, etc
-    node = styled_id << "label=\"" << string << "\"];\n"
-        << links << links << links;
+    node = node_id << "label=\"" << string << "\"];\n" << links << links << links;
     
-    name = id << skip[string]
-        << skip[links] << skip[links] << skip[links];
+    from = from_id << skip[string] << skip[links] << skip[links] << skip[links];
+    
+    to = to_id << skip[string] << skip[links] << skip[links] << skip[links];
 
-    // FIXME: style nodes by kind
-    styled_id = lit("    n") << lit(ref(count)) << "_" << hash << "_" << hash
-             << "[";
+    node_id = lit("    n") << lit(ref(count)++) << "_" << hash << "_" << hash
+          << "["; // FIXME: style nodes by kind
     
-    id = lit("n") << lit(ref(count)) << "_" << hash << "_" << hash;
+    from_id = lit("n") << lit(ref(count) - 1) << "_" << hash << "_" << hash;
     
-    links = *link(++_a);
+    to_id = lit("n") << lit(ref(count)) << "_" << hash << "_" << hash;
+    
+    links = *( omit[lit(_b = ref(count))]
+            << link(++_a)
+            << omit[lit(ref(count) = _b)]
+             );
 
     link = duplicate[relationship(_r1) << dependency(_r1)];        
  
-    relationship = lit("    ") << name << " -> " << name << "[" <<
+    relationship = lit("    ") << from << " -> " << to << "[" <<
       ( (&relation(ir::INHERITANCE)
          << "color=\"blue\"")
       | (&relation(ir::MEMBERSHIP) 
@@ -116,7 +123,7 @@ struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
          << "color=\"red\" label=\"" << lit(_r1) << "\"")
       ) << "];\n"; 
  
-    dependency = skip[name] << node << skip[relation];
+    dependency = skip[from] << node << skip[relation];
   }
 };
 
