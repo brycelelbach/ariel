@@ -1,0 +1,9 @@
+digraph {
+  rankdir="BT"; overlap=false; splines=true;
+  n1_47949112[label="int"];
+  n6_247971690[label="base"];
+  n6_3276584052[label="derived"];
+  n6_247971690 -> n6_3276584052[color="red" label="1"];
+  n6_3276584052 -> n1_47949112[color="red" label="1"];
+  n6_3276584052 -> n6_247971690[color="blue"];
+}
