@@ -41,7 +41,8 @@ struct link_parameters<clang::ClassTemplateSpecializationDecl> {
         case clang::TemplateArgument::Type: {
           clang::QualType qual = arg.getAsType();
          
-          clang::Type* type = qual.getTypePtr();
+          // FIXME: this just discards reference types. Implement properly
+          clang::Type* type = qual.getNonReferenceType().getTypePtr();
 
           if (!type) break;
  

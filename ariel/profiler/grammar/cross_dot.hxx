@@ -78,8 +78,8 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
     using karma::_r1;
     using px::ref;
 
-    start = duplicate
-          [ lit("digraph {\n  rankdir=\"BT\";\n")
+    start = duplicate // aspect is set to golden ratio, for sanity's sake
+          [ lit("digraph {\n  rankdir=\"BT\"; overlap=false; splines=true;\n")
          << (*node)
          << (*dependencies)
          << "}\n"

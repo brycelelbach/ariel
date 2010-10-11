@@ -82,7 +82,8 @@ struct naive_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
     using karma::_r1;
     using px::ref;
 
-    start = lit("digraph {\n  rankdir=\"LR\"; clusterrank=\"local\";\n")
+    start = lit("digraph {\n  rankdir=\"LR\"; clusterrank=\"local\"; "
+                             "overlap=false; splines=true;\n")
          << context
          << "}\n";
 

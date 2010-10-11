@@ -148,7 +148,7 @@ class cmdline_grammar: public qi::grammar<Iterator> {
 
     start %= kwd("help")         [eps[help()]]
            / kwd("version")      [eps[version()]]
-           / kwd("include", 0, 1)['=' > *(include >> -lit(','))]
+           / kwd("include", 0, 1)['=' > +(include >> -lit(','))]
            / kwd("input", 0, 1)  ['=' > input]
     ;
 
@@ -156,7 +156,7 @@ class cmdline_grammar: public qi::grammar<Iterator> {
 
     input %= string[input_adder(_1)];
 
-    string %= *char_;
+    string %= +(char_ - ',');
   }
 };
 
