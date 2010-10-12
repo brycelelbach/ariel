@@ -6,7 +6,7 @@ License
 =======
 
 Ariel uses the `Boost Software License <http://www.boost.org/LICENSE_1_0.txt>`_.
-A copy should be available in the doc directory of this repository. Waf, our build
+A copy should be available in the credit directory of this repository. Waf, our build
 system, uses `the New BSD License <www.opensource.org/licenses/bsd-license.php>`_,
 which is similiar in nature.
 
