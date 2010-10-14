@@ -33,17 +33,6 @@ namespace boost {
         namespace detail {
 
             template <typename Target, typename Tag, typename Source>
-            struct construe_cast;
-
-            template <typename Target>
-            struct construe_cast<Target, boost::spirit::unused_type, Target> {
-                static inline Target const &
-                call(Target const & source) {
-                    return source;
-                }
-            };
-
-            template <typename Target, typename Tag, typename Source>
             struct construe_cast {
                 static inline Target const
                 call(Source const & source) {
