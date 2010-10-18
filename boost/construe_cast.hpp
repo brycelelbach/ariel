@@ -28,26 +28,26 @@ namespace boost {
     class bad_construe_cast
         : public std::bad_cast { };
 
+    namespace traits {
+
+        template <typename Target, typename Tag, typename Source, typename Enable = void>
+        struct construe_cast;
+
+    }  // namespace traits
+
     namespace construe {
 
         namespace detail {
 
             template <typename Target, typename Tag, typename Source>
             struct construe_cast {
-                static inline Target const
-                call(Source const & source) {
-                    Target target = Target();
-
-                    bool result = do_call(
+                static inline bool const
+                call(Target & target, Source const & source) {
+                    return do_call(
                         target,
                         source,
                         traits::is_iterable<Source>(),
                         boost::spirit::traits::is_container<Target>());
-
-                    if (!result)
-                        throw boost::bad_construe_cast();
-
-                    return target;
                 }
  
                 private:
@@ -113,11 +113,42 @@ namespace boost {
 
         }  // namespace detail
 
+        template <typename Target, typename Tag, typename Source>
+        struct construe_cast {
+            static inline Target const
+            call(Source const & source) {
+                Target target = Target();
+
+                bool result = boost::traits::construe_cast<
+                        Target, Tag, Source
+                    >::call(target, source);
+
+                if (!result)
+                    throw boost::bad_construe_cast();
+
+                return target;
+            }
+
+            static inline Target const
+            call(Source const & source, Target const & default_value) {
+                Target target = Target();
+
+                bool result = boost::traits::construe_cast<
+                        Target, Tag, Source
+                    >::call(target, source);
+
+                if (!result)
+                    return default_value;
+
+                return target;
+            }
+        };
+
     }  // namespace construe
 
     namespace traits {
 
-        template <typename Target, typename Tag, typename Source, typename Enable = void>
+        template <typename Target, typename Tag, typename Source, typename Enable>
         struct construe_cast
             : boost::construe::detail::construe_cast<Target, Tag, Source> { };
 
@@ -126,13 +157,31 @@ namespace boost {
     template <typename Target, typename Source>
     inline Target const
     construe_cast(Source const & source) {
-        return boost::traits::construe_cast<Target, boost::spirit::unused_type, Source>::call(source);
+        return boost::construe::construe_cast<
+                Target, boost::spirit::unused_type, Source
+            >::call(source);
     }
 
     template <typename Target, typename Tag, typename Source>
     inline Target const
     construe_cast(Source const & source) {
-        return boost::traits::construe_cast<Target, Tag, Source>::call(source);
+        return boost::construe::construe_cast<Target, Tag, Source>::call(source);
+    }
+
+    template <typename Target, typename Source>
+    inline Target const
+    construe_cast(Source const & source, Target const & default_value) throw() {
+        return boost::construe::construe_cast<
+                Target, boost::spirit::unused_type, Source
+            >::call(source, default_value);
+    }
+
+    template <typename Target, typename Tag, typename Source>
+    inline Target const
+    construe_cast(Source const & source, Target const & default_value) throw() {
+        return boost::construe::construe_cast<
+                Target, Tag, Source
+            >::call(source, default_value);
     }
 
 }  // namespace boost
