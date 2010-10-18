@@ -14,6 +14,7 @@
 #include <clang/AST/AST.h>
 
 #include <boost/type_traits.hpp>
+#include <boost/construe_cast.hpp>
 
 #include <ariel/profiler/filters/filter_builder.hxx>
 
@@ -50,9 +51,9 @@ struct get_name<clang::RecordType> {
   );
 
   ARIEL_1ARY_CALL(x) {
-    if (!x) return "";
+    if (!x) return "???";
 
-    ARIEL_IF_NOT_DYN_CAST(clang::RecordDecl, decl, x->getDecl()) return "";
+    ARIEL_IF_NOT_DYN_CAST(clang::RecordDecl, decl, x->getDecl()) return "???";
 
     return decl->getQualifiedNameAsString();
   }
@@ -69,11 +70,11 @@ struct get_name<clang::ClassTemplateSpecializationDecl> {
   );
 
   ARIEL_1ARY_CALL(x) {
-    if (!x) return "";
+    if (!x) return "???";
 
     clang::ClassTemplateDecl* decl = x->getSpecializedTemplate();
 
-    if (!decl) return "";
+    if (!decl) return "???";
 
     // FIXME: make nested name specifiers show up
     return decl->getQualifiedNameAsString();
@@ -91,9 +92,26 @@ struct get_name<llvm::APSInt> {
   );
 
   ARIEL_1ARY_CALL(x) {
-    if (!x) return "";
+    if (!x) return "???";
 
-    return std::string("0x") + x->toString(16);
+    return std::string("0x").append(x->toString(16));
+  }
+};
+
+template<>
+struct get_name<clang::PresumedLoc> {
+  typedef clang::PresumedLoc target;
+
+  typedef std::string result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_reference<boost::add_const<target>::type>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
+    return std::string(x.getFilename()).append(":").append(
+      boost::construe_cast<std::string>(x.getLine())
+    );
   }
 };
 

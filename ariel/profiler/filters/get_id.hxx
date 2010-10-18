@@ -110,6 +110,21 @@ struct get_id<llvm::APSInt> {
   }
 };
 
+template<>
+struct get_id<clang::PresumedLoc> {
+  typedef clang::PresumedLoc target;
+
+  typedef ir::unique_id result;
+
+  ARIEL_1ARY_CALL_PARAMS(
+    boost::add_reference<boost::add_const<target>::type>::type
+  );
+
+  ARIEL_1ARY_CALL(x) {
+    return ir::unique_id(ir::LOCATION, x.getRawEncoding());
+  }
+};
+
 } // profiler
 } // ariel
 

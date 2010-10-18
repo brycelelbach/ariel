@@ -37,6 +37,13 @@ struct link_location<clang::ClassTemplateSpecializationDecl> {
     clang::SourceLocation loc = x->getLocation();
 
     if (loc.isInvalid()) return;
+
+    clang::PresumedLoc ploc =
+      x->getASTContext().getSourceManager().getPresumedLoc(loc);
+  
+    ir::make_link<ir::INSTANTIATION>::call(
+      root, add_node<clang::PresumedLoc>::call(ariel_ctx, ploc)
+    );
   }
 };
 
@@ -58,6 +65,13 @@ struct link_location<clang::CXXRecordDecl> {
     clang::SourceLocation loc = x->getLocation();
 
     if (loc.isInvalid()) return;
+    
+    clang::PresumedLoc ploc =
+      x->getASTContext().getSourceManager().getPresumedLoc(loc);
+  
+    ir::make_link<ir::DECLARATION>::call(
+      root, add_node<clang::PresumedLoc>::call(ariel_ctx, ploc)
+    );
   }
 };
  

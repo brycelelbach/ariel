@@ -84,6 +84,20 @@ struct add_node<llvm::APSInt> {
   ARIEL_2ARY_CALL(ariel_ctx, x);
 };
 
+template<>
+struct add_node<clang::PresumedLoc> {
+  typedef clang::PresumedLoc target;
+
+  typedef ir::context::iterator result;
+
+  ARIEL_2ARY_CALL_PARAMS(
+    boost::add_reference<ir::context>::type,
+    boost::add_reference<boost::add_const<target>::type>::type
+  );
+
+  ARIEL_2ARY_CALL(ariel_ctx, x);
+};
+
 } // profiler
 } // ariel
 
@@ -142,6 +156,18 @@ ARIEL_2ARY_CALL_DEF(
 
 ARIEL_2ARY_CALL_DEF(
   add_node, llvm::APSInt, ariel_ctx, x
+) {
+  std::pair<ir::context::iterator, bool> r =
+    ariel_ctx.insert(ir::node(
+      get_id<target>::call(x),
+      get_name<target>::call(x)
+    ));
+
+  return r.first;
+}
+
+ARIEL_2ARY_CALL_DEF(
+  add_node, clang::PresumedLoc, ariel_ctx, x
 ) {
   std::pair<ir::context::iterator, bool> r =
     ariel_ctx.insert(ir::node(

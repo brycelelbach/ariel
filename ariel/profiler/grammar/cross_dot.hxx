@@ -117,6 +117,12 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
             << "color=\"green\"")
          | (&relation(ir::PARAMETRIC) 
             << "color=\"red\" label=\"" << lit(_r1) << "\"")
+         | (&relation(ir::DEFINITION) 
+            << "shape=none weight=0.5 label=\"definition\"")
+         | (&relation(ir::DECLARATION) 
+            << "shape=none weight=0.5 label=\"declaration\"")
+         | (&relation(ir::INSTANTIATION) 
+            << "shape=none weight=0.5 label=\"instantiation\"")
          ) << "];\n"; 
 
     kind = kind_table[_1 = _r1];
@@ -127,6 +133,7 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
       (ir::TEMPLATE | ir::CLASS,                    "shape=square ")
       (ir::TEMPLATE | ir::CLASS | ir::INSTANTIATED, "shape=diamond ")
       (ir::INTEGRAL,                                "shape=circle ")
+      (ir::LOCATION,                                "shape=egg ")
     ;
   }
 };

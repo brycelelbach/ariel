@@ -64,6 +64,48 @@ struct make_link<MEMBERSHIP> {
   }
 };
 
+template<>
+struct make_link<DEFINITION> {
+  typedef boost::mpl::int_<DEFINITION> target;
+  typedef boost::add_reference<link>::type result;
+
+  ARIEL_2ARY_CALL_PARAMS(link::param_type, link::param_type);
+
+  ARIEL_2ARY_CALL(from_it, to_it) {
+    node const& from = *from_it;
+    from.bases.push_back(link(from_it, to_it, DEFINITION));
+    return from.bases.back();
+  }
+};
+
+template<>
+struct make_link<DECLARATION> {
+  typedef boost::mpl::int_<DECLARATION> target;
+  typedef boost::add_reference<link>::type result;
+
+  ARIEL_2ARY_CALL_PARAMS(link::param_type, link::param_type);
+
+  ARIEL_2ARY_CALL(from_it, to_it) {
+    node const& from = *from_it;
+    from.bases.push_back(link(from_it, to_it, DECLARATION));
+    return from.bases.back();
+  }
+};
+
+template<>
+struct make_link<INSTANTIATION> {
+  typedef boost::mpl::int_<INSTANTIATION> target;
+  typedef boost::add_reference<link>::type result;
+
+  ARIEL_2ARY_CALL_PARAMS(link::param_type, link::param_type);
+
+  ARIEL_2ARY_CALL(from_it, to_it) {
+    node const& from = *from_it;
+    from.bases.push_back(link(from_it, to_it, INSTANTIATION));
+    return from.bases.back();
+  }
+};
+
 } // ir 
 } // ariel
 
