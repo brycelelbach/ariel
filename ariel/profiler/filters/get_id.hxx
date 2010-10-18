@@ -83,7 +83,11 @@ struct get_id<clang::ClassTemplateSpecializationDecl> {
     
     llvm::FoldingSetNodeID id;
     x->Profile(id);
-    return ir::unique_id(ir::CLASS | ir::TEMPLATE, id.ComputeHash());
+    return ir::unique_id(
+      ir::CLASS | ir::TEMPLATE |
+      (x->getPointOfInstantiation().isValid() ? ir::INSTANTIATED : 0),
+      id.ComputeHash()
+    );
   }
 };
 

@@ -17,11 +17,12 @@ namespace ariel {
 namespace ir {
 
 enum kind {
-  VOID      = BOOST_BINARY(0 0 0 0 0 0 0 0),
-  TYPE      = BOOST_BINARY(0 0 0 0 0 0 0 1),
-  TEMPLATE  = BOOST_BINARY(0 0 0 0 0 0 1 0),
-  CLASS     = BOOST_BINARY(0 0 0 0 0 1 0 0),
-  INTEGRAL  = BOOST_BINARY(0 0 0 0 1 0 0 0)
+  VOID          = BOOST_BINARY(0 0 0 0 0 0 0 0),
+  TYPE          = BOOST_BINARY(0 0 0 0 0 0 0 1),
+  TEMPLATE      = BOOST_BINARY(0 0 0 0 0 0 1 0),
+  CLASS         = BOOST_BINARY(0 0 0 0 0 1 0 0),
+  INTEGRAL      = BOOST_BINARY(0 0 0 0 1 0 0 0),
+  INSTANTIATED  = BOOST_BINARY(0 0 0 1 0 0 0 0)
 };
 
 } // ir

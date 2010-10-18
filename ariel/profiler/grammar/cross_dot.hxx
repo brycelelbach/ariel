@@ -62,6 +62,12 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
   karma::rule<Iterator, ir::link(std::size_t)>
     link;
 
+  karma::rule<Iterator, void(std::size_t)>
+    kind;
+
+  karma::symbols<std::size_t, char const*>
+    kind_table;
+
   karma::uint_generator<std::size_t>
     hash;
 
@@ -75,8 +81,11 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
     using karma::duplicate;
     using karma::string;
     using karma::_a;
+    using karma::_1;
     using karma::_r1;
+    using karma::_val;
     using px::ref;
+    using px::at_c;
 
     start = duplicate // aspect is set to golden ratio, for sanity's sake
           [ lit("digraph {\n  rankdir=\"BT\"; overlap=false; splines=true;\n")
@@ -94,7 +103,8 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
     name = name_id << skip[string] << skip[links] << skip[links] << skip[links];
 
     // FIXME: style nodes by kind
-    node_id = lit("  n") << hash << "_" << hash << "[";
+    node_id = lit("  n") << hash << "_" << hash << "[" << 
+              kind(at_c<0>(_val));
 
     name_id = lit("n") << hash << "_" << hash;
     
@@ -108,6 +118,16 @@ struct cross_dot_grammar: karma::grammar<Iterator, ir::context(void)> {
          | (&relation(ir::PARAMETRIC) 
             << "color=\"red\" label=\"" << lit(_r1) << "\"")
          ) << "];\n"; 
+
+    kind = kind_table[_1 = _r1];
+
+    kind_table.add
+      (ir::TYPE,                                    "shape=polygon ")
+      (ir::CLASS,                                   "shape=triangle ")
+      (ir::TEMPLATE | ir::CLASS,                    "shape=square ")
+      (ir::TEMPLATE | ir::CLASS | ir::INSTANTIATED, "shape=diamond ")
+      (ir::INTEGRAL,                                "shape=circle ")
+    ;
   }
 };
 
