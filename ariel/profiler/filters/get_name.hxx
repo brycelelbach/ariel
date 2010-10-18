@@ -54,7 +54,7 @@ struct get_name<clang::RecordType> {
 
     ARIEL_IF_NOT_DYN_CAST(clang::RecordDecl, decl, x->getDecl()) return "";
 
-    return decl->getNameAsString();
+    return decl->getQualifiedNameAsString();
   }
 };
 
@@ -76,7 +76,7 @@ struct get_name<clang::ClassTemplateSpecializationDecl> {
     if (!decl) return "";
 
     // FIXME: make nested name specifiers show up
-    return decl->getNameAsString();
+    return decl->getQualifiedNameAsString();
   }
 };
 

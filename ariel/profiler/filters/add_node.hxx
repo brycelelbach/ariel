@@ -89,6 +89,7 @@ struct add_node<llvm::APSInt> {
 
 #include <ariel/profiler/filters/link_parameters.hxx>
 #include <ariel/profiler/filters/link_bases.hxx>
+#include <ariel/profiler/filters/link_location.hxx>
 
 namespace ariel {
 namespace profiler {
@@ -115,6 +116,7 @@ ARIEL_2ARY_CALL_DEF(
   
   ARIEL_IF_NOT_DYN_CAST(clang::CXXRecordDecl, y, x->getDecl()) return r.first;
 
+  link_location<clang::CXXRecordDecl>::call(ariel_ctx, r.first, y);
   link_bases<clang::CXXRecordDecl>::call(ariel_ctx, r.first, y);
 
   return r.first;
@@ -131,8 +133,8 @@ ARIEL_2ARY_CALL_DEF(
   
   if (r.second == false) return r.first;
 
+  link_location<target>::call(ariel_ctx, r.first, x);
   link_parameters<target>::call(ariel_ctx, r.first, x);
-
   link_bases<target>::call(ariel_ctx, r.first, x);
 
   return r.first;
