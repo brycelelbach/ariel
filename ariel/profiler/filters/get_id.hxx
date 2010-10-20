@@ -14,6 +14,7 @@
 #include <clang/AST/AST.h>
 
 #include <boost/type_traits.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <ariel/ir/node.hxx>
 #include <ariel/ir/kind.hxx>
@@ -111,8 +112,8 @@ struct get_id<llvm::APSInt> {
 };
 
 template<>
-struct get_id<clang::PresumedLoc> {
-  typedef clang::PresumedLoc target;
+struct get_id<clang::FullSourceLoc> {
+  typedef clang::FullSourceLoc target;
 
   typedef ir::unique_id result;
 
@@ -121,7 +122,13 @@ struct get_id<clang::PresumedLoc> {
   );
 
   ARIEL_1ARY_CALL(x) {
-    return ir::unique_id(ir::LOCATION, x.getRawEncoding());
+    std::size_t seed(x.getFileID().getHashValue());
+    std::string file(x.getCharacterData());
+
+    boost::hash_combine(seed, x.getInstantiationLineNumber());
+    boost::hash_combine(seed, boost::hash_range(file.begin(), file.end()));
+
+    return ir::unique_id(ir::LOCATION, seed); 
   }
 };
 

@@ -1,0 +1,3 @@
+digraph {
+  rankdir="BT"; overlap=false; splines=true;
+}

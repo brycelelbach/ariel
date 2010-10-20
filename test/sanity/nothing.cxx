@@ -8,3 +8,6 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
+int main (void) {
+  // the most basic of sanity tests
+}

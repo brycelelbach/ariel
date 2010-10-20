@@ -1,0 +1,28 @@
+digraph {
+  rankdir="BT"; overlap=false; splines=true;
+  n32_9659032006029851090[shape=egg label="bar {
+  typedef T type;
+};
+
+int main (void) {
+  bar<foo<int> > b;
+}
+:13"];
+  n32_14375025312603490926[shape=egg label="foo;
+
+template<typename T> struct bar {
+  typedef T type;
+};
+
+int main (void) {
+  bar<foo<int> > b;
+}
+:11"];
+  n22_2171002465[shape=diamond label="bar"];
+  n1_45003288[shape=polygon label="int"];
+  n6_1666574866[shape=square label="foo"];
+  n22_2171002465 -> n32_9659032006029851090[shape=none weight=0.5 label="instantiation"];
+  n22_2171002465 -> n6_1666574866[color="red" label="2"];
+  n6_1666574866 -> n32_14375025312603490926[shape=none weight=0.5 label="instantiation"];
+  n6_1666574866 -> n1_45003288[color="red" label="2"];
+}

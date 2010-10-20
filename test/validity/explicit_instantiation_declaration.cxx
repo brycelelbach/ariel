@@ -8,3 +8,12 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
+template<class T> struct foo {
+  typedef T type;
+};
+
+extern template struct foo<int>;
+
+int main (void) {
+
+}

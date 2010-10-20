@@ -85,8 +85,8 @@ struct add_node<llvm::APSInt> {
 };
 
 template<>
-struct add_node<clang::PresumedLoc> {
-  typedef clang::PresumedLoc target;
+struct add_node<clang::FullSourceLoc> {
+  typedef clang::FullSourceLoc target;
 
   typedef ir::context::iterator result;
 
@@ -167,7 +167,7 @@ ARIEL_2ARY_CALL_DEF(
 }
 
 ARIEL_2ARY_CALL_DEF(
-  add_node, clang::PresumedLoc, ariel_ctx, x
+  add_node, clang::FullSourceLoc, ariel_ctx, x
 ) {
   std::pair<ir::context::iterator, bool> r =
     ariel_ctx.insert(ir::node(

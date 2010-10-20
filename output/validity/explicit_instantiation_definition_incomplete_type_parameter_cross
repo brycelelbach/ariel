@@ -1,0 +1,12 @@
+digraph {
+  rankdir="BT"; overlap=false; splines=true;
+  n22_2569453873[shape=diamond label="bar"];
+  n1_17806936[shape=polygon label="int"];
+  n32_13065470110875011325[shape=egg label="explicit_instantiation_definition_incomplete_type_parameter.cxx:17"];
+  n6_1782766893[shape=square label="foo"];
+  n32_17655800245698611180[shape=egg label="explicit_instantiation_definition_incomplete_type_parameter.cxx:11"];
+  n22_2569453873 -> n32_13065470110875011325[shape=none weight=0.5 label="instantiation"];
+  n22_2569453873 -> n6_1782766893[color="red" label="2"];
+  n6_1782766893 -> n32_17655800245698611180[shape=none weight=0.5 label="instantiation"];
+  n6_1782766893 -> n1_17806936[color="red" label="2"];
+}

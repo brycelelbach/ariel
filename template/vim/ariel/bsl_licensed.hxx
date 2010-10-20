@@ -1,4 +1,4 @@
-//===-----------------------------------------------------------*- C++ -*-===//
+//===------------------------------------------------------------*- C++ -*-===//
 // (C) Copyright 2010 Bryce Lelbach
 //
 // Use, modification and distribution of this software is subject to the Boost

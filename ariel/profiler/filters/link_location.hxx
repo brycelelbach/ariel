@@ -38,11 +38,12 @@ struct link_location<clang::ClassTemplateSpecializationDecl> {
 
     if (loc.isInvalid()) return;
 
-    clang::PresumedLoc ploc =
-      x->getASTContext().getSourceManager().getPresumedLoc(loc);
+    clang::FullSourceLoc floc(loc, x->getASTContext().getSourceManager());
+    
+    if (floc.isInvalid()) return;
   
     ir::make_link<ir::INSTANTIATION>::call(
-      root, add_node<clang::PresumedLoc>::call(ariel_ctx, ploc)
+      root, add_node<clang::FullSourceLoc>::call(ariel_ctx, floc)
     );
   }
 };
@@ -66,11 +67,12 @@ struct link_location<clang::CXXRecordDecl> {
 
     if (loc.isInvalid()) return;
     
-    clang::PresumedLoc ploc =
-      x->getASTContext().getSourceManager().getPresumedLoc(loc);
-  
-    ir::make_link<ir::DECLARATION>::call(
-      root, add_node<clang::PresumedLoc>::call(ariel_ctx, ploc)
+    clang::FullSourceLoc floc(loc, x->getASTContext().getSourceManager());
+ 
+    if (floc.isInvalid()) return;
+ 
+    ir::make_link<ir::INSTANTIATION>::call(
+      root, add_node<clang::FullSourceLoc>::call(ariel_ctx, floc)
     );
   }
 };

@@ -99,8 +99,8 @@ struct get_name<llvm::APSInt> {
 };
 
 template<>
-struct get_name<clang::PresumedLoc> {
-  typedef clang::PresumedLoc target;
+struct get_name<clang::FullSourceLoc> {
+  typedef clang::FullSourceLoc target;
 
   typedef std::string result;
 
@@ -109,8 +109,12 @@ struct get_name<clang::PresumedLoc> {
   );
 
   ARIEL_1ARY_CALL(x) {
-    return std::string(x.getFilename()).append(":").append(
-      boost::construe_cast<std::string>(x.getLine())
+    clang::PresumedLoc ploc = x.getManager().getPresumedLoc(
+      (*((clang::SourceLocation const*) (&x)))
+    );
+
+    return std::string(ploc.getFilename()).append(":").append(
+      boost::construe_cast<std::string>(ploc.getLine())
     );
   }
 };

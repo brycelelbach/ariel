@@ -8,3 +8,10 @@
 // Online: http://www.boost.org/LICENSE_1_0.txt
 //===----------------------------------------------------------------------===//
 
+template<class Derived> struct base { };
+
+template<class T> struct derived: base<derived<T> > { };
+
+int main (void) {
+  derived<int> d;
+}

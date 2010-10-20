@@ -1,0 +1,8 @@
+digraph {
+  rankdir="BT"; overlap=false; splines=true;
+  n6_2520008171[shape=square label="foo"];
+  n1_26211880[shape=polygon label="int"];
+  n32_4228598650048948861[shape=egg label="typedef.cxx:11"];
+  n6_2520008171 -> n32_4228598650048948861[shape=none weight=0.5 label="instantiation"];
+  n6_2520008171 -> n1_26211880[color="red" label="2"];
+}
