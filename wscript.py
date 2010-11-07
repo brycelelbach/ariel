@@ -28,6 +28,7 @@ def configure(conf):
   conf.check_tool('clangxx')
 
   conf.env.CXXDEFINES += [
+    '_GNU_SOURCE',
     'ARIEL_RELEASE=%s' % RELEASE,
     'ARIEL_CODENAME="%s"' % CODENAME, 
     'ARIEL_VERSION="%s"' % VERSION 

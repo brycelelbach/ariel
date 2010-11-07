@@ -25,7 +25,6 @@
 #include <boost/spirit/home/qi/binary.hpp>
 #include <boost/spirit/home/qi/directive.hpp>
 #include <boost/spirit/home/qi/nonterminal.hpp>
-#include <boost/spirit/home/qi/numeric.hpp>
 #include <boost/spirit/home/qi/operator.hpp>
 #include <boost/spirit/home/qi/parse.hpp>
 #include <boost/spirit/home/qi/string.hpp>

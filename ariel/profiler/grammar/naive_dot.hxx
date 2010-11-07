@@ -19,7 +19,6 @@
 #include <boost/spirit/include/karma_auxiliary.hpp>
 #include <boost/spirit/include/karma_char.hpp>
 #include <boost/spirit/include/karma_operator.hpp>
-#include <boost/spirit/include/karma_numeric.hpp>
 #include <boost/spirit/include/karma_string.hpp>
 
 #include <boost/spirit/include/phoenix.hpp>
